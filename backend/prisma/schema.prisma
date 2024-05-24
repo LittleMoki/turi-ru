@@ -13,16 +13,561 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model tour_types {
+model t_types {
   id              Int     @id @default(autoincrement())
-  parent          Int?
-  name            String?
-  type            String?
-  url             String?
-  photo           String
+  parent          Int
+  name            String
+  type            String  @db.VarChar(3)
+  url             String
+  photo           String?
+  description     String?
+  title           String
+  metakeywords    String?
+  metadescription String?
+  sorting         Int?    @default(0)
+}
+
+model t_about {
+  id           Int     @id @default(autoincrement())
+  name         String  @default("")
+  position     String  @default("")
+  employment   String  @default("")
+  body         String?
+  public       Int     @default(0)
+  order_number Int
+  photo        String? @db.VarChar(255)
+}
+
+model t_banner {
+  id      Int     @id @default(autoincrement())
+  file    String  @default("") @db.VarChar(14)
+  fileext String  @default("") @db.VarChar(5)
+  url     String  @default("") @db.VarChar(255)
+  header  String  @default("") @db.VarChar(255)
+  width   String  @default("") @db.VarChar(5)
+  height  String  @default("") @db.VarChar(5)
+  type    Int     @default(0)
+  cnt     Int     @default(0)
+  tcnt    Int     @default(0)
+  info    String?
+  email   String  @default("") @db.VarChar(40)
+  act     Int     @default(1)
+  cityid  Int     @default(0)
+}
+
+model t_city {
+  id              Int     @id @default(autoincrement())
+  country_id      Int
+  name            String  @default("") @db.VarChar(30)
+  url             String  @unique @default("") @db.VarChar(255)
+  body            String?
+  map             String?
+  photo           String  @default("") @db.VarChar(200)
+  metakeywords    String  @default("") @db.VarChar(255)
+  metadescription String  @default("") @db.VarChar(255)
+  title           String  @default("") @db.VarChar(255)
+
+  @@index([country_id])
+}
+
+model t_cityphoto {
+  id        Int    @id @default(autoincrement())
+  header_ru String @default("") @db.VarChar(255)
+  url       String @default("") @db.VarChar(255)
+  foto      String @default("") @db.VarChar(200)
+  fotoext   String @default("") @db.VarChar(5)
+  type      Int    @default(1)
+  domain    String @default("www") @db.VarChar(20)
+  header_en String @default("") @db.VarChar(255)
+  cat       Int    @default(0)
+}
+
+model t_country {
+  id              Int    @id @default(autoincrement())
+  language_id     Int    @default(1)
+  name            String
+  url             String
   description     String
+  title           String
+  metadescription String
+  metakeywords    String
+  photo           String
+}
+
+model t_dayplace {
+  id      Int @id @default(autoincrement())
+  tourid  Int
+  dayid   Int
+  placeid Int
+
+  @@unique([tourid, dayid, placeid])
+}
+
+model t_exchange {
+  id             Int     @id @default(autoincrement())
+  title          String
+  name           String
+  symbol         String
+  exchange_rate  Float
+  primary_valuta Boolean @default(false)
+}
+
+model t_faq {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  archive     Int    @default(0)
+}
+
+model t_guide {
+  id       Int     @id @default(autoincrement())
+  url      String  @default("") @db.VarChar(255)
+  name_ru  String  @default("") @db.VarChar(255)
+  name_en  String  @default("") @db.VarChar(255)
+  local_ru String  @default("") @db.VarChar(255)
+  local_en String  @default("") @db.VarChar(255)
+  lang_ru  String  @default("") @db.VarChar(255)
+  lang_en  String  @default("") @db.VarChar(255)
+  body_ru  String?
+  body_en  String?
+  foto     String  @default("0") @db.Char(14)
+  fotoext  String  @default("") @db.VarChar(5)
+  vote     Int     @default(0)
+  voters   Int     @default(0)
+  cert_ru  String?
+  cert_en  String?
+
+  @@unique([url])
+}
+
+model t_guideresponses {
+  id       Int       @id @default(autoincrement())
+  guide    Int
+  cat      Int
+  type     String    @default("") @db.Char(20)
+  name     String    @default("") @db.VarChar(150)
+  city     String    @default("") @db.VarChar(50)
+  email    String    @default("") @db.VarChar(150)
+  dtime    DateTime?
+  response String?
+  answer   String?
+  active   Int       @default(0)
+  foto     String    @default("0") @db.Char(14)
+  fotoext  String    @default("") @db.VarChar(5)
+  ftext    String    @default("0") @db.Char(16)
+  fotoext2 String    @default("") @db.VarChar(5)
+}
+
+model t_hotel {
+  id              Int     @id @default(autoincrement())
+  country_id      Int     @default(1)
+  cityid          Int     @default(0)
+  name            String  @default("") @db.VarChar(250)
+  url             String  @default("") @db.VarChar(255)
+  title           String
+  metakeywords    String  @default("") @db.VarChar(255)
+  metadescription String  @default("") @db.VarChar(255)
+  rating          String
+  adress          String  @default("") @db.VarChar(250)
+  photo           String
+  body            String?
+  map             String?
+  services        Json
+  service_text    String?
+  conditions      String?
+  public          Int     @default(1)
+}
+
+model t_hotel_photo {
+  id      Int    @id @default(autoincrement())
+  hotelid Int    @default(1)
+  photo   String @default("") @db.VarChar(200)
+  alt     String @default("") @db.VarChar(255)
+}
+
+model t_hotel_rooms {
+  id        Int     @id @default(autoincrement())
+  hotelid   Int
+  name      String  @default("") @db.VarChar(250)
+  price     Int
+  sizem     Int
+  body      String?
+  breakfast Int     @default(0)
+  lunch     Int     @default(0)
+  dinner    Int     @default(0)
+  p_person  Int     @default(0)
+}
+
+model t_hotel_room_photo {
+  id      Int    @id @default(autoincrement())
+  room_id Int
+  photo   String
+  alt     String @db.VarChar(60)
+}
+
+model t_hotel_services {
+  id   Int    @id @default(autoincrement())
+  name String
+  icon String
+}
+
+model t_news {
+  id              Int     @id @default(autoincrement())
+  new_date        String? @db.VarChar(255)
+  header          String  @default("") @db.VarChar(255)
+  body            String?
+  firsttext       String?
+  lang            String  @default("ru") @db.Char(2)
+  type            Int     @default(1)
+  view            Int     @default(0)
+  photo           String
+  foto            String  @db.VarChar(200)
+  fotoext         String  @db.VarChar(5)
+  title           String  @default("") @db.VarChar(255)
+  metakeywords    String  @default("") @db.VarChar(255)
+  metadescription String  @default("") @db.VarChar(255)
+  url             String  @default("") @db.VarChar(255)
+  public          Int     @default(0)
+  country         String  @default("Узбекистан") @db.VarChar(50)
+  tags            String?
+
+  @@unique([url])
+}
+
+model t_news_type {
+  id              Int    @id @default(autoincrement())
+  name            String @db.VarChar(255)
+  description     String
+  photo           String @db.VarChar(255)
+  url             String @db.VarChar(255)
+  title           String @db.VarChar(255)
+  metakeywords    String @db.VarChar(255)
+  metadescription String @db.VarChar(255)
+}
+
+model t_order_product {
+  id       Int @id @default(autoincrement())
+  user_id  Int
+  order_id Int
+  tour_id  Int
+}
+
+model t_orders {
+  id               Int              @id @default(autoincrement())
+  user_id          Int
+  order_status     t_order_status   @relation(fields: [order_number], references: [id], onDelete: Cascade)
+  payment_status   t_payment_status @relation(fields: [payment_id], references: [id], onDelete: Cascade)
+  order_number     Int
+  travellers_count Int
+  tour_date_start  DateTime
+  tour_date_end    DateTime
+  order_created    DateTime         @default(now())
+  order_updated    DateTime         @updatedAt
+  price            Float            @default(0)
+  payment_id       Int
+  deposit          Float            @default(0)
+  balance          Float            @default(0)
+  total_price      Float            @default(0)
+  total_paid_price Float            @default(0)
+  payment_type     String
+  tour_type        String
+}
+
+model t_order_hotels {
+  id       Int @id @default(autoincrement())
+  order_id Int
+  hotel_id Int
+}
+
+model t_oreder_services {
+  id            Int    @id @default(autoincrement())
+  user_id       Int
+  order_id      Int
+  service_name  String
+  service_price Float
+  service_count Int
+}
+
+model t_order_status {
+  id       Int        @id @default(autoincrement())
+  name     String
+  color    String
+  t_orders t_orders[]
+}
+
+model t_order_travellers {
+  id             Int    @id @default(autoincrement())
+  order_id       Int
+  user_id        Int
+  customer_name  String
+  customer_email String
+  customer_phone String
+  billing_adress String
+  country        String
+  city           String
+  postcode       String
+}
+
+model t_pages {
+  id              Int     @id @default(autoincrement())
+  pagename        String?
+  isdel           Int     @default(0)
+  metakeywords    String?
+  metadescription String?
   title           String?
+  titlename       String  @default("")
+  description     String  @default("")
+}
+
+model t_payment_status {
+  id       Int        @id @default(autoincrement())
+  name     String
+  color    String
+  t_orders t_orders[]
+}
+
+model t_photo {
+  id         Int    @id @default(autoincrement())
+  photo_type String
+  photo      String
+  alt        String
+}
+
+model t_place {
+  id              Int     @id @default(autoincrement())
+  country_id      Int
+  cityid          Int     @default(0)
+  url             String  @default("")
+  name            String
+  body            String?
+  photo           String
+  foto            String  @default("")
+  fotoext         String  @default("")
+  metakeywords    String  @default("")
+  metadescription String  @default("")
+  public          Int     @default(1)
+
+  @@unique([url])
+}
+
+model t_place_photo {
+  id       Int    @id @default(autoincrement())
+  place_id Int
+  photo    String
+  alt      String
+}
+
+model t_restaurant {
+  id              Int     @id @default(autoincrement())
+  country_id      Int
+  cityid          Int     @default(0)
+  url             String  @default("")
+  name            String
+  body            String?
+  photo           String
+  metakeywords    String  @default("")
+  metadescription String  @default("")
+
+  @@unique([url])
+}
+
+model t_restaurant_photo {
+  id            Int    @id @default(autoincrement())
+  restaurant_id Int
+  url           String @default("")
+  photo         String
+  alt           String
+}
+
+model t_review {
+  id      Int       @id @default(autoincrement())
+  user_id Int
+  name    String?   @default("")
+  city    String
+  dtime   DateTime?
+  review  String?
+  answer  String?
+  active  Int       @default(0)
+  rating  Int       @default(5)
+}
+
+model t_tags {
+  id   Int    @id @default(autoincrement())
+  name String
+  url  String
+}
+
+model t_team {
+  id    Int    @id @default(autoincrement())
+  name  String
+  photo String
+}
+
+model t_tour {
+  id              Int     @id @default(autoincrement())
+  type            Int
+  main_title      String?
+  name            String
+  name2           String
+  price           Float
+  oldPrice        Float
+  sales           String
+  body            String?
+  map             String?
+  url             String
+  photo           String
+  date            String
   metakeywords    String
   metadescription String
-  sorting         Int
+  ftext           String?
+  ftext2          String?
+  intop           Int     @default(0)
+  intop2          Int     @default(0)
+  intop3          Int     @default(0)
+  types           Json?
+  include         Json?
+  exclude         Json?
+  notes           Json?
+  paid_services   Json?
+  places          Json?
+  transport       Json?
+  travellers      String
+  archive         Int     @default(0)
+  solo_price      Float   @default(0)
+  single_price    Float
+  guaranted       Boolean @default(true)
+  new_type        String  @default("i")
+}
+
+model t_tourcity {
+  id     Int    @id @default(autoincrement())
+  tourid Int
+  cityid Int
+  route  String @default("train")
+}
+
+model t_tourtoday {
+  id        Int     @id @default(autoincrement())
+  tourid    Int
+  name      String
+  body      String?
+  breakfast Boolean @default(false)
+  lunch     Boolean @default(false)
+  dinner    Boolean @default(false)
+  hotel     Int
+  hotels    Json?
+}
+
+model t_tourdayphto {
+  id      Int     @id @default(autoincrement())
+  day_id  Int
+  photo   String
+  foto    String? @default("")
+  fotoext String? @default("")
+  alt     String
+}
+
+model t_tourphoto {
+  id     Int     @id @default(autoincrement())
+  tourid Int
+  photo  String?
+}
+
+model t_tourhotel {
+  id      Int @id @default(autoincrement())
+  tourid  Int
+  hotelid Int
+}
+
+model t_tour_meta {
+  id              Int    @id @default(autoincrement())
+  lang            String @db.Char(2)
+  title           String
+  metakeywords    String
+  metadescription String
+  url             String
+}
+
+model t_tour_country {
+  id         Int @id @default(autoincrement())
+  tour_id    Int
+  country_id Int
+}
+
+model t_tour_day_price {
+  id           Int      @id @default(autoincrement())
+  tourid       Int
+  date_start   DateTime
+  date_end     DateTime
+  double_price Int
+  single_price Int
+}
+
+model t_tour_faqs {
+  id     Int @id @default(autoincrement())
+  tourid Int
+  faqid  Int
+}
+
+model t_tour_services {
+  id      Int     @id @default(autoincrement())
+  type_id Int
+  title   String?
+  icon    String?
+  price   Int
+  archive Boolean @default(false)
+}
+
+model t_tour_team {
+  id      Int @id @default(autoincrement())
+  tour_id Int
+  team_id Int
+}
+
+model t_tour_type {
+  id              Int     @id @default(autoincrement())
+  type_id         Int
+  name            String
+  url             String?
+  photo_name      String
+  photo_ext       String
+  description     String?
+  metakeywords    String?
+  metadescription String?
+  parent          Int
+  type            String
+}
+
+model t_users {
+  id           Int     @id @default(autoincrement())
+  login        String?
+  first_name   String?
+  last_name    String?
+  phone_number String?
+  password     String
+  email        String  @unique @db.VarChar(255)
+  role         Int     @default(2)
+  photo        String
+}
+
+model t_users_role {
+  id        Int    @id @default(autoincrement())
+  name      String
+  type_name String @default("guest")
+}
+
+model t_user_address {
+  id      Int    @id @default(autoincrement())
+  user_id Int
+  country String
+  city    String
+  address String
+  zipcode String
+}
+
+model t_video {
+  id        Int    @id @default(autoincrement())
+  header    String @default("") @db.VarChar(255)
+  code      String @default("")
+  header_en String @default("") @db.VarChar(255)
 }

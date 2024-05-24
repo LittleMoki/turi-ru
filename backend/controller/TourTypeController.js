@@ -14,7 +14,7 @@ export const tourCreate = async (req, res) => {
 		sorting,
 	} = req.body
 
-	let tour = await prisma.tour_types.create({
+	let tour = await prisma.t_types.create({
 		data: {
 			parent,
 			name,
@@ -32,14 +32,14 @@ export const tourCreate = async (req, res) => {
 	return res.json({ status: 200, data: tour, message: 'tour created' })
 }
 export const tourShow = async (req, res) => {
-	const tours = await prisma.tour_types.findMany({})
+	const tours = await prisma.t_types.findMany({})
 
 	return res.json({ status: 200, data: tours })
 }
 export const tourDelete = async (req, res) => {
 	const { id } = req.params
 
-	const tour_delete = await prisma.tour_types.delete({
+	const tour_delete = await prisma.t_types.delete({
 		where: {
 			id: Number(id),
 		},
