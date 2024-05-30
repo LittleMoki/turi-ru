@@ -1,13 +1,17 @@
-import Sidebar from '@/Components/Sidebar/Sidebar'
+import Footer from '@/Components/Check/Footer'
+import Header from '@/Components/Check/Header'
+import Home from '@/Components/Check/Home'
+import SideBar from '@/Components/Check/SideBar'
 
 const Layout = ({ children }) => {
 	return (
-		<main className='text-white relative min-h-full'>
-			<Sidebar>
-				{children}
-			</Sidebar>
-			<footer>Footer</footer>
-		</main>
+		<div className='wrapper'>
+			<Header/>
+			<SideBar/>
+			<Home/>
+			<Footer/>
+			<div className="sidebar-overlay"></div>
+		</div>
 	)
 }
 

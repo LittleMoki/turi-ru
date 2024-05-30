@@ -1,9 +1,21 @@
 'use client'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import ApartmentIcon from '@mui/icons-material/Apartment'
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import MailIcon from '@mui/icons-material/Mail'
+import ContactEmergencyIcon from '@mui/icons-material/ContactEmergency'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import InventoryIcon from '@mui/icons-material/Inventory'
 import MenuIcon from '@mui/icons-material/Menu'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
+import PeopleIcon from '@mui/icons-material/People'
+import PersonIcon from '@mui/icons-material/Person'
+import PublicIcon from '@mui/icons-material/Public'
+import RoomServiceIcon from '@mui/icons-material/RoomService'
+import SignpostIcon from '@mui/icons-material/Signpost'
+import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import MuiAppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import MuiDrawer from '@mui/material/Drawer'
@@ -16,9 +28,12 @@ import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { styled, useTheme } from '@mui/material/styles'
+import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
+import logoAdmin from '../../../public/logo-admin.svg'
 
-const drawerWidth = 240
+const drawerWidth = 280
 
 const openedMixin = theme => ({
 	width: drawerWidth,
@@ -93,7 +108,7 @@ export default function Sidebar({ children }) {
 	const [menu, setMenu] = useState(null)
 
 	const changeMenuState = id => {
-		if (id != menu) setMenu(id)
+		if (id !== menu) setMenu(id)
 	}
 
 	const handleDrawerOpen = () => {
@@ -104,8 +119,92 @@ export default function Sidebar({ children }) {
 		setOpen(false)
 	}
 
+	const sideBarItems = [
+		{
+			icon: <InsertDriveFileIcon />,
+			title: 'Cтраницы',
+			link: '/admin/page',
+		},
+		{
+			icon: <BusinessCenterIcon />,
+			title: 'Туры',
+			link: '/admin/tour',
+		},
+		{
+			icon: <SignpostIcon />,
+			title: 'Типы туров',
+			link: '/admin/tour_type',
+		},
+		{
+			icon: <RoomServiceIcon />,
+			title: 'Услуги',
+			link: '/admin/services',
+		},
+		{
+			icon: <PublicIcon />,
+			title: 'Страны',
+			link: '/admin/country',
+		},
+		{
+			icon: <PublicIcon />,
+			title: 'Города',
+			link: '/admin/city',
+		},
+		{
+			icon: <AccountBalanceIcon />,
+			title: 'Места',
+			link: '/admin/place',
+		},
+		{
+			icon: <ApartmentIcon />,
+			title: 'Гостиницы',
+			link: '/admin/hotel',
+		},
+		{
+			icon: <StickyNote2Icon />,
+			title: 'Типы статей',
+			link: '/admin/news_type',
+		},
+		{
+			icon: <StickyNote2Icon />,
+			title: 'Статьи',
+			link: '/admin/news',
+		},
+		{
+			icon: <HelpOutlineIcon />,
+			title: 'FAQ',
+			link: '/admin/faq',
+		},
+
+		{
+			icon: <PersonIcon />,
+			title: 'Пользователи',
+			link: '/admin/users',
+		},
+		{
+			icon: <PeopleIcon />,
+			title: 'Партнеры',
+			link: '/admin/team',
+		},
+		{
+			icon: <InventoryIcon />,
+			title: 'Заказы',
+			link: '/admin/orders',
+		},
+		{
+			icon: <ContactEmergencyIcon />,
+			title: 'Сотрудники',
+			link: '/admin/about',
+		},
+		{
+			icon: <MonetizationOnIcon />,
+			title: 'Валюта',
+			link: '/admin/exchange',
+		},
+	]
+
 	return (
-		<Box sx={{ display: 'flex' }}>
+		<Box component='main' sx={{ display: 'flex' }}>
 			<AppBar
 				position='fixed'
 				open={open}
@@ -124,8 +223,16 @@ export default function Sidebar({ children }) {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography variant='h6' noWrap component='div'>
-						Mini variant drawer
+					<Typography component='ul' sx={{ display: 'flex', gap: '16px' }}>
+						<Typography component='li'>
+							<Link href='/'>Перейти на сайт</Link>
+						</Typography>
+						<Typography component='li'>
+							<Link href='/admin'>Вернуться на главную</Link>
+						</Typography>
+						<Typography component='li'>
+							<Link href='/exit'>Выход</Link>
+						</Typography>
 					</Typography>
 				</Toolbar>
 			</AppBar>
@@ -136,6 +243,29 @@ export default function Sidebar({ children }) {
 				open={open}
 			>
 				<DrawerHeader>
+					<Link href='/admin'>
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'start',
+								width: '100%',
+								padding: '0 20px',
+								gap: '10px',
+								cursor: 'pointer',
+							}}
+							component='span'
+						>
+							<Box sx={{ maxHeight: '33px', maxWidth: '33px' }}>
+								<Image
+									className='w-full h-full object-contain'
+									src={logoAdmin}
+									alt='logoAdmin'
+								/>
+							</Box>
+							<Typography sx={{ color: 'white' }}>Minzifa Travel ®</Typography>
+						</Box>
+					</Link>
 					<IconButton sx={{ color: '#fff' }} onClick={handleDrawerClose}>
 						{theme.direction === 'rtl' ? (
 							<ChevronRightIcon />
@@ -144,40 +274,44 @@ export default function Sidebar({ children }) {
 						)}
 					</IconButton>
 				</DrawerHeader>
-				<List sx={{ color: '#fff', padding: '0 5px' }}>
-					{['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-						<ListItem
-							onClick={() => changeMenuState(index)}
-							key={text}
-							disablePadding
-							sx={{ display: 'block' }}
-						>
-							<ListItemButton
-								sx={{
-									minHeight: 48,
-									borderRadius:'8px',
-									justifyContent: open ? 'initial' : 'center',
-									px: 2.5,
-									background: menu == index ? '#007bff' : '#001f3f',
-								}}
+				<List sx={{ color: '#fff', padding: '5px 5px 0' }}>
+					{sideBarItems.map((item, index) => (
+						<Link key={item.title} href={item.link}>
+							<ListItem
+								onClick={() => changeMenuState(index)}
+								disablePadding
+								sx={{ display: 'block' }}
 							>
-								<ListItemIcon
+								<ListItemButton
 									sx={{
-										color: open || menu == index ? '#fff' : '#6c757d',
-										minWidth: 0,
-										mr: open ? 3 : 'auto',
-										justifyContent: 'center',
+										minHeight: 48,
+										borderRadius: '8px',
+										justifyContent: open ? 'initial' : 'center',
+										px: 2.5,
+										background: menu === index ? '#007bff' : '#001f3f',
 									}}
 								>
-									{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-								</ListItemIcon>
-								<ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-							</ListItemButton>
-						</ListItem>
+									<ListItemIcon
+										sx={{
+											color: open || menu === index ? '#fff' : '#6c757d',
+											minWidth: 0,
+											mr: open ? 3 : 'auto',
+											justifyContent: 'center',
+										}}
+									>
+										{item.icon}
+									</ListItemIcon>
+									<ListItemText
+										primary={item.title}
+										sx={{ opacity: open ? 1 : 0 }}
+									/>
+								</ListItemButton>
+							</ListItem>
+						</Link>
 					))}
 				</List>
 			</Drawer>
-			<Box component='main' sx={{ flexGrow: 1, p: 3 }}>
+			<Box sx={{ flexGrow: 1, p: 3 }}>
 				<DrawerHeader />
 				{children}
 			</Box>
