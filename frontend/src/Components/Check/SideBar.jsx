@@ -92,7 +92,7 @@ const SideBar = () => {
 		<aside className='main-sidebar sidebar-dark-primary elevation-4'>
 			<a className='brand-link' href='/admin'>
 				<Image
-					style='opacity: .8'
+					style={{opacity:'.8'}}
 					src={logoAdmin}
 					alt='Logo'
 					className='brand-image'
@@ -150,7 +150,7 @@ const SideBar = () => {
 					<div className='os-scrollbar-track'>
 						<div
 							className='os-scrollbar-handle'
-							style={{ width: '50.6849%', transform: 'translate(0px, 0px)' }}
+							// style={{ width: '50.6849%', transform: 'translate(0px, 0px)' }}
 						/>
 					</div>
 				</div>
@@ -158,7 +158,7 @@ const SideBar = () => {
 					<div className='os-scrollbar-track'>
 						<div
 							className='os-scrollbar-handle'
-							style={{ height: '100%', transform: 'translate(0px, 0px)' }}
+							// style={{ height: '100%', transform: 'translate(0px, 0px)' }}
 						/>
 					</div>
 				</div>
