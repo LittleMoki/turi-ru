@@ -1,17 +1,20 @@
-import Footer from '@/Components/Check/Footer'
-import Header from '@/Components/Check/Header'
-import Home from '@/Components/Check/Home'
-import SideBar from '@/Components/Check/SideBar'
+'use client'
+import Footer from '@/Components/Dashboard/Footer'
+import Header from '@/Components/Dashboard/Header'
+import Home from '@/Components/Dashboard/Home'
+import SideBar from '@/Components/Dashboard/SideBar'
+
+
+
 
 const Layout = ({ children }) => {
 	return (
-		<div className='wrapper'>
-			<Header/>
-			<SideBar/>
-			<Home/>
-			<Footer/>
-			<div className="sidebar-overlay"></div>
-		</div>
+		<>
+				<Header />
+				<SideBar />
+				<Home children={children} />
+				<Footer />
+		</>
 	)
 }
 
