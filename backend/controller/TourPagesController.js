@@ -46,7 +46,7 @@ export const DeletePage = async (req, res) => {
 export const ShowAllPages = async (req, res) => {
 	const pages = await prisma.t_pages.findMany({})
 
-	if (pages.length <= 0)
+	if (!pages)
 		return res.json({ status: 400, message: 'We did not find any pages' })
 
 	return res.json({ status: 200, data: pages })

@@ -38,11 +38,7 @@ export const ExchangeDelete = async (req, res) => {
 export const ExchangeShowAll = async (req, res) => {
 	const exchange = await prisma.t_exchange.findMany({})
 
-	if (exchange.length > 0) {
-		return res.json({ status: 200, data: exchange })
-	}
-
-	return res.json({ status: 400, message: 'You did not have any valuta' })
+	return res.json({ status: 200, data: exchange })
 }
 
 // Edit exchange

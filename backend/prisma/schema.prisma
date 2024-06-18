@@ -14,17 +14,19 @@ datasource db {
 }
 
 model t_types {
-  id              Int     @id @default(autoincrement())
+  id              Int               @id @default(autoincrement())
   parent          Int
   name            String
-  type            String  @db.VarChar(3)
+  type            String            @db.VarChar(3)
   url             String
   photo           String?
   description     String?
   title           String
   metakeywords    String?
   metadescription String?
-  sorting         Int?    @default(0)
+  sorting         Int?              @default(0)
+  tour_services   t_tour_services[]
+  tour_type       t_tour_type[]
 }
 
 model t_about {
@@ -53,21 +55,40 @@ model t_banner {
   email   String  @default("") @db.VarChar(40)
   act     Int     @default(1)
   cityid  Int     @default(0)
+  city    t_city  @relation(fields: [cityid], references: [id], onDelete: Cascade)
 }
 
 model t_city {
-  id              Int     @id @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   country_id      Int
-  name            String  @default("") @db.VarChar(30)
-  url             String  @unique @default("") @db.VarChar(255)
+  country         t_country        @relation(fields: [country_id], references: [id])
+  name            String           @default("") @db.VarChar(30)
+  url             String           @unique @default("") @db.VarChar(255)
   body            String?
   map             String?
-  photo           String  @default("") @db.VarChar(200)
-  metakeywords    String  @default("") @db.VarChar(255)
-  metadescription String  @default("") @db.VarChar(255)
-  title           String  @default("") @db.VarChar(255)
+  photo           String           @default("") @db.VarChar(200)
+  metakeywords    String           @default("") @db.VarChar(255)
+  metadescription String           @default("") @db.VarChar(255)
+  title           String           @default("") @db.VarChar(255)
+  banner          t_banner[]
+  tourcity        t_tourcity[]
+  tour_country    t_tour_country[]
 
   @@index([country_id])
+}
+
+model t_country {
+  id              Int              @id @default(autoincrement())
+  language_id     Int              @default(1)
+  name            String
+  url             String
+  description     String
+  title           String
+  metadescription String
+  metakeywords    String
+  photo           String
+  city            t_city[]
+  tour_country    t_tour_country[]
 }
 
 model t_cityphoto {
@@ -80,18 +101,6 @@ model t_cityphoto {
   domain    String @default("www") @db.VarChar(20)
   header_en String @default("") @db.VarChar(255)
   cat       Int    @default(0)
-}
-
-model t_country {
-  id              Int    @id @default(autoincrement())
-  language_id     Int    @default(1)
-  name            String
-  url             String
-  description     String
-  title           String
-  metadescription String
-  metakeywords    String
-  photo           String
 }
 
 model t_dayplace {
@@ -113,10 +122,11 @@ model t_exchange {
 }
 
 model t_faq {
-  id          Int    @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
   description String
-  archive     Int    @default(0)
+  archive     Int           @default(0)
+  tour_faqs   t_tour_faqs[]
 }
 
 model t_guide {
@@ -168,14 +178,14 @@ model t_hotel {
   metakeywords    String  @default("") @db.VarChar(255)
   metadescription String  @default("") @db.VarChar(255)
   rating          String
-  adress          String  @default("") @db.VarChar(250)
+  address         String  @default("") @db.VarChar(250)
   photo           String
   body            String?
   map             String?
   services        Json
   service_text    String?
   conditions      String?
-  public          Int     @default(1)
+  publics         Int     @default(1)
 }
 
 model t_hotel_photo {
@@ -212,37 +222,39 @@ model t_hotel_services {
 }
 
 model t_news {
-  id              Int     @id @default(autoincrement())
-  new_date        String? @db.VarChar(255)
-  header          String  @default("") @db.VarChar(255)
+  id              Int         @id @default(autoincrement())
+  new_date        String?     @db.VarChar(255)
+  header          String      @default("") @db.VarChar(255)
   body            String?
   firsttext       String?
-  lang            String  @default("ru") @db.Char(2)
-  type            Int     @default(1)
-  view            Int     @default(0)
+  lang            String      @default("ru") @db.Char(2)
+  typeId          Int         @default(1)
+  type            t_news_type @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  view            Int         @default(0)
   photo           String
-  foto            String  @db.VarChar(200)
-  fotoext         String  @db.VarChar(5)
-  title           String  @default("") @db.VarChar(255)
-  metakeywords    String  @default("") @db.VarChar(255)
-  metadescription String  @default("") @db.VarChar(255)
-  url             String  @default("") @db.VarChar(255)
-  public          Int     @default(0)
-  country         String  @default("Узбекистан") @db.VarChar(50)
+  foto            String      @db.VarChar(200)
+  fototext        String      @db.VarChar(5)
+  title           String      @default("") @db.VarChar(255)
+  metakeywords    String      @default("") @db.VarChar(255)
+  metadescription String      @default("") @db.VarChar(255)
+  url             String      @default("") @db.VarChar(255)
+  publick         Int         @default(0)
+  country         String      @default("Узбекистан") @db.VarChar(50)
   tags            String?
 
   @@unique([url])
 }
 
 model t_news_type {
-  id              Int    @id @default(autoincrement())
-  name            String @db.VarChar(255)
+  id              Int      @id @default(autoincrement())
+  name            String   @db.VarChar(255)
   description     String
-  photo           String @db.VarChar(255)
-  url             String @db.VarChar(255)
-  title           String @db.VarChar(255)
-  metakeywords    String @db.VarChar(255)
-  metadescription String @db.VarChar(255)
+  photo           String   @db.VarChar(255)
+  url             String   @db.VarChar(255)
+  title           String   @db.VarChar(255)
+  metakeywords    String   @db.VarChar(255)
+  metadescription String   @db.VarChar(255)
+  news            t_news[]
 }
 
 model t_order_product {
@@ -289,10 +301,10 @@ model t_oreder_services {
 }
 
 model t_order_status {
-  id       Int        @id @default(autoincrement())
-  name     String
-  color    String
-  t_orders t_orders[]
+  id     Int        @id @default(autoincrement())
+  name   String
+  color  String
+  orders t_orders[]
 }
 
 model t_order_travellers {
@@ -320,10 +332,10 @@ model t_pages {
 }
 
 model t_payment_status {
-  id       Int        @id @default(autoincrement())
-  name     String
-  color    String
-  t_orders t_orders[]
+  id     Int        @id @default(autoincrement())
+  name   String
+  color  String
+  orders t_orders[]
 }
 
 model t_photo {
@@ -345,7 +357,7 @@ model t_place {
   fotoext         String  @default("")
   metakeywords    String  @default("")
   metadescription String  @default("")
-  public          Int     @default(1)
+  publics         Int     @default(1)
 
   @@unique([url])
 }
@@ -398,13 +410,14 @@ model t_tags {
 }
 
 model t_team {
-  id    Int    @id @default(autoincrement())
-  name  String
-  photo String
+  id        Int           @id @default(autoincrement())
+  name      String
+  photo     String
+  tour_team t_tour_team[]
 }
 
 model t_tour {
-  id              Int     @id @default(autoincrement())
+  id              Int                @id @default(autoincrement())
   type            Int
   main_title      String?
   name            String
@@ -421,9 +434,9 @@ model t_tour {
   metadescription String
   ftext           String?
   ftext2          String?
-  intop           Int     @default(0)
-  intop2          Int     @default(0)
-  intop3          Int     @default(0)
+  intop           Int                @default(0)
+  intop2          Int                @default(0)
+  intop3          Int                @default(0)
   types           Json?
   include         Json?
   exclude         Json?
@@ -432,50 +445,65 @@ model t_tour {
   places          Json?
   transport       Json?
   travellers      String
-  archive         Int     @default(0)
-  solo_price      Float   @default(0)
+  archive         Int                @default(0)
+  solo_price      Float              @default(0)
   single_price    Float
-  guaranted       Boolean @default(true)
-  new_type        String  @default("i")
+  guaranted       Boolean            @default(true)
+  tour            t_tourcity[]
+  new_type        String             @default("i")
+  tourtoday       t_tourtoday[]
+  tourphoto       t_tourphoto[]
+  tourhotel       t_tourhotel[]
+  tour_country    t_tour_country[]
+  tour_day_price  t_tour_day_price[]
+  tour_faqs       t_tour_faqs[]
+  tour_team       t_tour_team[]
 }
 
 model t_tourcity {
   id     Int    @id @default(autoincrement())
   tourid Int
+  tour   t_tour @relation(fields: [tourid], references: [id])
+  city   t_city @relation(fields: [cityid], references: [id])
   cityid Int
   route  String @default("train")
 }
 
 model t_tourtoday {
-  id        Int     @id @default(autoincrement())
-  tourid    Int
-  name      String
-  body      String?
-  breakfast Boolean @default(false)
-  lunch     Boolean @default(false)
-  dinner    Boolean @default(false)
-  hotel     Int
-  hotels    Json?
+  id           Int              @id @default(autoincrement())
+  tourid       Int
+  tour         t_tour           @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  name         String
+  body         String?
+  breakfast    Boolean          @default(false)
+  lunch        Boolean          @default(false)
+  dinner       Boolean          @default(false)
+  hotel        Int
+  hotels       Json?
+  tourdayphoto t_tourdayphoto[]
 }
 
-model t_tourdayphto {
-  id      Int     @id @default(autoincrement())
+model t_tourdayphoto {
+  id      Int         @id @default(autoincrement())
   day_id  Int
+  tourday t_tourtoday @relation(fields: [day_id], references: [id])
   photo   String
-  foto    String? @default("")
-  fotoext String? @default("")
+  foto    String?     @default("")
+  fotoext String?     @default("")
   alt     String
 }
 
 model t_tourphoto {
   id     Int     @id @default(autoincrement())
   tourid Int
+  tour   t_tour  @relation(fields: [tourid], references: [id], onDelete: Cascade)
   photo  String?
 }
 
 model t_tourhotel {
-  id      Int @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   tourid  Int
+  tour    t_tour @relation(fields: [tourid], references: [id])
   hotelid Int
 }
 
@@ -489,14 +517,19 @@ model t_tour_meta {
 }
 
 model t_tour_country {
-  id         Int @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   tour_id    Int
+  tour       t_tour    @relation(fields: [tour_id], references: [id], onDelete: Cascade)
   country_id Int
+  country    t_country @relation(fields: [country_id], references: [id], onDelete: Cascade)
+  city       t_city?   @relation(fields: [t_cityId], references: [id], onDelete: Cascade)
+  t_cityId   Int?
 }
 
 model t_tour_day_price {
   id           Int      @id @default(autoincrement())
   tourid       Int
+  tour         t_tour   @relation(fields: [tourid], references: [id], onDelete: Cascade)
   date_start   DateTime
   date_end     DateTime
   double_price Int
@@ -504,14 +537,17 @@ model t_tour_day_price {
 }
 
 model t_tour_faqs {
-  id     Int @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   tourid Int
+  tour   t_tour @relation(fields: [tourid], references: [id], onDelete: Cascade)
   faqid  Int
+  faq    t_faq  @relation(fields: [faqid], references: [id], onDelete: Cascade)
 }
 
 model t_tour_services {
   id      Int     @id @default(autoincrement())
   type_id Int
+  type    t_types @relation(fields: [type_id], references: [id], onDelete: Cascade)
   title   String?
   icon    String?
   price   Int
@@ -519,14 +555,17 @@ model t_tour_services {
 }
 
 model t_tour_team {
-  id      Int @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   tour_id Int
   team_id Int
+  tour    t_tour @relation(fields: [tour_id], references: [id])
+  team    t_team @relation(fields: [team_id], references: [id])
 }
 
 model t_tour_type {
   id              Int     @id @default(autoincrement())
   type_id         Int
+  types           t_types @relation(fields: [type_id], references: [id])
   name            String
   url             String?
   photo_name      String
@@ -539,15 +578,16 @@ model t_tour_type {
 }
 
 model t_users {
-  id           Int     @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   login        String?
   first_name   String?
   last_name    String?
   phone_number String?
   password     String
-  email        String  @unique @db.VarChar(255)
-  role         Int     @default(2)
+  email        String           @unique @db.VarChar(255)
+  role         Int              @default(2)
   photo        String
+  user_address t_user_address[]
 }
 
 model t_users_role {
@@ -557,8 +597,9 @@ model t_users_role {
 }
 
 model t_user_address {
-  id      Int    @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   user_id Int
+  user    t_users @relation(fields: [user_id], references: [id])
   country String
   city    String
   address String

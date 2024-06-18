@@ -66,21 +66,6 @@ CREATE TABLE "t_city" (
 );
 
 -- CreateTable
-CREATE TABLE "t_cityphoto" (
-    "id" SERIAL NOT NULL,
-    "header_ru" VARCHAR(255) NOT NULL DEFAULT '',
-    "url" VARCHAR(255) NOT NULL DEFAULT '',
-    "foto" VARCHAR(200) NOT NULL DEFAULT '',
-    "fotoext" VARCHAR(5) NOT NULL DEFAULT '',
-    "type" INTEGER NOT NULL DEFAULT 1,
-    "domain" VARCHAR(20) NOT NULL DEFAULT 'www',
-    "header_en" VARCHAR(255) NOT NULL DEFAULT '',
-    "cat" INTEGER NOT NULL DEFAULT 0,
-
-    CONSTRAINT "t_cityphoto_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "t_country" (
     "id" SERIAL NOT NULL,
     "language_id" INTEGER NOT NULL DEFAULT 1,
@@ -93,6 +78,21 @@ CREATE TABLE "t_country" (
     "photo" TEXT NOT NULL,
 
     CONSTRAINT "t_country_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "t_cityphoto" (
+    "id" SERIAL NOT NULL,
+    "header_ru" VARCHAR(255) NOT NULL DEFAULT '',
+    "url" VARCHAR(255) NOT NULL DEFAULT '',
+    "foto" VARCHAR(200) NOT NULL DEFAULT '',
+    "fotoext" VARCHAR(5) NOT NULL DEFAULT '',
+    "type" INTEGER NOT NULL DEFAULT 1,
+    "domain" VARCHAR(20) NOT NULL DEFAULT 'www',
+    "header_en" VARCHAR(255) NOT NULL DEFAULT '',
+    "cat" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "t_cityphoto_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -112,7 +112,7 @@ CREATE TABLE "t_exchange" (
     "name" TEXT NOT NULL,
     "symbol" TEXT NOT NULL,
     "exchange_rate" DOUBLE PRECISION NOT NULL,
-    "primary_valute" BOOLEAN NOT NULL DEFAULT false,
+    "primary_valuta" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "t_exchange_pkey" PRIMARY KEY ("id")
 );
@@ -181,14 +181,14 @@ CREATE TABLE "t_hotel" (
     "metakeywords" VARCHAR(255) NOT NULL DEFAULT '',
     "metadescription" VARCHAR(255) NOT NULL DEFAULT '',
     "rating" TEXT NOT NULL,
-    "adress" VARCHAR(250) NOT NULL DEFAULT '',
+    "address" VARCHAR(250) NOT NULL DEFAULT '',
     "photo" TEXT NOT NULL,
     "body" TEXT,
     "map" TEXT,
     "services" JSONB NOT NULL,
     "service_text" TEXT,
     "conditions" TEXT,
-    "public" INTEGER NOT NULL DEFAULT 1,
+    "publics" INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT "t_hotel_pkey" PRIMARY KEY ("id")
 );
@@ -246,16 +246,16 @@ CREATE TABLE "t_news" (
     "body" TEXT,
     "firsttext" TEXT,
     "lang" CHAR(2) NOT NULL DEFAULT 'ru',
-    "type" INTEGER NOT NULL DEFAULT 1,
+    "typeId" INTEGER NOT NULL DEFAULT 1,
     "view" INTEGER NOT NULL DEFAULT 0,
     "photo" TEXT NOT NULL,
     "foto" VARCHAR(200) NOT NULL,
-    "fotoext" VARCHAR(5) NOT NULL,
+    "fototext" VARCHAR(5) NOT NULL,
     "title" VARCHAR(255) NOT NULL DEFAULT '',
     "metakeywords" VARCHAR(255) NOT NULL DEFAULT '',
     "metadescription" VARCHAR(255) NOT NULL DEFAULT '',
     "url" VARCHAR(255) NOT NULL DEFAULT '',
-    "public" INTEGER NOT NULL DEFAULT 0,
+    "publick" INTEGER NOT NULL DEFAULT 0,
     "country" VARCHAR(50) NOT NULL DEFAULT 'Узбекистан',
     "tags" TEXT,
 
@@ -363,6 +363,7 @@ CREATE TABLE "t_pages" (
     "metadescription" TEXT,
     "title" TEXT,
     "titlename" TEXT NOT NULL DEFAULT '',
+    "description" TEXT NOT NULL DEFAULT '',
 
     CONSTRAINT "t_pages_pkey" PRIMARY KEY ("id")
 );
@@ -399,7 +400,7 @@ CREATE TABLE "t_place" (
     "fotoext" TEXT NOT NULL DEFAULT '',
     "metakeywords" TEXT NOT NULL DEFAULT '',
     "metadescription" TEXT NOT NULL DEFAULT '',
-    "public" INTEGER NOT NULL DEFAULT 1,
+    "publics" INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT "t_place_pkey" PRIMARY KEY ("id")
 );
@@ -538,7 +539,7 @@ CREATE TABLE "t_tourtoday" (
 );
 
 -- CreateTable
-CREATE TABLE "t_tourdayphto" (
+CREATE TABLE "t_tourdayphoto" (
     "id" SERIAL NOT NULL,
     "day_id" INTEGER NOT NULL,
     "photo" TEXT NOT NULL,
@@ -546,7 +547,7 @@ CREATE TABLE "t_tourdayphto" (
     "fotoext" TEXT DEFAULT '',
     "alt" TEXT NOT NULL,
 
-    CONSTRAINT "t_tourdayphto_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "t_tourdayphoto_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -584,6 +585,7 @@ CREATE TABLE "t_tour_country" (
     "id" SERIAL NOT NULL,
     "tour_id" INTEGER NOT NULL,
     "country_id" INTEGER NOT NULL,
+    "t_cityId" INTEGER,
 
     CONSTRAINT "t_tour_country_pkey" PRIMARY KEY ("id")
 );
@@ -718,7 +720,67 @@ CREATE UNIQUE INDEX "t_restaurant_url_key" ON "t_restaurant"("url");
 CREATE UNIQUE INDEX "t_users_email_key" ON "t_users"("email");
 
 -- AddForeignKey
+ALTER TABLE "t_banner" ADD CONSTRAINT "t_banner_cityid_fkey" FOREIGN KEY ("cityid") REFERENCES "t_city"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_city" ADD CONSTRAINT "t_city_country_id_fkey" FOREIGN KEY ("country_id") REFERENCES "t_country"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_news" ADD CONSTRAINT "t_news_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "t_news_type"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "t_orders" ADD CONSTRAINT "t_orders_order_number_fkey" FOREIGN KEY ("order_number") REFERENCES "t_order_status"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "t_orders" ADD CONSTRAINT "t_orders_payment_id_fkey" FOREIGN KEY ("payment_id") REFERENCES "t_payment_status"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tourcity" ADD CONSTRAINT "t_tourcity_tourid_fkey" FOREIGN KEY ("tourid") REFERENCES "t_tour"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tourcity" ADD CONSTRAINT "t_tourcity_cityid_fkey" FOREIGN KEY ("cityid") REFERENCES "t_city"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tourtoday" ADD CONSTRAINT "t_tourtoday_tourid_fkey" FOREIGN KEY ("tourid") REFERENCES "t_tour"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tourdayphoto" ADD CONSTRAINT "t_tourdayphoto_day_id_fkey" FOREIGN KEY ("day_id") REFERENCES "t_tourtoday"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tourphoto" ADD CONSTRAINT "t_tourphoto_tourid_fkey" FOREIGN KEY ("tourid") REFERENCES "t_tour"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tourhotel" ADD CONSTRAINT "t_tourhotel_tourid_fkey" FOREIGN KEY ("tourid") REFERENCES "t_tour"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_country" ADD CONSTRAINT "t_tour_country_tour_id_fkey" FOREIGN KEY ("tour_id") REFERENCES "t_tour"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_country" ADD CONSTRAINT "t_tour_country_country_id_fkey" FOREIGN KEY ("country_id") REFERENCES "t_country"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_country" ADD CONSTRAINT "t_tour_country_t_cityId_fkey" FOREIGN KEY ("t_cityId") REFERENCES "t_city"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_day_price" ADD CONSTRAINT "t_tour_day_price_tourid_fkey" FOREIGN KEY ("tourid") REFERENCES "t_tour"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_faqs" ADD CONSTRAINT "t_tour_faqs_tourid_fkey" FOREIGN KEY ("tourid") REFERENCES "t_tour"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_faqs" ADD CONSTRAINT "t_tour_faqs_faqid_fkey" FOREIGN KEY ("faqid") REFERENCES "t_faq"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_services" ADD CONSTRAINT "t_tour_services_type_id_fkey" FOREIGN KEY ("type_id") REFERENCES "t_types"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_team" ADD CONSTRAINT "t_tour_team_tour_id_fkey" FOREIGN KEY ("tour_id") REFERENCES "t_tour"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_team" ADD CONSTRAINT "t_tour_team_team_id_fkey" FOREIGN KEY ("team_id") REFERENCES "t_team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_tour_type" ADD CONSTRAINT "t_tour_type_type_id_fkey" FOREIGN KEY ("type_id") REFERENCES "t_types"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "t_user_address" ADD CONSTRAINT "t_user_address_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "t_users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
