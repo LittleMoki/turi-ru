@@ -7,8 +7,10 @@ import {
 } from '@nextui-org/react'
 import { api } from '../../Api/api'
 import { VerticalDotsIcon } from './VerticalDotsIcon'
+import { useRouter } from 'next/navigation'
 
 const DropDownDoted = ({ id, params, onDelete }) => {
+	const router = useRouter()
 	const DeleteData = async id => {
 		try {
 			await api.delete(`${params.slug}/${id}`)
@@ -20,7 +22,7 @@ const DropDownDoted = ({ id, params, onDelete }) => {
 
 	return (
 		<div className='relative flex justify-end items-center gap-2'>
-			<Dropdown className='dark'>
+			<Dropdown className='dark text-white'>
 				<DropdownTrigger>
 					<Button isIconOnly size='sm' variant='light'>
 						<VerticalDotsIcon className='text-default-300' />
@@ -28,7 +30,11 @@ const DropDownDoted = ({ id, params, onDelete }) => {
 				</DropdownTrigger>
 				<DropdownMenu>
 					<DropdownItem>View</DropdownItem>
-					<DropdownItem>Edit</DropdownItem>
+					<DropdownItem
+						onClick={() => router.push(`/admin/${params.slug}/edit/${id}`)}
+					>
+						Edit
+					</DropdownItem>
 					<DropdownItem onClick={() => DeleteData(id)}>Delete</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>

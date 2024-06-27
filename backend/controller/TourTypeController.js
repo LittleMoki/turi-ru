@@ -32,7 +32,11 @@ export const tourCreate = async (req, res) => {
 	return res.json({ status: 200, data: tour, message: 'tour created' })
 }
 export const tourShow = async (req, res) => {
-	const tours = await prisma.t_types.findMany({})
+	const tours = await prisma.t_types.findMany({
+		include: {
+			tour_type: true,
+		},
+	})
 
 	return res.json({ status: 200, data: tours })
 }

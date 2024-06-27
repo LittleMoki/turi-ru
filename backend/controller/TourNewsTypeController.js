@@ -31,7 +31,11 @@ export const CreateNewsType = async (req, res) => {
 // get news_type
 
 export const ShowAllNewsType = async (req, res) => {
-	const newsType = await prisma.t_news_type.findMany({})
+	const newsType = await prisma.t_news_type.findMany({
+		include: {
+			_count: true,
+		},
+	})
 
 	return res.json({ status: 200, data: newsType })
 }
@@ -45,12 +49,45 @@ export const ShowNewsType = async (req, res) => {
 		where: {
 			id: Number(id),
 		},
+		include: {
+			news: true,
+		},
 	})
 
 	if (!newsType)
 		return res.json({ status: 400, message: 'We did not find any newsType' })
 
 	return res.json({ status: 200, data: newsType })
+}
+
+export const EditNewsType = async (req, res) => {
+	const { id } = req.params
+
+	const {
+		name,
+		description,
+		photo,
+		url,
+		title,
+		metakeywords,
+		metadescription,
+	} = req.body
+
+	const newType = await prisma.t_news_type.update({
+		where: {
+			id: Number(id),
+		},
+		data: {
+			name,
+			description,
+			photo,
+			url,
+			title,
+			metakeywords,
+			metadescription,
+		},
+	})
+	return res.json({ status: 200, data: newType })
 }
 
 // delete news_type

@@ -50,11 +50,11 @@ export const CreateNews = async (req, res) => {
 
 // get news
 
-export const 	ShowAllNews = async (req, res) => {
+export const ShowAllNews = async (req, res) => {
 	const news = await prisma.t_news.findMany({
-		include:{
-			type:true
-		}
+		include: {
+			type: true,
+		},
 	})
 
 	return res.json({ status: 200, data: news })
@@ -75,6 +75,55 @@ export const ShowNews = async (req, res) => {
 		return res.json({ status: 400, message: 'We did not find any news' })
 
 	res.json({ status: 200, data: news })
+}
+
+export const EditNews = async (req, res) => {
+	const { id } = req.params
+	const {
+		new_date,
+		header,
+		body,
+		firsttext,
+		lang,
+		typeId,
+		view,
+		photo,
+		foto,
+		fototext,
+		title,
+		metakeywords,
+		metadescription,
+		url,
+		publick,
+		country,
+		tags,
+	} = req.body
+
+	const news = await prisma.t_news.update({
+		data: {
+			new_date,
+			header,
+			body,
+			firsttext,
+			lang,
+			typeId,
+			view,
+			photo,
+			foto,
+			fototext,
+			title,
+			metakeywords,
+			metadescription,
+			url,
+			publick,
+			country,
+			tags,
+		},
+		where: {
+			id: Number(id),
+		},
+	})
+	return res.json({ status: 200, data: news })
 }
 
 // delete news

@@ -1,8 +1,8 @@
 'use client'
 
- const Footer = () => {
+const Footer = () => {
 	return (
-		<footer className='main-footer'>
+		<footer style={{ backgroundColor: '#343a40' }} className='main-footer'>
 			<strong>
 				Copyright © 2014-2021 <a href='https://adminlte.io'>AdminLTE.io</a>.
 			</strong>

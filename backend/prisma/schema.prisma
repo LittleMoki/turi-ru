@@ -35,7 +35,7 @@ model t_about {
   position     String  @default("")
   employment   String  @default("")
   body         String?
-  public       Int     @default(0)
+  publick      Int     @default(0)
   order_number Int
   photo        String? @db.VarChar(255)
 }
@@ -61,7 +61,7 @@ model t_banner {
 model t_city {
   id              Int              @id @default(autoincrement())
   country_id      Int
-  country         t_country        @relation(fields: [country_id], references: [id])
+  country         t_country        @relation(fields: [country_id], references: [id], onDelete: Cascade)
   name            String           @default("") @db.VarChar(30)
   url             String           @unique @default("") @db.VarChar(255)
   body            String?
@@ -73,6 +73,7 @@ model t_city {
   banner          t_banner[]
   tourcity        t_tourcity[]
   tour_country    t_tour_country[]
+  t_hotel         t_hotel[]
 
   @@index([country_id])
 }
@@ -89,6 +90,7 @@ model t_country {
   photo           String
   city            t_city[]
   tour_country    t_tour_country[]
+  t_hotel         t_hotel[]
 }
 
 model t_cityphoto {
@@ -169,23 +171,25 @@ model t_guideresponses {
 }
 
 model t_hotel {
-  id              Int     @id @default(autoincrement())
-  country_id      Int     @default(1)
-  cityid          Int     @default(0)
-  name            String  @default("") @db.VarChar(250)
-  url             String  @default("") @db.VarChar(255)
+  id              Int       @id @default(autoincrement())
+  country_id      Int       @default(1)
+  cityid          Int       @default(0)
+  country         t_country @relation(fields: [country_id], references: [id], onDelete: Cascade)
+  city            t_city    @relation(fields: [cityid], references: [id], onDelete: Cascade)
+  name            String    @default("") @db.VarChar(250)
+  url             String    @default("") @db.VarChar(255)
   title           String
-  metakeywords    String  @default("") @db.VarChar(255)
-  metadescription String  @default("") @db.VarChar(255)
+  metakeywords    String    @default("") @db.VarChar(255)
+  metadescription String    @default("") @db.VarChar(255)
   rating          String
-  address         String  @default("") @db.VarChar(250)
+  address         String    @default("") @db.VarChar(250)
   photo           String
   body            String?
   map             String?
   services        Json
   service_text    String?
   conditions      String?
-  publics         Int     @default(1)
+  publics         Int       @default(1)
 }
 
 model t_hotel_photo {
@@ -322,7 +326,7 @@ model t_order_travellers {
 
 model t_pages {
   id              Int     @id @default(autoincrement())
-  pagename        String?
+  url             String?
   isdel           Int     @default(0)
   metakeywords    String?
   metadescription String?
@@ -545,13 +549,14 @@ model t_tour_faqs {
 }
 
 model t_tour_services {
-  id      Int     @id @default(autoincrement())
-  type_id Int
-  type    t_types @relation(fields: [type_id], references: [id], onDelete: Cascade)
-  title   String?
-  icon    String?
-  price   Int
-  archive Boolean @default(false)
+  id        Int      @id @default(autoincrement())
+  type_id   Int
+  title     String?
+  icon      String?
+  price     Int
+  archive   Int      @default(0)
+  t_types   t_types? @relation(fields: [t_typesId], references: [id])
+  t_typesId Int?
 }
 
 model t_tour_team {

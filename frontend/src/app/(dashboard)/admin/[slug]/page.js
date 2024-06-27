@@ -1,17 +1,17 @@
 'use client'
+import { api } from '@/Api/api'
 import AdminTable from '@/Components/Table/Table'
-import axios from 'axios'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const fetchData = async ({ params, setLoading }) => {
 	try {
-		const response = await axios.get(`http://localhost:4000/${params.slug}`)
+		const response = await api.get(`${params.slug}`)
 		setLoading(false)
-		return response.data.data; // Return data from the response
+		return response.data.data // Return data from the response
 	} catch (error) {
 		setLoading(false)
-		throw error; // Throw error to be caught by the calling function
+		throw error // Throw error to be caught by the calling function
 	}
 }
 

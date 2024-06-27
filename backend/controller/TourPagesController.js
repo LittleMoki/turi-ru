@@ -4,7 +4,7 @@ import prisma from '../db/db.config.js'
 
 export const CreatePage = async (req, res) => {
 	const {
-		pagename,
+		url,
 		isdel,
 		metakeywords,
 		metadescription,
@@ -14,7 +14,7 @@ export const CreatePage = async (req, res) => {
 	} = req.body
 	const page = await prisma.t_pages.create({
 		data: {
-			pagename,
+			url,
 			isdel,
 			metakeywords,
 			metadescription,
@@ -73,7 +73,7 @@ export const ShowPage = async (req, res) => {
 export const EditPage = async (req, res) => {
 	const { id } = req.params
 	const {
-		pagename,
+		url,
 		isdel,
 		metakeywords,
 		metadescription,
@@ -87,7 +87,7 @@ export const EditPage = async (req, res) => {
 			id: Number(id),
 		},
 		data: {
-			pagename,
+			url,
 			isdel,
 			metakeywords,
 			metadescription,

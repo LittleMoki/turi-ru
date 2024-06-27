@@ -1,5 +1,5 @@
-import Link from 'next/link'
+import MainPage from '../../Pages/Main/MainPage'
 
 export default function Home() {
-	return <main><Link href='/admin' >Main</Link></main>
+	return <MainPage />
 }

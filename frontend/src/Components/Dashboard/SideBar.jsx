@@ -1,10 +1,16 @@
 'use client'
 
+import { api } from '@/Api/api'
 import Image from 'next/image'
-import logoAdmin from '../../../public/logo-admin.svg'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import logoAdmin from '../../../public/logo-admin.svg'
 
 const SideBar = () => {
+	const [news, setNews] = useState([])
+	const { slug } = useParams()
+
 	const sideBarItems = [
 		{
 			icon: 'nav-icon far fa-file',
@@ -54,14 +60,13 @@ const SideBar = () => {
 		{
 			icon: 'nav-icon far fa-sticky-note',
 			title: 'Статьи',
-			link: '/admin/news',
+			link: `/admin/${slug ? slug : ''}`,
 		},
 		{
 			icon: 'nav-icon far fa-question-circle',
 			title: 'FAQ',
 			link: '/admin/faq',
 		},
-
 		{
 			icon: 'nav-icon fas fa-user',
 			title: 'Пользователи',
@@ -88,11 +93,20 @@ const SideBar = () => {
 			link: '/admin/exchange',
 		},
 	]
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const { data } = await api.get('/news_type')
+			setNews(data.data)
+		}
+		fetchData()
+	}, [])
+
 	return (
 		<aside className='main-sidebar sidebar-dark-primary elevation-4'>
 			<Link className='brand-link' href='/admin'>
 				<Image
-					style={{opacity:'.8'}}
+					style={{ opacity: '.8' }}
 					src={logoAdmin}
 					alt='Logo'
 					className='brand-image'
@@ -133,14 +147,39 @@ const SideBar = () => {
 									role='menu'
 									data-accordion='false'
 								>
-									{sideBarItems.map((el, i) => (
-										<li key={i} className='nav-item'>
-											<Link className='nav-link' href={el.link}>
-												<i className={el.icon} />
-												<p>{el.title}</p>
-											</Link>
-										</li>
-									))}
+									{sideBarItems.map((el, i) =>
+										el.title !== 'Статьи' ? (
+											<li key={i} className='nav-item'>
+												<Link className='nav-link' href={el.link}>
+													<i className={el.icon} />
+													<p>{el.title}</p>
+												</Link>
+											</li>
+										) : (
+											<li key={i} className='nav-item menu-is-opening'>
+												<Link
+													className='nav-link'
+													href={`/admin/${slug ? slug : ''}`}
+												>
+													<i className={el.icon}></i>
+													<p>Статьи</p>
+												</Link>
+												<ul className='nav nav-treeview'>
+													{news.map(newsItem => (
+														<li key={newsItem.id} className='nav-item'>
+															<Link
+																className='nav-link'
+																href={`/admin/news/${newsItem.id}`}
+															>
+																<i className='nav-icon far fa-sticky-note'></i>
+																<p>{newsItem.title}</p>
+															</Link>
+														</li>
+													))}
+												</ul>
+											</li>
+										)
+									)}
 								</ul>
 							</nav>
 						</div>

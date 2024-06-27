@@ -45,7 +45,15 @@ export const CreateHotel = async (req, res) => {
 }
 
 export const ShowAllHotels = async (req, res) => {
-	const hotels = await prisma.t_hotel.findMany({})
+	const hotels = await prisma.t_hotel.findMany({
+		include:{
+			country:{
+				select:{
+					name:true
+				}
+			}
+		}
+	})
 
 	if (!hotels)
 		return res.json({ status: 400, message: 'We did not find any hotels' })

@@ -1,14 +1,50 @@
-import cors from 'cors'
 import express from 'express'
-import router from './routes/index.js'
+import fs from 'fs'
+import multer from 'multer'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const app = express()
-const PORT = process.env.PORT || 4000
 
-app.use(express.json())
-app.use(cors())
-app.use(express.urlencoded({ extended: false }))
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		fs.mkdir(
+			path.join(__dirname, '../frontend/uploads'),
+			{ recursive: true },
+			err => {
+				if (err && err.code !== 'EEXIST') {
+					return cb(err)
+				}
+				cb(null, path.join(__dirname, '../frontend/uploads'))
+			}
+		)
+	},
+	filename: function (req, file, cb) {
+		cb(null, file.originalname)
+	},
+})
 
-app.use(router)
+const upload = multer({ storage: storage })
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+app.post('/upload', upload.single('file'), (req, res) => {
+	res.json({ location: req.file.originalname })
+})
+
+app.get('/uploads/:filename', (req, res) => {
+	const filename = req.params.filename
+	const filepath = path.join(__dirname, '../frontend/uploads', filename)
+
+	fs.access(filepath, fs.constants.F_OK, err => {
+		if (err) {
+			return res.status(404).send('File not found')
+		}
+		res.sendFile(filepath)
+	})
+})
+
+app.listen(4000, () => {
+	console.log('Server is running on port 4000')
+})

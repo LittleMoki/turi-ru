@@ -41,18 +41,31 @@ export const ExchangeShowAll = async (req, res) => {
 	return res.json({ status: 200, data: exchange })
 }
 
-// Edit exchange
-export const ExchangeEdit = async (req, res) => {
+// show exchange
+
+export const ExchangeShow = async (req, res) => {
 	const { id } = req.params
-	const { title, name, symbol, exchange_rate, primary_valuta } = req.body
-	const findExchange = await prisma.t_exchange.findUnique({
+	const exchange = await prisma.t_exchange.findUnique({
 		where: {
 			id: Number(id),
 		},
 	})
-	if (!findExchange) {
-		return res.json({ status: 400, message: 'We did not find this valuta' })
-	}
+
+	return res.json({ status: 200, data: exchange })
+}
+
+// Edit exchange
+export const ExchangeEdit = async (req, res) => {
+	const { id } = req.params
+	const { title, name, symbol, exchange_rate, primary_valuta } = req.body
+	// const findExchange = await prisma.t_exchange.findUnique({
+	// 	where: {
+	// 		id: Number(id),
+	// 	},
+	// })
+	// if (!findExchange) {
+	// 	return res.json({ status: 400, message: 'We did not find this valuta' })
+	// }
 
 	const exchange = await prisma.t_exchange.update({
 		where: {
@@ -61,5 +74,9 @@ export const ExchangeEdit = async (req, res) => {
 		data: { title, name, symbol, exchange_rate, primary_valuta },
 	})
 
-	res.json({ status: 200, data: exchange, message: 'Exchange is updated' })
+	return res.json({
+		status: 200,
+		data: exchange,
+		message: 'Exchange is updated',
+	})
 }

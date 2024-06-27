@@ -99,11 +99,11 @@ export const ShowTour = async (req, res) => {
 
 export const DeleteTour = async (req, res) => {
 	const { id } = req.params
-	
+
 	const tour = await prisma.t_tour.findUnique({
-		where:{
-			id:Number(id)
-		}
+		where: {
+			id: Number(id),
+		},
 	})
 
 	if (!tour)
