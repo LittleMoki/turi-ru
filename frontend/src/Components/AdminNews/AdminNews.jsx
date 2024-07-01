@@ -5,7 +5,9 @@ import CustomInput from '@/UI/CustomInput'
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
 import { Card, CardBody, DatePicker, Tab, Tabs } from '@nextui-org/react'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import CustomEditor from "@/UI/CustomEditor.jsx";
+import Image from "next/image";
 
 const AdminNews = () => {
 	let defaultDate = today(getLocalTimeZone())
@@ -103,8 +105,15 @@ const AdminNews = () => {
 		}))
 	}
 
+	const handleEditorChange = (name, value) => {
+		setFormData((prevState) => ({
+			...prevState,
+			[name]: value,
+		}));
+	};
+
 	const handleSubmit = async e => {
-		e.preventDefault()
+		if(e!== undefined)e.preventDefault()
 		try {
 			if (id) {
 				await api.put(`/news/${id}`, formData)
@@ -132,6 +141,23 @@ const AdminNews = () => {
 
 		// Optionally, you can update formData.new_date here as well
 	}
+
+	const handleImageChange = async (img) => {
+		const formDataImage = new FormData();
+		formDataImage.append('file', img);
+		await api.post('/upload', formDataImage);
+		setFormData((prevState) => ({
+			...prevState,
+			'photo': img.name, // Store the file object directly
+		}));
+		if (id) {
+			router.push(`/admin/news/${newsId}/edit/${id}`)
+		} else {
+			handleSubmit()
+		}
+	}
+
+
 	if (error) {
 		return (
 			<div className='pt-3'>
@@ -243,13 +269,15 @@ const AdminNews = () => {
 									label='Краткий анонс:'
 									white='true'
 								/>
-								<CustomInput
-									name='body'
-									value={formData.body || ''}
-									fn={handleInputChange}
-									label='Полный текст:'
-									white='true'
-								/>
+								<label className='w-full text-white'>
+									Содержание страницы:
+									<CustomEditor
+										id='body'
+										fn={handleEditorChange}
+										name='body'
+										value={formData.body}
+									/>
+								</label>
 								<CustomButton type='submit'>Save</CustomButton>
 							</form>
 						</CardBody>
@@ -259,6 +287,25 @@ const AdminNews = () => {
 					<Card>
 						<CardBody>
 							<form onSubmit={handleSubmit}>
+								<label className='text-white flex flex-col gap-3 w-full'>
+									Фото
+									<input
+										className='bg-white w-full py-3	px-2 rounded-xl cursor-pointer'
+										name='photo'
+										type='file'
+										onChange={(e) => handleImageChange(e.target.files[0])}
+									/>
+									Файл изображения должен быть в формате JPG или PNG
+									{formData.photo ? (
+										<Image
+											width={'500'}
+											height={'500'}
+											alt={formData.photo}
+											src={`http://localhost:4000/uploads/${formData.photo}`
+											}
+										/>
+									) : ''}
+								</label>
 								<CustomButton type='submit'>Save</CustomButton>
 							</form>
 						</CardBody>

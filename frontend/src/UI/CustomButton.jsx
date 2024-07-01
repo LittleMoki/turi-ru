@@ -1,8 +1,8 @@
 import { Button } from '@nextui-org/react'
 
-const CustomButton = ({ children, type }) => {
+const CustomButton = ({ children, type = 'submit' ,fn,className }) => {
 	return (
-		<Button className='dark w-4' type={type}>
+		<Button className={`dark w-[150px] ${className}`} onClick={fn} type={type}>
 			{children}
 		</Button>
 	)

@@ -130,7 +130,7 @@ export const BottomMenu = () => {
 									{menuCards.map((el, i) => (
 										<Link
 											key={i}
-											href='/tour/indv/may-check'
+											href='/tour/uzbekistan'
 											className='border relative overflow-hidden rounded-2xl h-[150px] cursor-pointer'
 										>
 											<img

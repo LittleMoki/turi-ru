@@ -2,14 +2,8 @@
 
 const Footer = () => {
 	return (
-		<footer style={{ backgroundColor: '#343a40' }} className='main-footer'>
-			<strong>
-				Copyright © 2014-2021 <a href='https://adminlte.io'>AdminLTE.io</a>.
-			</strong>
-			All rights reserved.
-			<div className='float-right d-none d-sm-inline-block'>
-				<b>Version</b> 3.2.0
-			</div>
+		<footer style={{ backgroundColor: '#343a40' }} className='main-footer flex justify-center'>
+			© 2014-2024 All Rights Reserved Minzifa Travel.
 		</footer>
 	)
 }

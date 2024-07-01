@@ -4,6 +4,8 @@ import CustomInput from '@/UI/CustomInput'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import CustomButton from '../../UI/CustomButton'
+import {Checkbox} from "@nextui-org/react";
+import CustomEditor from "@/UI/CustomEditor.jsx";
 
 const AdminPage = () => {
 	const router = useRouter()
@@ -57,6 +59,13 @@ const AdminPage = () => {
 			[name]: type === 'checkbox' ? (checked ? 1 : 0) : value,
 		}))
 	}
+
+	const handleEditorChange = (name, value) => {
+		setFormData((prevState) => ({
+			...prevState,
+			[name]: value,
+		}));
+	};
 
 	const handleSubmit = async e => {
 		e.preventDefault()
@@ -116,21 +125,18 @@ const AdminPage = () => {
 					fn={handleInputChange}
 					label='Metadescription:'
 				/>
-				<CustomInput
-					name='description'
-					value={formData.description}
-					fn={handleInputChange}
-					label='Содержание страницы:'
-				/>
-				<label className='flex gap-2'>
-					<input
-						name='isdel'
-						checked={formData.isdel === 1}
-						onChange={handleInputChange}
-						type='checkbox'
+				<label className='w-full text-white'>
+					Содержание страницы:
+					<CustomEditor
+						id='description'
+						fn={handleEditorChange}
+						name='description'
+						value={formData.description}
 					/>
-					Удаляемая страница
 				</label>
+				<Checkbox className='dark' name='isdel' onChange={handleInputChange} isSelected={formData.isdel === 1}>
+					Удаляемая страница
+				</Checkbox>
 				<CustomButton type='submit'>Save</CustomButton>
 			</form>
 		</section>

@@ -1,5 +1,4 @@
-import { Container } from "@/Components";
-import { Head } from "@inertiajs/react";
+import { Container } from "@/Components"
 import {
     FaClock,
     FaEnvelope,
@@ -8,12 +7,11 @@ import {
     FaTelegram,
     FaUserCircle,
     FaWhatsapp,
-} from "react-icons/fa";
+} from "react-icons/fa"
 const Contacts = () => {
     return (
         <section className="py-5">
             <Container>
-                <Head title="Contacts" />
                 <h1 className="text-center text-3xl py-8">
                     Контакты. Номера телефонов, почта, адрес. Минзифа Тревел,
                     туры в Узбекистан

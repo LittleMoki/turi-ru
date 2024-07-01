@@ -1,65 +1,65 @@
-import { Editor } from '@tinymce/tinymce-react'
-import { useState } from 'react'
-import axios from 'axios' // Assuming axios is used for API requests
+import React, { useEffect, useRef } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 
-const CustomEditor = () => {
-	const [editor, setEditor] = useState('')
+export default function CustomEditor({ value, fn1, fn, name, id, index }) {
+    const editorRef = useRef(null);
 
-	const handleImageUpload = async (blobInfo, progress, success, failure) => {
-		const formData = new FormData()
-		formData.append('file', blobInfo.blob(), blobInfo.filename())
 
-		try {
-			const response = await axios.post(
-				'http://localhost:4000/upload',
-				formData,
-				{
-					headers: { 'Content-Type': 'multipart/form-data' },
-					onUploadProgress: progressEvent => {
-						const percentCompleted = Math.round(
-							(progressEvent.loaded * 100) / progressEvent.total
-						)
-						if (progress && typeof progress === 'function') {
-							progress(percentCompleted)
-						}
-					},
-				}
-			)
+    const handleEditorChange = (content) => {
+        if (fn) {
+            fn(name, content);
+        } else if (fn1) {
+            fn1(index, name, content);
+        }
+    };
 
-			if (response.status >= 200 && response.status < 300) {
-				const json = response.data
-				if (json && typeof json.location === 'string') {
-					success(json.location)
-				} else {
-					throw new Error('Invalid JSON response: ' + JSON.stringify(json))
-				}
-			} else {
-				throw new Error('HTTP Error: ' + response.status)
-			}
-		} catch (error) {
-			if (failure && typeof failure === 'function') {
-				failure('Image upload failed: ' + error.message)
-			}
-		}
-	}
+    return (
+        <Editor
+            id={id}
+            apiKey='u190yql3pdvp1t1p1x3wziih00tj4p7vzfqcp1pd9lsnhfo4'
+            onInit={(_evt, editor) => editorRef.current = editor}
+            init={{
+                width: '100%',
+                min_height: 600,
+                selector: `textarea#${id}`,
+                plugins: 'anchor autolink charmap codesample emoticons image code link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                image_title: true,
+                automatic_uploads: true,
+                file_picker_types: 'image',
+                file_picker_callback: (cb, value, meta) => {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*');
 
-	return (
-		<div>
-			<Editor
-				className='w-full'
-				style={{ width: '100%' }}
-				apiKey='u190yql3pdvp1t1p1x3wziih00tj4p7vzfqcp1pd9lsnhfo4'
-				init={{
-					selector: 'textarea',
-					plugins: 'image imagetools',
-					toolbar: 'image',
-					automatic_uploads: true,
-					images_upload_handler: handleImageUpload, // Correct handler function
-				}}
-				initialValue='Fuck your self)'
-			/>
-		</div>
-	)
+                    input.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        const formData = new FormData();
+                        formData.append('file', file);
+
+                        fetch('http://localhost:4000/upload', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data && data.location) {
+                                    cb(data.location, { title: file.name });
+                                } else {
+                                    console.error('Upload failed', data);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error uploading image:', error);
+                            });
+                    });
+
+                    input.click();
+                },
+                content_style: 'body { font-family: Helvetica, Arial, sans-serif; font-size: 16px; direction: ltr; }',
+            }}
+            value={value}
+            onEditorChange={handleEditorChange}
+        />
+    );
 }
-
-export default CustomEditor

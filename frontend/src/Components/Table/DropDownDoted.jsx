@@ -29,13 +29,14 @@ const DropDownDoted = ({ id, params, onDelete }) => {
 					</Button>
 				</DropdownTrigger>
 				<DropdownMenu>
-					<DropdownItem>View</DropdownItem>
+					{/*<DropdownItem>View</DropdownItem>*/}
 					<DropdownItem
+						startContent={<i className='fas fa-edit'></i>}
 						onClick={() => router.push(`/admin/${params.slug}/edit/${id}`)}
 					>
 						Edit
 					</DropdownItem>
-					<DropdownItem onClick={() => DeleteData(id)}>Delete</DropdownItem>
+					<DropdownItem startContent={<i className='fas fa-trash'></i>} className='text-red' onClick={() => DeleteData(id)}>Delete</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
 		</div>

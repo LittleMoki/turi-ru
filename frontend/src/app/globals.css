@@ -62,3 +62,10 @@ body.active {
 	scrollbar-width: thin;
 	scrollbar-color: #37af24 #37af2425;
 }
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+	-moz-appearance: textfield;
+}

@@ -1,54 +1,32 @@
-import { useStoreWallet } from "./useStoreWallet";
-import { IoIosArrowDown } from "react-icons/io";
+"use client"
+import {useStoreWallet} from "./useStoreWallet";
+import {IoIosArrowDown} from "react-icons/io";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
+import {useState} from "react";
+
 
 export const WalletTopMenu = () => {
-    const { menu, setMenu, wallet, setWallet } = useStoreWallet();
+    const {wallet, setWallet} = useStoreWallet();
+    const [icon, setIcon] = useState(false)
 
     return (
-        <div className="relative w-16 flex items-center justify-between">
-            <button
-                onClick={() => setMenu(!menu)}
-                className="flex items-center gap-2"
-            >
-                {wallet}
-            </button>
-            <IoIosArrowDown className={menu ? "rotate-0" : "rotate-180"} />
-            <div
-                className={`absolute top-full right-0 flex flex-col bg-white border rounded-lg z-30 transition-transform ${
-                    menu ? "scale-1" : "scale-0"
-                }`}
-            >
-                <a
-                    onClick={() => {
-                        setWallet("Рубль");
-                        setMenu(false);
-                    }}
-                    className="pr-16 pl-3 py-3 hover:bg-slate-100"
-                    href="#!"
+        <Dropdown onOpenChange={e => setIcon(e)}>
+            <DropdownTrigger>
+                <Button
+                    color='c'
+                    endContent={<IoIosArrowDown className={icon ? "rotate-0" : "rotate-180"}/>}
                 >
-                    Рубль
-                </a>
-                <a
-                    onClick={() => {
-                        setWallet("Сум");
-                        setMenu(false);
-                    }}
-                    className="pr-16 pl-3 py-3 hover:bg-slate-100"
-                    href="#!"
-                >
-                    Сум
-                </a>
-                <a
-                    onClick={() => {
-                        setWallet("Евро");
-                        setMenu(false);
-                    }}
-                    className="pr-16 pl-3 py-3 hover:bg-slate-100"
-                    href="#!"
-                >
-                    Евро
-                </a>
-            </div>
-        </div>
+                    {wallet}
+                </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Dunamic exchanges">
+                <DropdownItem onClick={() => setWallet("Рубль")
+                } key="rub">Рубль</DropdownItem>
+                <DropdownItem onClick={() => setWallet("Сум")
+                } key="som">Сум</DropdownItem>
+                <DropdownItem onClick={() => setWallet("Евро")
+                } key="euro">Евро</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
     );
 };

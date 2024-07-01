@@ -1,6 +1,5 @@
 'use client'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Switch from '@mui/material/Switch'
+import { DatePicker, Switch } from '@nextui-org/react'
 import { useState } from 'react'
 import { FaEnvelope, FaGlobe, FaUser } from 'react-icons/fa'
 
@@ -43,7 +42,7 @@ export const TripForm = () => {
 		setFlexibleDates(event.target.checked)
 	}
 	return (
-		<div className='w-full flex flex-col gap-5'>
+		<form className='w-full flex flex-col gap-5'>
 			<div className='bg-white/70 rounded-2xl p-4'>
 				<h2 className='text-2xl border-l-4 border-[#66B93E] pl-2'>
 					Какое ваше идеальное путешествие?
@@ -59,6 +58,7 @@ export const TripForm = () => {
 									value={el.title}
 									className='absolute opacity-0'
 									name='проживание'
+									aria-label={el.title}
 								/>
 								<label
 									onClick={() => setCheckLive(i)}
@@ -79,6 +79,7 @@ export const TripForm = () => {
 						<button
 							onClick={decreaseHotel}
 							className='w-[45px] bg-[#dee2e6] text-xl'
+							aria-label='Decrease hotel count'
 						>
 							-
 						</button>
@@ -88,10 +89,12 @@ export const TripForm = () => {
 							min='1'
 							readOnly
 							className='border-0 w-[100px] text-center text-xl p-0 py-2'
+							aria-label='Number of hotels'
 						/>
 						<button
 							onClick={increaseHotel}
 							className='w-[45px] bg-[#dee2e6] text-xl'
+							aria-label='Increase hotel count'
 						>
 							+
 						</button>
@@ -100,17 +103,8 @@ export const TripForm = () => {
 				<div>
 					<h3 className='text-xl pt-5 pb-1'>Дата прибытия</h3>
 					<div className='flex flex-col sm:flex-row sm:items-center sm:w-auto w-full items-start gap-3'>
-						<input type='date' className='sm:w-auto w-full' />
-						<FormControlLabel
-							control={
-								<Switch
-									checked={flexibleDates}
-									onChange={handleChange}
-									name='flexibleDates'
-								/>
-							}
-							label='Гибкие даты?'
-						/>
+						<DatePicker className='sm:w-[200px] w-full' />
+						<Switch aria-label='Flexible dates?'>Гибкие даты?</Switch>
 					</div>
 				</div>
 				<div>
@@ -121,6 +115,7 @@ export const TripForm = () => {
 					<textarea
 						className='w-full h-[150px] p-[10px] border-0 rounded-lg'
 						placeholder='Укажите свои пожелания и предпочтения, чтобы мы смогли сделать Ваше путешествие особенным.'
+						aria-label='Travel preferences'
 					/>
 				</div>
 			</div>
@@ -138,6 +133,7 @@ export const TripForm = () => {
 								value={el.title}
 								className='absolute opacity-0'
 								name='проживание'
+								aria-label={el.title}
 							/>
 							<label
 								onClick={() => setCheckPeople(i)}
@@ -160,8 +156,9 @@ export const TripForm = () => {
 							</div>
 							<input
 								type='text'
-								className='w-full border-0 rounded-r-md'
+								className='w-full py-2 pl-2 border-0 rounded-r-md'
 								placeholder='Ваша страна'
+								aria-label='Your country'
 							/>
 						</div>
 					</div>
@@ -173,8 +170,9 @@ export const TripForm = () => {
 							</div>
 							<input
 								type='text'
-								className='w-full border-0 rounded-r-md'
+								className='w-full py-2 pl-2 border-0 rounded-r-md'
 								placeholder='Ваше имя'
+								aria-label='Your name'
 							/>
 						</div>
 					</div>
@@ -186,8 +184,9 @@ export const TripForm = () => {
 							</div>
 							<input
 								type='text'
-								className='w-full border-0 rounded-r-md'
+								className='w-full py-2 pl-2 border-0 rounded-r-md'
 								placeholder='Ваш email'
+								aria-label='Your email'
 							/>
 						</div>
 						<small className='opacity-70'>
@@ -205,10 +204,13 @@ export const TripForm = () => {
 				</p>
 			</div>
 			<div className='flex justify-center pb-5'>
-				<button className='bg-[#37AF24] text-xl py-2 px-5 rounded-lg text-white hover:bg-[#1f7e10] duration-100'>
-					Отправить мой запрос
-				</button>
+				<input
+					type='submit'
+					className='bg-[#37AF24] text-xl py-2 px-5 rounded-lg text-white hover:bg-[#1f7e10] duration-100'
+					value='Отправить мой запрос'
+					aria-label='Submit my request'
+				/>
 			</div>
-		</div>
+		</form>
 	)
 }

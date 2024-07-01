@@ -11,6 +11,11 @@ import AdminServices from '@/Components/AdminServices/AdminServices'
 import AdminTeam from '@/Components/AdminTeam/AdminTeam'
 import AdminUsers from '@/Components/AdminUsers/AdminUsers'
 import { useParams } from 'next/navigation'
+import AdminMainTour from "@/Components/AdminMainTour/AdminMainTour.jsx";
+import AdminAbout from "@/Components/AdminAbout/AdminAbout.jsx";
+import AdminHotel from "@/Components/AdminHotel/AdminHotel.jsx";
+import AdminTourType from "@/Components/AdminTourType/AdminTourType.jsx";
+import AdminOrders from "@/Components/AdminOrders/AdminOrders.jsx";
 
 const Create = () => {
 	const params = useParams()
@@ -36,6 +41,14 @@ const Create = () => {
 			return <AdminUsers />
 		case 'exchange':
 			return <AdminExchange />
+		case 'tour':
+			return <AdminMainTour />
+		case 'about':
+			return <AdminAbout />
+		case 'hotel':
+			return <AdminHotel />
+		case 'tour_type':
+			return <AdminTourType />
 		default:
 			return <h1>Not page</h1>
 	}

@@ -3,6 +3,8 @@ import { api } from '@/Api/api'
 import CustomInputAdmin from '@/UI/CustomInputAdmin'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import CustomInput from "@/UI/CustomInput.jsx";
+import CustomButton from "@/UI/CustomButton.jsx";
 
 const AdminTeam = () => {
 	const router = useRouter()
@@ -61,19 +63,9 @@ const AdminTeam = () => {
 		)
 	}
 	return (
-		<form onSubmit={handleSubmit}>
-			<CustomInputAdmin
-				name='name'
-				value={formData.name}
-				fn={handleInputChange}
-			>
-				Название
-			</CustomInputAdmin>
-			<input
-				className='bg-black py-2 px-5 rounded-md'
-				type='submit'
-				value='Save'
-			/>
+		<form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+			<CustomInput label='Название' name='name' fn={handleInputChange} value={formData.name} />
+			<CustomButton type='submit'>Save</CustomButton>
 		</form>
 	)
 }
