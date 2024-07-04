@@ -3,11 +3,12 @@ import { api } from '@/Api/api'
 import CustomButton from '@/UI/CustomButton'
 import CustomInput from '@/UI/CustomInput'
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
-import { Card, CardBody, DatePicker, Tab, Tabs } from '@nextui-org/react'
+import {Card, CardBody, DatePicker, Select, SelectItem, Tab, Tabs} from '@nextui-org/react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import CustomEditor from "@/UI/CustomEditor.jsx";
 import Image from "next/image";
+import {object, string} from "yup";
 
 const AdminNews = () => {
 	let defaultDate = today(getLocalTimeZone())
@@ -34,7 +35,8 @@ const AdminNews = () => {
 		country: '',
 		tags: null,
 	})
-	const [error, setError] = useState(null)
+	const [errors, setErrors] = useState({});
+
 	const [selectedDate, setSelectedDate] = useState(
 		formData.new_date ? formData.new_date : defaultDate
 	)
@@ -87,7 +89,7 @@ const AdminNews = () => {
 					setSelectedDate(new_date ? parseDate(new_date) : defaultDate)
 				}
 			} catch (error) {
-				setError(error.message)
+				console.error(error.message)
 			}
 		}
 
@@ -115,6 +117,7 @@ const AdminNews = () => {
 	const handleSubmit = async e => {
 		if(e!== undefined)e.preventDefault()
 		try {
+			await newsSchema.validate(formData, {abortEarly: false})
 			if (id) {
 				await api.put(`/news/${id}`, formData)
 			} else {
@@ -127,7 +130,15 @@ const AdminNews = () => {
 			}
 			router.push(`/admin/news/${newsId}`)
 		} catch (error) {
-			setError(error.message)
+			const newErrors = {};
+
+			error?.inner?.forEach((err) => {
+				newErrors[err.path] = err.message;
+			});
+			if (error?.response?.data?.message) {
+				newErrors['url'] = error?.response?.data?.message;
+			}
+			setErrors(newErrors);
 		}
 	}
 	const handleDateChange = newDate => {
@@ -145,26 +156,28 @@ const AdminNews = () => {
 	const handleImageChange = async (img) => {
 		const formDataImage = new FormData();
 		formDataImage.append('file', img);
-		await api.post('/upload', formDataImage);
-		setFormData((prevState) => ({
-			...prevState,
-			'photo': img.name, // Store the file object directly
-		}));
-		if (id) {
-			router.push(`/admin/news/${newsId}/edit/${id}`)
-		} else {
-			handleSubmit()
+		formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+		try {
+			const response = await api.post('/upload', formDataImage);
+			const newPhotoLocation = response.data.location; // URL новой фотографии
+
+			// Обновляем состояние с новым именем файла
+			setFormData((prevState) => ({
+				...prevState,
+				'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+			}));
+
+			router.push(`/admin/${slug}/edit/${id}`);
+		} catch (error) {
+			console.error('Ошибка загрузки изображения:', error);
 		}
-	}
+	};
 
-
-	if (error) {
-		return (
-			<div className='pt-3'>
-				<p>{error}</p>
-			</div>
-		)
-	}
+	const newsSchema = object({
+		header:string().required('Please enter header of news'),
+		url:string().required('Please enter url of news'),
+		country:string().min(1,'Please choose a country').required('Please choose a country'),
+	})
 
 	return (
 		<div className='flex w-full dark flex-col'>
@@ -189,6 +202,7 @@ const AdminNews = () => {
 									fn={handleInputChange}
 									label='Заголовок :'
 									white='true'
+									error={errors.header}
 								/>
 								<CustomInput
 									name='title'
@@ -217,23 +231,25 @@ const AdminNews = () => {
 									fn={handleInputChange}
 									label='Адрес статьи (URL) :'
 									white='true'
+									error={errors.url}
 									smallText='Не пишите одинаковые ссылки'
 								/>
-								<label className='flex w-full flex-col'>
-									Страна:
-									<select
-										name='country'
-										className='py-3 px-4 rounded-lg'
-										value={formData.country || ''}
-										onChange={handleInputChange}
-									>
-										{country.map(el => (
-											<option key={el.id} value={el.name || ''}>
-												{el.name}
-											</option>
-										))}
-									</select>
-								</label>
+								<Select
+									label="Выберите страну"
+									placeholder="Выберите страну"
+									value={formData.country}
+									className="w-full"
+									errorMessage={errors.country}
+									isInvalid={errors.country}
+									name='country'
+									onChange={handleInputChange}
+								>
+									{country.map(el => (
+										<SelectItem key={el.name} value={el.name}>
+											{el.name}
+										</SelectItem>
+									))}
+								</Select>
 								<CustomInput
 									name='tags'
 									value={formData.tags || ''}

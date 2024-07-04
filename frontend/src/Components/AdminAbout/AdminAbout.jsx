@@ -7,6 +7,7 @@ import CustomInput from "@/UI/CustomInput.jsx";
 import {Checkbox} from "@nextui-org/react";
 import CustomButton from "@/UI/CustomButton.jsx";
 import Image from "next/image.js";
+import {number, object, string} from "yup";
 
 export default function AdminAbout() {
     const router = useRouter()
@@ -20,7 +21,9 @@ export default function AdminAbout() {
         order_number: 0,
         photo: "",
     })
-    const [error, setError] = useState(null)
+
+    const [errors, setErrors] = useState({});
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,7 +49,7 @@ export default function AdminAbout() {
                     photo: photo || '',
                 })
             } catch (error) {
-                setError(error.message)
+                console.error(error.message)
             }
         }
 
@@ -57,13 +60,14 @@ export default function AdminAbout() {
         const {name, value, type, checked} = e.target
         setFormData(prevState => ({
             ...prevState,
-            [name]: type === 'checkbox' ? (checked ? 1 : 0) : name == 'order_number' ? Number(value) : value,
+            [name]: type === 'checkbox' ? (checked ? 1 : 0)  : value,
         }))
     }
 
     const handleSubmit = async e => {
         if (e !== undefined) e.preventDefault()
         try {
+            await aboutSchema.validate(formData, {abortEarly: false})
             if (id) {
                 await api.put(`/about/${id}`, formData)
             } else {
@@ -71,38 +75,54 @@ export default function AdminAbout() {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            const newErrors = {};
+
+            error?.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            setErrors(newErrors);
         }
     }
+
+    const aboutSchema= object({
+        order_number:number().typeError('Please enter only number'),
+        name:string().required('Please enter your name'),
+    })
 
     const handleImageChange = async (img) => {
         const formDataImage = new FormData();
         formDataImage.append('file', img);
-        await api.post('/upload', formDataImage);
-        setFormData((prevState) => ({
-            ...prevState,
-            'photo': img.name, // Store the file object directly
-        }));
-        if (id) {
-            router.push(`/admin/${slug}/edit/${id}`)
-        } else {
-            handleSubmit()
-        }
-    }
+        formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+        try {
+            const response = await api.post('/upload', formDataImage);
+            const newPhotoLocation = response.data.location; // URL новой фотографии
 
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
+            // Обновляем состояние с новым именем файла
+            setFormData((prevState) => ({
+                ...prevState,
+                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+            }));
+
+            router.push(`/admin/${slug}/edit/${id}`);
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
+        }
+    };
+
+
     return (
         <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-            <CustomInput label='ФИО' name='name' fn={handleInputChange} value={formData.name}/>
+            <CustomInput label='ФИО'
+                         name='name'
+                         fn={handleInputChange}
+                         error={errors.name}
+                         value={formData.name}/>
             <CustomInput label='Должность' name='position' fn={handleInputChange} value={formData.position}/>
             <CustomInput label='Обязанности' name='employment' fn={handleInputChange} value={formData.employment}/>
-            <CustomInput label='Порядок показа карточек на сайте' name='order_number' fn={handleInputChange}
+            <CustomInput label='Порядок показа карточек на сайте'
+                         name='order_number'
+                         fn={handleInputChange}
+                         error={errors.order_number}
                          value={formData.order_number}/>
             <Checkbox className='dark' isSelected={formData.publick === 1} onChange={handleInputChange} name='publick'>Опубликовать
                 на сайте?</Checkbox>

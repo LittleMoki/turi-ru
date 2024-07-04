@@ -3,7 +3,6 @@ import prisma from '../db/db.config.js'
 export const CreateCity = async (req, res) => {
 	const {
 		country_id,
-		country,
 		name,
 		url,
 		body,
@@ -13,6 +12,27 @@ export const CreateCity = async (req, res) => {
 		metadescription,
 		title,
 	} = req.body
+
+	// Проверка существования country_id
+	const countryExists = await prisma.t_country.findUnique({
+		where: {
+			id: Number(country_id),
+		},
+	});
+
+	if (!countryExists) {
+		return res.status(400).json({ status: 400, country_id: 'Country ID does not exist' });
+	}
+
+	const findPage = await prisma.t_city.findFirst({
+		where: {
+			url: url,
+		},
+	});
+
+	if (findPage) {
+		return res.status(400).json({ status: 400, message: 'Page with this URL already exists' });
+	}
 
 	const city = await prisma.t_city.create({
 		data: {

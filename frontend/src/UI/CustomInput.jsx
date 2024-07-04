@@ -9,6 +9,7 @@ const CustomInput = ({
                          description,
                          placeholder = '',
                          white = true,
+    error
                      }) => {
     return (
         <Input
@@ -22,7 +23,8 @@ const CustomInput = ({
             name={name}
             description={description}
             style={{fontSize: '1rem', fontWeight: '400'}}
-            // className='dark'
+            isInvalid={error}
+            errorMessage={error}
         />
     )
 }

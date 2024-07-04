@@ -4,6 +4,7 @@ import {api} from "@/Api/api.js";
 import CustomInput from "@/UI/CustomInput.jsx";
 import CustomButton from "@/UI/CustomButton.jsx";
 import CustomEditor from "@/UI/CustomEditor.jsx";
+import {object, string} from "yup";
 
 export default function AdminTourType() {
     const router = useRouter()
@@ -20,7 +21,7 @@ export default function AdminTourType() {
         metadescription: '',
         sorting: 0,
     })
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -77,7 +78,15 @@ export default function AdminTourType() {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            const newErrors = {};
+            console.error(error.message)
+            error.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            if (error?.response?.data?.message) {
+                newErrors['url'] = error?.response?.data?.message;
+            }
+            setErrors(newErrors);
         }
     }
 
@@ -88,17 +97,13 @@ export default function AdminTourType() {
         }));
     };
 
-
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
+    const tourTypeSchema = object({
+        name:string().typeError('Please enter letters not numbers').required('Please enter name of tour'),
+        url:string().required('Please enter url'),
+    })
     return (
         <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-            <CustomInput name='name' label='Заголовок' value={formData.name} fn={handleInputChange}/>
+            <CustomInput error={errors.name} name='name' label='Заголовок' value={formData.name} fn={handleInputChange}/>
             <CustomInput name='parent' label='Родительская категория' value={formData.parent} fn={handleInputChange}/>
             <label className="text-white">
                 Описание
@@ -108,7 +113,7 @@ export default function AdminTourType() {
                               value={formData.description}
                 />
             </label>
-            <CustomInput name='url' label='Ссылка на тип' value={formData.url} fn={handleInputChange}/>
+            <CustomInput error={errors.url} name='url' label='Ссылка на тип' value={formData.url} fn={handleInputChange}/>
             <CustomInput name='title' label='Title' value={formData.title} fn={handleInputChange}/>
             <CustomInput name='metakeywords' label='Metakeywords' value={formData.metakeywords} fn={handleInputChange}/>
             <CustomInput name='metadescription' label='Metadescription' value={formData.metadescription}

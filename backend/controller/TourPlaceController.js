@@ -15,6 +15,18 @@ export const CreatePlace = async (req, res) => {
 		publics,
 	} = req.body
 
+
+	const findPage = await prisma.t_place.findFirst({
+		where: {
+			url: url,
+		},
+	});
+
+	if (findPage) {
+		return res.status(400).json({ status: 400, message: 'Page with this URL already exists' });
+	}
+
+
 	const place = await prisma.t_place.create({
 		data: {
 			country_id,

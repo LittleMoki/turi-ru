@@ -6,6 +6,7 @@ import React, {useEffect, useState} from 'react'
 import {Select, SelectItem} from "@nextui-org/react";
 import CustomEditor from "@/UI/CustomEditor.jsx";
 import Image from "next/image.js";
+import {number, object, string} from "yup";
 
 const AdminCity = () => {
     const router = useRouter()
@@ -22,7 +23,7 @@ const AdminCity = () => {
         metadescription: '',
         title: '',
     })
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,7 +57,7 @@ const AdminCity = () => {
                     })
                 }
             } catch (error) {
-                setError(error.message)
+                console.error(error)
             }
         }
 
@@ -88,21 +89,27 @@ const AdminCity = () => {
     const handleImageChange = async (img) => {
         const formDataImage = new FormData();
         formDataImage.append('file', img);
-        await api.post('/upload', formDataImage);
-        setFormData((prevState) => ({
-            ...prevState,
-            'photo': img.name, // Store the file object directly
-        }));
-        if (id) {
-            router.push(`/admin/${slug}/edit/${id}`)
-        } else{
-            router.push(`/admin/${slug}`)
+        formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+        try {
+            const response = await api.post('/upload', formDataImage);
+            const newPhotoLocation = response.data.location; // URL новой фотографии
+
+            // Обновляем состояние с новым именем файла
+            setFormData((prevState) => ({
+                ...prevState,
+                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+            }));
+
+            router.push(`/admin/${slug}/edit/${id}`);
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
         }
-    }
+    };
 
     const handleSubmit = async e => {
         e.preventDefault()
         try {
+            await citySchema.validate(formData,{abortEarly:false})
             if (id) {
                 await api.put(`/city/${id}`, formData)
             } else {
@@ -110,17 +117,25 @@ const AdminCity = () => {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            const newErrors = {};
+
+            error?.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            if (error?.response?.data) {
+                newErrors['url'] = error?.response?.data?.message;
+                newErrors['country_id'] = error?.response?.data?.country_id;
+            }
+            setErrors(newErrors);
         }
     }
 
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
+
+    const citySchema = object({
+        name:string().required('Please enter name of city'),
+        country_id:number().required('Please choose a country'),
+        url:string().required('Please enter url of city')
+    })
 
     return (
         <form className='grid gap-3 md:grid-cols-3' onSubmit={handleSubmit}>
@@ -130,12 +145,15 @@ const AdminCity = () => {
                     fn={handleInputChange}
                     value={formData.name}
                     label='Название города:'
+                    error={errors.name}
                 />
                 <Select
                     label="Выберите страну"
                     placeholder="Выберите страну"
                     selectedKeys={new Set([formData.country_id.toString()])}
                     className="w-full"
+                    errorMessage={errors.country_id}
+                    isInvalid={errors.country_id}
                     onSelectionChange={handleSelectChange}
                 >
                     {country.map(el => (
@@ -148,6 +166,7 @@ const AdminCity = () => {
                     name='url'
                     fn={handleInputChange}
                     value={formData.url}
+                    error={errors.url}
                     label='Ссылка на город:'
                 />
                 <label className='text-white w-full'>

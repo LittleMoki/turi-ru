@@ -23,6 +23,18 @@ export const CreateNews = async (req, res) => {
 		tags,
 	} = req.body
 
+	// Проверка, существует ли страница с таким URL
+	const findPage = await prisma.t_news.findFirst({
+		where: {
+			url: url,
+		},
+	});
+
+	if (findPage) {
+		return res.status(400).json({status: 400, message: 'Page with this URL already exists'});
+	}
+
+
 	const news = await prisma.t_news.create({
 		data: {
 			new_date,
@@ -98,6 +110,24 @@ export const EditNews = async (req, res) => {
 		country,
 		tags,
 	} = req.body
+
+	const currentTourType = await prisma.t_news.findUnique({
+		where: {
+			id: Number(id),
+		},
+	});
+
+	// Если текущий URL отличается от нового, проверяем уникальность
+	if (currentTourType.url !== url) {
+		const findUniqueType = await prisma.t_news.findFirst({
+			where: {
+				url: url,
+			},
+		});
+
+		if (findUniqueType) return res.status(404).send({ message: 'Page with this URL already exists' });
+	}
+
 
 	const news = await prisma.t_news.update({
 		data: {

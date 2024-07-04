@@ -7,6 +7,7 @@ import CustomButton from '../../UI/CustomButton'
 import CustomEditor from '@/UI/CustomEditor'
 import Image from "next/image";
 import {Label} from "@mui/icons-material";
+import {object, string} from "yup";
 
 const AdminCountry = () => {
     const router = useRouter()
@@ -21,7 +22,8 @@ const AdminCountry = () => {
         metakeywords: '',
         photo: '',
     })
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState({});
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -74,21 +76,27 @@ const AdminCountry = () => {
     const handleImageChange = async (img) => {
         const formDataImage = new FormData();
         formDataImage.append('file', img);
-        await api.post('/upload', formDataImage);
-        setFormData((prevState) => ({
-            ...prevState,
-            'photo': img.name, // Store the file object directly
-        }));
-        if (id) {
-            router.push(`/admin/${slug}/edit/${id}`)
-        } else{
-            handleSubmit()
+        formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+        try {
+            const response = await api.post('/upload', formDataImage);
+            const newPhotoLocation = response.data.location; // URL новой фотографии
+
+            // Обновляем состояние с новым именем файла
+            setFormData((prevState) => ({
+                ...prevState,
+                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+            }));
+
+            router.push(`/admin/${slug}/edit/${id}`);
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
         }
-    }
+    };
 
     const handleSubmit = async e => {
         e.preventDefault()
         try {
+            await pageSchema.validate(formData, {abortEarly: false})
             if (id) {
                 await api.put(`/country/${id}`, formData)
             } else {
@@ -96,17 +104,25 @@ const AdminCountry = () => {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            console.error(error?.response?.data?.message)
+            const newErrors = {};
+            console.error(error.message)
+            error.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+
+            if (error?.response?.data?.message) {
+                newErrors['url'] = error?.response?.data?.message;
+            }
+
+            setErrors(newErrors);
         }
     }
 
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
+    const pageSchema = object({
+        name: string().required('Please enter a name'),
+        url: string().required('Please enter a url'),
+    })
 
     return (
         <form className='grid md:grid-cols-3 gap-3 items-start' onSubmit={handleSubmit}>
@@ -116,12 +132,14 @@ const AdminCountry = () => {
                     fn={handleInputChange}
                     value={formData.name}
                     label='Название страны:'
+                    error={errors.name}
                 />
                 <CustomInput
                     name='url'
                     fn={handleInputChange}
                     value={formData.url}
                     label='Ссылка на страну:'
+                    error={errors.url}
                 />
                 <label className='w-full text-white'>
                     Описание страны:

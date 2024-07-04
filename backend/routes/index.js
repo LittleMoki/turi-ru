@@ -16,6 +16,8 @@ import TourServicesRoutes from './TourServiceRoutes.js'
 import TourTeamRoutes from './TourTeamRoutes.js'
 import TourTypeRoutes from './TourTypeRoutes.js'
 import TourUsersRoutes from './TourUsersRoutes.js'
+import MainTourTeamRoutes from "./MainTourTeamRoutes.js";
+import TourOrderRoutes from "./TourOrderRoutes.js";
 
 const router = Router()
 
@@ -36,5 +38,7 @@ router.use('/users', TourUsersRoutes)
 router.use('/team', TourTeamRoutes)
 router.use('/orders', TourOrdersRoutes)
 router.use('/about', TourAboutRoutes)
+router.use('/tour_team', MainTourTeamRoutes)
+router.use('/orders', TourOrderRoutes)
 
 export default router

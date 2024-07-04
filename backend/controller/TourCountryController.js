@@ -12,6 +12,15 @@ export const CreateCountry = async (req, res) => {
 		photo,
 	} = req.body
 
+	const findUniqueType = await prisma.t_country.findFirst({
+		where: {
+			url: url
+		}
+	})
+
+	if(findUniqueType) return res.status(404).send({message: 'Page with this URL already exists'});
+
+
 	const country = await prisma.t_country.create({
 		data: {
 			language_id,
@@ -73,6 +82,18 @@ export const EditCountry = async (req, res) => {
 			id: Number(id),
 		},
 	})
+
+	if (findCountry.url !== url) {
+		const findCountry = await prisma.t_country.findFirst({
+			where: {
+				url: url,
+			},
+		});
+
+		if (findCountry) return res.status(404).send({ message: 'Page with this URL already exists' });
+	}
+
+
 
 	if (!findCountry)
 		return res.json({ status: 400, message: 'We did not find this country' })

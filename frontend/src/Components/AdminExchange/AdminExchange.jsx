@@ -5,6 +5,7 @@ import {useParams, useRouter} from 'next/navigation'
 import {useEffect, useState} from 'react'
 import {Checkbox} from "@nextui-org/react";
 import CustomButton from "@/UI/CustomButton.jsx";
+import {number, object} from "yup";
 
 const AdminExchange = () => {
     const router = useRouter()
@@ -16,7 +17,7 @@ const AdminExchange = () => {
         exchange_rate: 0,
         primary_valuta: false,
     })
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,7 +33,7 @@ const AdminExchange = () => {
                     primary_valuta: primary_valuta || false,
                 })
             } catch (error) {
-                setError(error.message)
+                console.error(error.message)
             }
         }
 
@@ -55,6 +56,7 @@ const AdminExchange = () => {
     const handleSubmit = async e => {
         e.preventDefault()
         try {
+            await exchangeSchema.validate(formData, {abortEarly: false})
             if (id) {
                 await api.put(`/exchange/${id}`, formData)
             } else {
@@ -62,17 +64,18 @@ const AdminExchange = () => {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            const newErrors = {};
+
+            error?.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            setErrors(newErrors);
         }
     }
 
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
+    const exchangeSchema = object({
+        exchange_rate: number().typeError('Please enter only number').required('Please enter exchange rate'),
+    })
 
     return (
         <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
@@ -99,6 +102,7 @@ const AdminExchange = () => {
                 fn={handleInputChange}
                 value={formData.exchange_rate}
                 label='Курс валюты*:'
+                error={errors.exchange_rate}
             />
             <Checkbox className='dark' name='primary_valuta' isSelected={formData.primary_valuta}
                       onChange={handleInputChange}>

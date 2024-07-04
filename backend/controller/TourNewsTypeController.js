@@ -13,6 +13,16 @@ export const CreateNewsType = async (req, res) => {
 		metadescription,
 	} = req.body
 
+	const findPage = await prisma.t_news_type.findFirst({
+		where: {
+			url: url,
+		},
+	});
+
+	if (findPage) {
+		return res.status(400).json({status: 400, message: 'Page with this URL already exists'});
+	}
+
 	const newsType = await prisma.t_news_type.create({
 		data: {
 			name,
@@ -72,6 +82,23 @@ export const EditNewsType = async (req, res) => {
 		metakeywords,
 		metadescription,
 	} = req.body
+
+	const currentTourType = await prisma.t_news_type.findUnique({
+		where: {
+			id: Number(id),
+		},
+	});
+
+	// Если текущий URL отличается от нового, проверяем уникальность
+	if (currentTourType.url !== url) {
+		const findUniqueType = await prisma.t_news_type.findFirst({
+			where: {
+				url: url,
+			},
+		});
+
+		if (findUniqueType) return res.status(404).send({ message: 'Page with this URL already exists' });
+	}
 
 	const newType = await prisma.t_news_type.update({
 		where: {

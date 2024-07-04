@@ -4,6 +4,10 @@ import {usePathname} from 'next/navigation'
 import {useEffect} from 'react'
 import './globals.css'
 import Script from "next/script";
+// import getConfig from 'next/config';
+//
+// const {publicRuntimeConfig} = getConfig();
+
 
 // export const metadata = {
 // 	title: 'Next.js',
@@ -16,12 +20,6 @@ export default function RootLayout({children}) {
     useEffect(() => {
         // Check if the current route matches '/admin'
         if (pathname.startsWith('/admin')) {
-            // Load external stylesheets
-            const fontAwesomeLink = document.createElement('link')
-            fontAwesomeLink.rel = 'stylesheet'
-            fontAwesomeLink.href = '/plugins/fontawesome-free/css/all.min.css'
-            document.head.appendChild(fontAwesomeLink)
-
             const overlayScrollbarsLink = document.createElement('link')
             overlayScrollbarsLink.rel = 'stylesheet'
             overlayScrollbarsLink.href =
@@ -36,22 +34,25 @@ export default function RootLayout({children}) {
 
             // Cleanup function
             return () => {
-                document.head.removeChild(fontAwesomeLink)
                 document.head.removeChild(overlayScrollbarsLink)
                 document.head.removeChild(adminLteLink)
             }
         }
     }, [pathname])
-
     return (
         <html lang='en'>
-
         <body
-            className={`${montserrat.className} sidebar-mini layout-fixed layout-navbar-fixed sidebar-collapse wrapper`}
+            className={`${montserrat.className} ${pathname.startsWith('/admin') ? "sidebar-mini layout-fixed layout-navbar-fixed sidebar-collapse wrapper" : ''}`}
         >
         {children}
-        {/*<script src='https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js'/>*/}
-        {/*<script src='https://code.jquery.com/jquery-3.6.0.min.js'/>*/}
+        <Script src="https://kit.fontawesome.com/01bb16bf2a.js" crossOrigin="anonymous"/>
+        <script
+            src='https://code.jquery.com/jquery-3.6.0.min.js'
+            integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4='
+            crossOrigin='anonymous'
+        ></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
         </body>
         </html>
     )

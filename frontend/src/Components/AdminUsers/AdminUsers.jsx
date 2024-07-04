@@ -5,6 +5,10 @@ import CustomButton from '@/UI/CustomButton'
 import {useParams, useRouter} from 'next/navigation'
 import React, {useEffect, useState} from 'react'
 import Image from "next/image";
+import {object, ref, string} from "yup";
+import {Input} from "@nextui-org/react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye, faEyeSlash} from "@fortawesome/free-regular-svg-icons";
 
 const AdminUsers = () => {
     const router = useRouter()
@@ -14,16 +18,15 @@ const AdminUsers = () => {
         first_name: '',
         last_name: '',
         phone_number: '',
+        confirmPassword: '',
         email: '',
         password: '',
         role: 2,
         photo: '',
     })
-    const [formPassword, setFormPassword] = useState({
-        password: '',
-        confirmPassword: ''
-    })
-    const [error, setError] = useState(null)
+
+    const [errors, setErrors] = useState({});
+
     const [passwordError, setPasswordError] = useState(null)
 
     useEffect(() => {
@@ -49,10 +52,10 @@ const AdminUsers = () => {
                     email: email || '',
                     role: role || 2,
                     photo: photo || '',
-                    password: password || '',
+                    password: '',
                 })
             } catch (error) {
-                setError(error.message)
+                console.error(error.message)
             }
         }
 
@@ -67,37 +70,13 @@ const AdminUsers = () => {
         }))
     }
 
-    const handlePassword = e => {
-        const {name, value} = e.target
-
-        setFormPassword(prevState => ({
-            ...prevState,
-            [name]: value,
-        }))
-    }
-
-    const validatePasswords = () => {
-        if (formPassword.password !== formPassword.confirmPassword) {
-            setPasswordError('Пароли не совпадают')
-            return false
-        }
-        formData.password = formPassword.password
-        return true
-    }
-
     const handleSubmit = async e => {
         if (e !== undefined) e.preventDefault()
 
-        if (!validatePasswords()) {
-            return
-        }
-
         const data = {...formData}
-        if (formPassword.password) {
-            data.password = formPassword.password
-        }
 
         try {
+            await userSchema.validate(formData, {abortEarly: false})
             if (id) {
                 await api.put(`/users/${id}`, data)
             } else {
@@ -105,33 +84,64 @@ const AdminUsers = () => {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            const newErrors = {};
+
+            error?.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+
+            setErrors(newErrors);
         }
     }
 
     const handleImageChange = async (img) => {
         const formDataImage = new FormData();
         formDataImage.append('file', img);
-        await api.post('/upload', formDataImage);
-        setFormData((prevState) => ({
-            ...prevState,
-            'photo': img.name, // Store the file object directly
-        }));
-        if (id) {
-            router.push(`/admin/${slug}/edit/${id}`)
-        } else {
-            handleSubmit()
+        formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+        try {
+            const response = await api.post('/upload', formDataImage);
+            const newPhotoLocation = response.data.location; // URL новой фотографии
+
+            // Обновляем состояние с новым именем файла
+            setFormData((prevState) => ({
+                ...prevState,
+                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+            }));
+
+            router.push(`/admin/${slug}/edit/${id}`);
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
         }
-    }
+    };
 
+    const userSchema = object({
+        password: string()
+            .required("Password is required")
+            .min(8, "Password must be at least 8 characters")
+            .matches(
+                /[!@#$%^&*(),.?":{}|<>]/,
+                "Password must contain at least one symbol"
+            )
+            .matches(/[0-9]/, "Password must contain at least one number")
+            .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+            .matches(/[a-z]/, "Password must contain at least one lowercase letter"),
+        confirmPassword: string()
+            .oneOf([ref("password")], "Passwords must match")
+            .required("Confirm password is required"),
+        email: string()
+            .min(1,'Email is Required')
+            .email("Invalid email format"),
+        phone_number: string()
+            .matches(/^\d{10}$/, "Phone Number must be 10 digits")
+            .required(),
+        first_name:string().min(1,'Please enter first name'),
+        last_name:string().min(1,'Please enter last name'),
+        login:string().min(1,'Please enter login'),
+    })
 
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
+    const [isVisible, setIsVisible] = React.useState(false);
+
+    const toggleVisibility = () => setIsVisible(!isVisible);
 
     return (
         <form className={'flex flex-col gap-3'} onSubmit={handleSubmit}>
@@ -140,23 +150,29 @@ const AdminUsers = () => {
                 fn={handleInputChange}
                 value={formData.login}
                 label='Логин:'
+                error={errors.login}
             />
             <CustomInput
                 name='first_name'
                 fn={handleInputChange}
                 value={formData.first_name}
                 label='Имя:'
+                error={errors.first_name}
+
             />
             <CustomInput
                 name='last_name'
                 fn={handleInputChange}
                 value={formData.last_name}
                 label='Фамилия:'
+                error={errors.last_name}
+
             />
             <CustomInput
                 name='phone_number'
                 fn={handleInputChange}
                 value={formData.phone_number}
+                error={errors.phone_number}
                 label='Номер телефона:'
             />
             <CustomInput
@@ -164,31 +180,44 @@ const AdminUsers = () => {
                 fn={handleInputChange}
                 value={formData.email}
                 label='Email:'
+                error={errors.email}
             />
-            <CustomInput
-                name='photo'
-                fn={handleInputChange}
-                value={formData.photo}
-                label='Фото пользователя:'
-            />
-            <CustomInput
-                name='password'
-                fn={handlePassword}
-                value={formPassword.password}
-                label='Пароль:'
-                type='password'
-            />
-            <CustomInput
-                name='confirmPassword'
-                fn={handlePassword}
-                value={formPassword.confirmPassword}
-                label='Подтверждение пароля:'
-                type='password'
-            />
-            {passwordError ? (
-                <p className='text-red'>{passwordError}</p>
-            ) : ''}
+            <Input
+                label="Пароль"
+                name="password"
+                value={formData.password}
+                onChange={(e)=>handleInputChange(e)}
+                placeholder="Enter your password"
+                endContent={
+                    <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                        {isVisible ? (
+                            <FontAwesomeIcon icon={faEye} />
 
+                        ) : (
+                           <FontAwesomeIcon icon={faEyeSlash} />
+                        )}
+                    </button>
+                }
+                type={isVisible ? "text" : "password"}
+            />
+            <Input
+                label="Подтверждение пароля:"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={(e)=>handleInputChange(e)}
+                placeholder="Enter your password"
+                endContent={
+                    <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                        {isVisible ? (
+                            <FontAwesomeIcon icon={faEye} />
+
+                        ) : (
+                            <FontAwesomeIcon icon={faEyeSlash} />
+                        )}
+                    </button>
+                }
+                type={isVisible ? "text" : "password"}
+            />
             <label className='text-white flex  gap-3 w-full'>
                 {formData.photo ? (
                     <Image

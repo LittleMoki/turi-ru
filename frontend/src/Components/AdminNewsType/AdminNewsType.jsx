@@ -6,6 +6,7 @@ import React, {useEffect, useState} from 'react'
 import CustomButton from '@/UI/CustomButton'
 import CustomEditor from "@/UI/CustomEditor.jsx";
 import Image from "next/image.js";
+import {object, string} from "yup";
 
 const AdminNewsType = () => {
     const router = useRouter()
@@ -19,7 +20,7 @@ const AdminNewsType = () => {
         metakeywords: '',
         metadescription: '',
     })
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,7 +46,7 @@ const AdminNewsType = () => {
                     metadescription: metadescription || '',
                 })
             } catch (error) {
-                setError(error.message)
+                console.error(error.message)
             }
         }
 
@@ -70,23 +71,28 @@ const AdminNewsType = () => {
     const handleImageChange = async (img) => {
         const formDataImage = new FormData();
         formDataImage.append('file', img);
-        await api.post('/upload', formDataImage);
-        setFormData((prevState) => ({
-            ...prevState,
-            'photo': img.name, // Store the file object directly
-        }));
-        if (id) {
-            router.push(`/admin/${slug}/edit/${id}`)
-        } else {
-            handleSubmit()
-            // router.push(`/admin/${slug}`)
+        formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+        try {
+            const response = await api.post('/upload', formDataImage);
+            const newPhotoLocation = response.data.location; // URL новой фотографии
+
+            // Обновляем состояние с новым именем файла
+            setFormData((prevState) => ({
+                ...prevState,
+                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+            }));
+
+            router.push(`/admin/${slug}/edit/${id}`);
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
         }
-    }
+    };
 
 
     const handleSubmit = async e => {
         if (e !== undefined) e.preventDefault()
         try {
+            await newsTypeSchema.validate(formData,{abortEarly:false})
             if (id) {
                 await api.put(`/news_type/${id}`, formData)
             } else {
@@ -94,17 +100,21 @@ const AdminNewsType = () => {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            const newErrors = {};
+            error?.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            if (error?.response?.data?.message) {
+                newErrors['url'] = error?.response?.data?.message;
+            }
+            setErrors(newErrors);
         }
     }
 
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
+    const newsTypeSchema = object({
+        name:string().required('Please enter name of news type'),
+        url:string().required('Please enter url of news type'),
+    })
 
     return (
         <form className='flex flex-col gap-3 items-start' onSubmit={handleSubmit}>
@@ -113,11 +123,13 @@ const AdminNewsType = () => {
                 fn={handleInputChange}
                 value={formData.name}
                 label='Название'
+                error={errors.name}
             />
             <CustomInput
                 name='url'
                 fn={handleInputChange}
                 value={formData.url}
+                error={errors.url}
                 label='Ссылка на тип'
             />
             <label className='w-full text-white'>
@@ -147,12 +159,7 @@ const AdminNewsType = () => {
                 value={formData.metadescription}
                 label='Metadescription'
             />
-            <CustomInput
-                name='photo'
-                fn={handleInputChange}
-                value={formData.photo}
-                label='Фото типа'
-            />
+
 
             <label className='text-white flex flex-col gap-3 w-full'>
                 Фото типа

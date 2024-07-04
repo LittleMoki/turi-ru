@@ -7,11 +7,13 @@ import {Select, SelectItem} from "@nextui-org/react";
 import CustomEditor from "@/UI/CustomEditor.jsx";
 import Image from "next/image";
 import CustomButton from "@/UI/CustomButton.jsx";
+import {number, object, string} from "yup";
 
 const AdminPlace = () => {
     const router = useRouter()
     const {id, slug} = useParams()
     const [city, setCity] = useState([])
+    const [country, setCountry] = useState([])
     const [formData, setFormData] = useState({
         country_id: 0,
         cityid: 0,
@@ -25,13 +27,15 @@ const AdminPlace = () => {
         metadescription: '',
         publics: 0,
     })
-    const [error, setError] = useState(null)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const cityResponse = await api.get('city')
+                const countryResponse = await api.get('country')
                 setCity(cityResponse.data.data)
+                setCountry(countryResponse.data.data)
 
                 if (id) {
                     const {data} = await api.get(`/place/${id}`)
@@ -63,7 +67,7 @@ const AdminPlace = () => {
                     })
                 }
             } catch (error) {
-                setError(error.message)
+                console.error(error.message)
             }
         }
 
@@ -74,14 +78,14 @@ const AdminPlace = () => {
         const {name, value} = e.target
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === 'cityid' ? Number(value) : value,
+            [name]: name === 'cityid' && name === 'country_id'? Number(value) : value,
         }))
     }
 
-    const handleSelectChange = keys => {
+    const handleSelectChange = (keys,name) => {
         setFormData(prevState => ({
             ...prevState,
-            cityid: Number([...keys][0])
+            [name]: Number([...keys][0]),
         }))
     }
 
@@ -95,21 +99,27 @@ const AdminPlace = () => {
     const handleImageChange = async (img) => {
         const formDataImage = new FormData();
         formDataImage.append('file', img);
-        await api.post('/upload', formDataImage);
-        setFormData((prevState) => ({
-            ...prevState,
-            'foto': img.name, // Store the file object directly
-        }));
-        if (id) {
-            router.push(`/admin/${slug}/edit/${id}`)
-        } else{
-            router.push(`/admin/${slug}`)
+        formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+        try {
+            const response = await api.post('/upload', formDataImage);
+            const newPhotoLocation = response.data.location; // URL новой фотографии
+
+            // Обновляем состояние с новым именем файла
+            setFormData((prevState) => ({
+                ...prevState,
+                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+            }));
+
+            router.push(`/admin/${slug}/edit/${id}`);
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
         }
-    }
+    };
 
     const handleSubmit = async e => {
         e.preventDefault()
         try {
+            await placeSchema.validate(formData,{abortEarly:false})
             if (id) {
                 await api.put(`/place/${id}`, formData)
             } else {
@@ -117,18 +127,24 @@ const AdminPlace = () => {
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
-            setError(error.message)
+            const newErrors = {};
+
+            error?.inner?.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            if (error?.response?.data?.message) {
+                newErrors['url'] = error?.response?.data?.message;
+            }
+            setErrors(newErrors);
         }
     }
 
-    if (error) {
-        return (
-            <div className='pt-3'>
-                <p>{error}</p>
-            </div>
-        )
-    }
-
+    const placeSchema = object({
+        name:string().required('Please enter name of place'),
+        cityid:number().min(1,'Please choose a city'),
+        country_id:number().min(1,'Please choose a country'),
+        url:string().required('Please enter url of place')
+    })
     return (
         <form className='grid md:grid-cols-3 gap-3'  onSubmit={handleSubmit}>
             <div className='flex flex-col gap-3 col-span-2'>
@@ -136,14 +152,34 @@ const AdminPlace = () => {
                     name='name'
                     fn={handleInputChange}
                     value={formData.name}
+                    error={errors.name}
                     label='Название достопримечательности:'
                 />
                 <Select
+                    label="Выберите страну"
+                    placeholder="Выберите страну"
+                    isInvalid={errors.country_id}
+                    errorMessage={errors.country_id}
+                    selectedKeys={new Set([formData.country_id.toString()])}
+                    className="w-full"
+                    // name='country_id'
+                    onSelectionChange={(e)=>handleSelectChange(e, 'country_id')}
+                >
+                    {country.map(el => (
+                        <SelectItem key={el.id} value={el.id.toString()}>
+                            {el.name}
+                        </SelectItem>
+                    ))}
+                </Select>
+                <Select
                     label="Выберите город"
                     placeholder="Выберите город"
+                    isInvalid={errors.cityid}
+                    errorMessage={errors.cityid}
                     selectedKeys={new Set([formData.cityid.toString()])}
                     className="w-full"
-                    onSelectionChange={handleSelectChange}
+                    onSelectionChange={(e)=>handleSelectChange(e, 'cityid')}
+
                 >
                     {city.map(el => (
                         <SelectItem key={el.id} value={el.id.toString()}>
@@ -155,6 +191,7 @@ const AdminPlace = () => {
                     name='url'
                     fn={handleInputChange}
                     value={formData.url}
+                    error={errors.url}
                     label='Ссылка на достопримечательность:'
                 />
 
@@ -178,12 +215,6 @@ const AdminPlace = () => {
                     fn={handleInputChange}
                     value={formData.metadescription}
                     label='Metadescription:'
-                />
-                <CustomInput
-                    name='foto'
-                    fn={handleInputChange}
-                    value={formData.foto}
-                    label='Фото достопримечательности:'
                 />
             </div>
             <label className='text-white flex flex-col gap-3 w-full'>

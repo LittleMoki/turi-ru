@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import {
 	CreateHotel,
-	DeleteHotel,
+	DeleteHotel, DeleteHotelPhoto, DeleteHotelRooms,
 	EditHotel,
 	ShowAllHotels,
 	ShowHotel,
@@ -14,5 +14,7 @@ router.get('/', ShowAllHotels)
 router.get('/:id', ShowHotel)
 router.put('/:id', EditHotel)
 router.delete('/:id', DeleteHotel)
+router.delete('/:id/rooms', DeleteHotelRooms)
+router.delete('/:id/photo', DeleteHotelPhoto)
 
 export default router

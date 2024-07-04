@@ -31,7 +31,11 @@ export const FAQDelete = async (req, res) => {
 // Show all FAQ
 
 export const FAQShowAll = async (req, res) => {
-	const FAQ = await prisma.t_faq.findMany({})
+	const FAQ = await prisma.t_faq.findMany({
+		include:{
+			tour_faqs:true
+		}
+	})
 
 	if (!FAQ) return res.json({ status: 400, message: 'We did not find any FAQ' })
 
