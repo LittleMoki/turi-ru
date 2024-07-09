@@ -45,7 +45,7 @@ const SideBar = () => {
         {
             icon: 'nav-icon fas fa-landmark',
             title: 'Места',
-            link: '/admin/place',
+            link: '/admin/places',
         },
         {
             icon: 'nav-icon fas fa-hotel',

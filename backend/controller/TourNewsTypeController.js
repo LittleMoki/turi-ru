@@ -50,6 +50,7 @@ export const ShowAllNewsType = async (req, res) => {
 	return res.json({ status: 200, data: newsType })
 }
 
+
 // get by id news_type
 
 export const ShowNewsType = async (req, res) => {

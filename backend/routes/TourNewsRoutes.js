@@ -4,7 +4,7 @@ import {
 	DeleteNews,
 	EditNews,
 	ShowAllNews,
-	ShowNews,
+	ShowNews, ShowNewsUrl, ShowNewsUrlType,
 } from '../controller/TourNewsController.js'
 
 const router = Router()
@@ -12,6 +12,8 @@ const router = Router()
 router.post('/', CreateNews)
 router.get('/', ShowAllNews)
 router.get('/:id', ShowNews)
+router.get('/:url/urlType', ShowNewsUrlType)
+router.get('/:url/url', ShowNewsUrl)
 router.put('/:id', EditNews)
 router.delete('/:id', DeleteNews)
 

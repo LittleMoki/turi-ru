@@ -60,7 +60,7 @@ export default function AdminAbout() {
         const {name, value, type, checked} = e.target
         setFormData(prevState => ({
             ...prevState,
-            [name]: type === 'checkbox' ? (checked ? 1 : 0)  : value,
+            [name]: type === 'checkbox' ? (checked ? 1 : 0) : name == 'order_number' ? Number(value) : value,
         }))
     }
 
@@ -84,9 +84,9 @@ export default function AdminAbout() {
         }
     }
 
-    const aboutSchema= object({
-        order_number:number().typeError('Please enter only number'),
-        name:string().required('Please enter your name'),
+    const aboutSchema = object({
+        order_number: number().typeError('Please enter only number'),
+        name: string().required('Please enter your name'),
     })
 
     const handleImageChange = async (img) => {
@@ -103,7 +103,11 @@ export default function AdminAbout() {
                 'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
             }));
 
-            router.push(`/admin/${slug}/edit/${id}`);
+            if (id) {
+                router.push(`/admin/${slug}/edit/${id}`);
+            } else {
+                router.push(`/admin/${slug}/create`);
+            }
         } catch (error) {
             console.error('Ошибка загрузки изображения:', error);
         }

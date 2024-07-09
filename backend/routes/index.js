@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import {Router} from 'express'
 import MainTourRoutes from './MainTourRoutes.js'
 import TourAboutRoutes from './TourAboutRoutes.js'
 import TourBannerRoutes from './TourBannerRoutes.js'
@@ -18,6 +18,7 @@ import TourTypeRoutes from './TourTypeRoutes.js'
 import TourUsersRoutes from './TourUsersRoutes.js'
 import MainTourTeamRoutes from "./MainTourTeamRoutes.js";
 import TourOrderRoutes from "./TourOrderRoutes.js";
+import authRoutes from "./authRoutes.js";
 
 const router = Router()
 
@@ -26,7 +27,7 @@ router.use('/exchange', TourExchange)
 router.use('/faq', TourFAQRoutes)
 router.use('/page', TourPageRoutes)
 router.use('/hotel', TourHotelRoutes)
-router.use('/place', TourPlaceRoutes)
+router.use('/places', TourPlaceRoutes)
 router.use('/country', TourCountryRoutes)
 router.use('/city', TourCityRoutes)
 router.use('/tour', MainTourRoutes)
@@ -40,5 +41,6 @@ router.use('/orders', TourOrdersRoutes)
 router.use('/about', TourAboutRoutes)
 router.use('/tour_team', MainTourTeamRoutes)
 router.use('/orders', TourOrderRoutes)
+router.use('/auth', authRoutes)
 
 export default router

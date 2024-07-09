@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 
 export default function CustomEditor({ value, fn1, fn, name, id, index }) {
     const editorRef = useRef(null);
-
 
     const handleEditorChange = (content) => {
         if (fn) {
@@ -16,7 +15,7 @@ export default function CustomEditor({ value, fn1, fn, name, id, index }) {
     return (
         <Editor
             id={id}
-            apiKey='u190yql3pdvp1t1p1x3wziih00tj4p7vzfqcp1pd9lsnhfo4'
+            apiKey='h5u59b6hl9nnq3huylg895npokq52ukrs4xk633u4xcosjf5'
             onInit={(_evt, editor) => editorRef.current = editor}
             init={{
                 width: '100%',
@@ -34,17 +33,21 @@ export default function CustomEditor({ value, fn1, fn, name, id, index }) {
 
                     input.addEventListener('change', (e) => {
                         const file = e.target.files[0];
+                        if (!file) {
+                            return;
+                        }
                         const formData = new FormData();
                         formData.append('file', file);
 
                         fetch('http://localhost:4000/upload', {
                             method: 'POST',
-                            body: formData
+                            body: formData,
                         })
                             .then(response => response.json())
                             .then(data => {
                                 if (data && data.location) {
-                                    cb(data.location, { title: file.name });
+                                    const fullUrl = `http://localhost:4000/uploads/${data.location}`;
+                                    cb(fullUrl, { title: file.name });
                                 } else {
                                     console.error('Upload failed', data);
                                 }

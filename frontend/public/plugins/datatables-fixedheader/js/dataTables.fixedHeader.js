@@ -145,11 +145,11 @@ $.extend( FixedHeader.prototype, {
 		$(window).off( this.s.namespace );
 
 		if ( this.c.header ) {
-			this._modeChange( 'in-place', 'header', true );
+			this._modeChange( 'in-places', 'header', true );
 		}
 
 		if ( this.c.footer && this.dom.tfoot.length ) {
-			this._modeChange( 'in-place', 'footer', true );
+			this._modeChange( 'in-places', 'footer', true );
 		}
 	},
 
@@ -208,7 +208,7 @@ $.extend( FixedHeader.prototype, {
 
 	
 	/**
-	 * Recalculate the position of the fixed elements and force them into place
+	 * Recalculate the position of the fixed elements and force them into places
 	 */
 	update: function (force)
 	{
@@ -289,7 +289,7 @@ $.extend( FixedHeader.prototype, {
 	 */
 
 	/**
-	 * Clone a fixed item to act as a place holder for the original element
+	 * Clone a fixed item to act as a places holder for the original element
 	 * which is moved into a clone of the table element, and moved around the
 	 * document to give the fixed effect.
 	 *
@@ -504,7 +504,7 @@ $.extend( FixedHeader.prototype, {
 	 * Change from one display mode to another. Each fixed item can be in one
 	 * of:
 	 *
-	 * * `in-place` - In the main DataTable
+	 * * `in-places` - In the main DataTable
 	 * * `in` - Floating over the DataTable
 	 * * `below` - (Header only) Fixed to the bottom of the table body
 	 * * `above` - (Footer only) Fixed to the top of the table body
@@ -552,7 +552,7 @@ $.extend( FixedHeader.prototype, {
 			null;
 		var scrollBody = $($(this.s.dt.table().node()).parent());
 
-		if ( mode === 'in-place' ) {
+		if ( mode === 'in-places' ) {
 			// Insert the header back into the table's real header
 			if ( itemDom.placeholder ) {
 				itemDom.placeholder.remove();
@@ -745,12 +745,12 @@ $.extend( FixedHeader.prototype, {
 
 		if ( this.c.header ) {
 			if ( ! this.s.enable ) {
-				headerMode = 'in-place';
+				headerMode = 'in-places';
 			}
-			// The header is in it's normal place if the body top is lower than
+			// The header is in it's normal places if the body top is lower than
 			//  the scroll of the window plus the headerOffset and the height of the header
 			else if ( ! position.visible || windowTop + this.c.headerOffset + position.theadHeight <= bodyTop) {
-				headerMode = 'in-place';
+				headerMode = 'in-places';
 			}
 			// The header should be floated if
 			else if (
@@ -799,10 +799,10 @@ $.extend( FixedHeader.prototype, {
 
 		if ( this.c.footer && this.dom.tfoot.length ) {
 			if ( ! this.s.enable ) {
-				footerMode = 'in-place';
+				footerMode = 'in-places';
 			}
 			else if ( ! position.visible || position.tfootBottom + this.c.footerOffset <= windowBottom ) {
-				footerMode = 'in-place';
+				footerMode = 'in-places';
 			}
 			else if (
 				bodyBottom + position.tfootHeight + this.c.footerOffset > windowBottom &&

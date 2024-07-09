@@ -41,7 +41,11 @@ export const CreateCountry = async (req, res) => {
 }
 
 export const ShowAllCountries = async (req, res) => {
-	const countries = await prisma.t_country.findMany({})
+	const countries = await prisma.t_country.findMany({
+		include:{
+			tour_country:true
+		}
+	})
 
 	if (!countries)
 		return res.json({ status: 400, message: 'We did not find any countries' })
@@ -62,6 +66,17 @@ export const ShowCountry = async (req, res) => {
 		return res.json({ status: 400, message: 'We did not find this country' })
 
 	return res.json({ status: 200, data: findCountry })
+}
+
+export const ShowCountryUrl = async (req, res) => {
+	const { url } = req.params
+
+	const country = await prisma.t_country.findFirst({
+		where:{
+			url
+		}
+	})
+	res.json({status:200,data:country})
 }
 
 export const EditCountry = async (req, res) => {

@@ -87,7 +87,11 @@ const AdminCountry = () => {
                 'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
             }));
 
-            router.push(`/admin/${slug}/edit/${id}`);
+            if(id){
+                router.push(`/admin/${slug}/edit/${id}`);
+            }else {
+                router.push(`/admin/${slug}/create`);
+            }
         } catch (error) {
             console.error('Ошибка загрузки изображения:', error);
         }

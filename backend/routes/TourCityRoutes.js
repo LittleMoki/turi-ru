@@ -4,7 +4,7 @@ import {
 	DeleteCity,
 	EditCity,
 	ShowAllCities,
-	ShowCity,
+	ShowCity, ShowCityUrl,
 } from '../controller/TourCityController.js'
 
 const router = Router()
@@ -12,6 +12,7 @@ const router = Router()
 router.post('/', CreateCity)
 router.get('/', ShowAllCities)
 router.get('/:id', ShowCity)
+router.get('/:url/url', ShowCityUrl)
 router.put('/:id', EditCity)
 router.delete('/:id', DeleteCity)
 

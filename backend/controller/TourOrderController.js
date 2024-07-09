@@ -18,24 +18,26 @@ export const CreateOrder = async (req, res) => {
         tour_type,
     } = req.body;
 
-    const order = await prisma.t_orders.create({
-        data: {
-            user_id,
-            order_number,
-            travellers_count,
-            tour_date_start,
-            tour_date_end,
-            order_created,
-            order_updated,
-            price,
-            deposit,
-            balance,
-            total_price,
-            total_paid_price,
-            payment_type,
-            tour_type,
-        }
-    })
+    console.log(req.body);
+
+    // const order = await prisma.t_orders.create({
+    //     data: {
+    //         user_id,
+    //         order_number,
+    //         travellers_count,
+    //         tour_date_start,
+    //         tour_date_end,
+    //         order_created,
+    //         order_updated,
+    //         price,
+    //         deposit,
+    //         balance,
+    //         total_price,
+    //         total_paid_price,
+    //         payment_type,
+    //         tour_type,
+    //     }
+    // })
     return res.json({status: 200, data: order})
 }
 

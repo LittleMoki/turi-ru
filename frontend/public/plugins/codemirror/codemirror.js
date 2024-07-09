@@ -1364,7 +1364,7 @@
   }
 
   // Given a change object, compute the new set of marker spans that
-  // cover the line in which the change took place. Removes spans
+  // cover the line in which the change took places. Removes spans
   // entirely within the change, reconnects spans belonging to the
   // same marker that appear on both sides of the change, and cuts off
   // spans partially within the change. Returns an array of span
@@ -2808,7 +2808,7 @@
       sticky = ch == 0 ? "after" : ch == lineObj.text.length ? "before" :
         (measureCharPrepared(cm, preparedMeasure, ch - (ltr ? 1 : 0)).bottom + widgetHeight <= y) == ltr ?
         "after" : "before";
-      // Now get accurate coordinates for this place, in order to get a
+      // Now get accurate coordinates for this places, in order to get a
       // base X position
       var coords = cursorCoords(cm, Pos(lineNo, ch, sticky), "line", lineObj, preparedMeasure);
       baseX = coords.left;

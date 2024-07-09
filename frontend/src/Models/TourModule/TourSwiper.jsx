@@ -1,12 +1,13 @@
-import { Swiper, SwiperSlide } from "swiper/react";
+import {Swiper, SwiperSlide} from "swiper/react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
-import { FreeMode, Navigation, Thumbs } from "swiper/modules";
-import { useState } from "react";
+import {FreeMode, Navigation, Thumbs} from "swiper/modules";
+import {useState} from "react";
+import Image from "next/image";
 
-export const TourSwiper = ({ image }) => {
+export const TourSwiper = ({image, data}) => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     return (
         <div className='lg:max-w-[60%] max-w-full'>
@@ -18,13 +19,30 @@ export const TourSwiper = ({ image }) => {
                 loop={true}
                 spaceBetween={10}
                 navigation={true}
-                thumbs={{ swiper: thumbsSwiper }}
+                thumbs={{swiper: thumbsSwiper}}
                 modules={[FreeMode, Navigation, Thumbs]}
                 className="max-h-[400px] mb-3 rounded-xl"
             >
-                {image.map((el, i) => (
+                {data?.photo && (
+                    <SwiperSlide>
+                        <Image
+                            width={1000}
+                            height={1000}
+                            quality={100}
+                            src={`http://localhost:4000/uploads/${data?.photo}`}
+                            alt={data?.photo}
+                        />
+                    </SwiperSlide>
+                )}
+                {data?.tourphoto?.map((el, i) => (
                     <SwiperSlide key={i}>
-                        <img src={el.image} />
+                        <Image
+                            width={1000}
+                            height={1000}
+                            quality={100}
+                            src={`http://localhost:4000/uploads/${el?.photo}`}
+                            alt={el?.photo}
+                        />
                     </SwiperSlide>
                 ))}
             </Swiper>
@@ -38,17 +56,28 @@ export const TourSwiper = ({ image }) => {
                 modules={[FreeMode, Navigation, Thumbs]}
                 className="mySwiper"
             >
-                {image.length <= 1
-                    ? ""
-                    : image.map((el, i) => (
-                          <SwiperSlide key={i}>
-                              <img
-                                  className="rounded-xl cursor-pointer"
-                                  src={el.image}
-                                  key={i}
-                              />
-                          </SwiperSlide>
-                      ))}
+                {data?.tourphoto.length > 0 && (
+                    <SwiperSlide>
+                        <Image
+                            width={1000}
+                            height={1000}
+                            quality={100}
+                            src={`http://localhost:4000/uploads/${data?.photo}`}
+                            alt={data?.photo}
+                        />
+                    </SwiperSlide>
+                )}
+                {data?.tourphoto?.map((el, i) => (
+                    <SwiperSlide key={i}>
+                        <Image
+                            width={1000}
+                            height={1000}
+                            quality={100}
+                            src={`http://localhost:4000/uploads/${el?.photo}`}
+                            alt={el?.photo}
+                        />
+                    </SwiperSlide>
+                ))}
             </Swiper>
         </div>
     );

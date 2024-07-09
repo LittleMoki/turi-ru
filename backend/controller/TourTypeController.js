@@ -43,6 +43,14 @@ export const tourShowAll = async (req, res) => {
     const tours = await prisma.t_types.findMany({
         include: {
             tour_type: true,
+            t_tour: {
+                include:{
+                    type:true,
+                    tourtoday:true,
+                    tour_country:true,
+                    tour_city:true,
+                }
+            },
         },
     })
 
@@ -59,6 +67,32 @@ export const tourShow = async (req, res) => {
     })
 
     return res.json({status: 200, data: tours})
+}
+
+export const tourTypeShowUrl = async (req, res) => {
+    const {url} = req.params
+
+    const tourType = await prisma.t_types.findFirst({
+        where:{
+            url
+        },
+        include:{
+            t_tour: {
+                include:{
+                    type:true,
+                    tourtoday:true,
+                    tour_country:{
+                        select:{
+                            country:true
+                        }
+                    },
+                }
+            }
+        }
+    })
+    if(!tourType) return res.json({status: 404, message: 'No tour'})
+
+    return res.json({status: 200, data: tourType})
 }
 
 export const tourEdit = async (req, res) => {

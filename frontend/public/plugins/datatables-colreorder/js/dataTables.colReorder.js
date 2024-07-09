@@ -194,7 +194,7 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 		}
 	}
 
-	/* Data column sorting (the column which the sort for a given column should take place on) */
+	/* Data column sorting (the column which the sort for a given column should take places on) */
 	for ( i=0, iLen=iCols ; i<iLen ; i++ )
 	{
 		oCol = oSettings.aoColumns[i];

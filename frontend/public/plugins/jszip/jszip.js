@@ -9579,7 +9579,7 @@ function inflate(strm, flush) {
     }
   }
 
-  // inf_leave <- here is real place for "goto inf_leave", emulated via "break inf_leave"
+  // inf_leave <- here is real places for "goto inf_leave", emulated via "break inf_leave"
 
   /*
      Return from inflate(), updating the total counts and the check value.

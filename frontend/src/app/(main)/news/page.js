@@ -1,43 +1,22 @@
+'use client'
 import { Articles } from '@/Models/MainModules'
+import {useQuery} from "@tanstack/react-query";
+import {api} from "@/Api/api.js";
 
 const NewsPage = () => {
-	const cards = [
-		{
-			img: 'https://turi-uzbekistana.ru/images/news/202309251428152727.jpg',
-			country: 'Узбекистан',
-			date: '23 марта 2024',
-			views: '3121',
-			title:
-				'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-			description:
-				'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-		},
-		{
-			img: 'https://turi-uzbekistana.ru/images/news/202309251428152727.jpg',
-			country: 'Узбекистан',
-			date: '23 марта 2024',
-			views: '3121',
-			title:
-				'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-			description:
-				'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-		},
-		{
-			img: 'https://turi-uzbekistana.ru/images/news/202309251428152727.jpg',
-			country: 'Узбекистан',
-			date: '23 марта 2024',
-			views: '3121',
-			title:
-				'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-			description:
-				'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-		},
-	]
+	const {data: newsData} = useQuery({
+		queryKey: ['news'],
+		queryFn: () => api.get(`/news/news/urlType`),
+		select: data => data.data.data
+	});
+	const title = newsData?.map(el=>el.type.title).pop()
+	const news = newsData?.filter(el=>el.publick !== 0)
+
 	return (
 		<Articles
-			title={'Новости Узбекистана'}
+			title={title}
 			btnName={'Все новости'}
-			cards={cards}
+			cards={news}
 		/>
 	)
 }

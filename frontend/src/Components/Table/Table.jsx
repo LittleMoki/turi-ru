@@ -51,7 +51,7 @@ const AdminTable = ({ handleDelete, dataItems, loading, params }) => {
 		case 'tour_type':
 		case 'country':
 		case 'city':
-		case 'place':
+		case 'places':
 		case 'hotel':
 		case 'faq':
 		case 'team':

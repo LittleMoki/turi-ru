@@ -33550,7 +33550,7 @@ function inflate(strm, flush) {
     }
   }
 
-  // inf_leave <- here is real place for "goto inf_leave", emulated via "break inf_leave"
+  // inf_leave <- here is real places for "goto inf_leave", emulated via "break inf_leave"
 
   /*
      Return from inflate(), updating the total counts and the check value.
@@ -50386,7 +50386,7 @@ var runtime = (function (exports) {
 
   function Context(tryLocsList) {
     // The root entry object (effectively a try statement without a catch
-    // or a finally block) gives us a place to store values thrown from
+    // or a finally block) gives us a places to store values thrown from
     // locations where there is no enclosing try statement.
     this.tryEntries = [{ tryLoc: "root" }];
     tryLocsList.forEach(pushTryEntry, this);
@@ -65521,7 +65521,7 @@ function reorder(font, glyphs) {
 
         if (isBase(info) || isHalant(glyphs[i])) {
           // If we hit a halant, move before it; otherwise it's a base: move to it's
-          // place, and shift things in between backward.
+          // places, and shift things in between backward.
           if (isHalant(glyphs[i])) {
             i--;
           }
@@ -65538,7 +65538,7 @@ function reorder(font, glyphs) {
 
       if (isBase(info) || isHalant(glyphs[i])) {
         // If we hit a halant, move after it; otherwise it's a base: move to it's
-        // place, and shift things in between backward.
+        // places, and shift things in between backward.
         j = isHalant(glyphs[i]) ? i + 1 : i;
       } else if ((info.category === 'VPre' || info.category === 'VMPre') && j < i) {
         glyphs.splice.apply(glyphs, [j, 1, glyphs[i]].concat(glyphs.splice(j, i - j)));

@@ -9,7 +9,7 @@ const CustomInput = ({
                          description,
                          placeholder = '',
                          white = true,
-    error
+                         error,
                      }) => {
     return (
         <Input

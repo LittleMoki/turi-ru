@@ -4,6 +4,7 @@ import {usePathname} from 'next/navigation'
 import {useEffect} from 'react'
 import './globals.css'
 import Script from "next/script";
+import {ReactQueryProvider} from "@/Providers/ReactQuery.js";
 // import getConfig from 'next/config';
 //
 // const {publicRuntimeConfig} = getConfig();
@@ -44,7 +45,9 @@ export default function RootLayout({children}) {
         <body
             className={`${montserrat.className} ${pathname.startsWith('/admin') ? "sidebar-mini layout-fixed layout-navbar-fixed sidebar-collapse wrapper" : ''}`}
         >
-        {children}
+        <ReactQueryProvider>
+            {children}
+        </ReactQueryProvider>
         <Script src="https://kit.fontawesome.com/01bb16bf2a.js" crossOrigin="anonymous"/>
         <script
             src='https://code.jquery.com/jquery-3.6.0.min.js'

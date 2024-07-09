@@ -12808,7 +12808,7 @@ var FullCalendar = (function (exports) {
             var eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt);
             var limitViaBalanced = dayMaxEvents === true || dayMaxEventRows === true;
             // if rows can't expand to fill fixed height, can't do balanced-height event limit
-            // TODO: best place to normalize these options?
+            // TODO: best places to normalize these options?
             if (limitViaBalanced && !expandRows) {
                 limitViaBalanced = false;
                 dayMaxEventRows = null;

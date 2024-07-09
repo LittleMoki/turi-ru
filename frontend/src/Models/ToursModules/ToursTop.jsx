@@ -1,61 +1,57 @@
-import { Container } from "@/Components";
+import {Container} from "@/Components";
+import banner from '/public/banner.jpg'
+import Link from "next/link";
+import {useState} from "react";
 
-export const ToursTop = ({ title }) => {
+
+export const ToursTop = ({tourType, tourTypeUrl, TourTypeBase, setFilterByDay}) => {
+
+    const [selected, setSelected] = useState(3);
+
+    const selectTourFilterDay = (id) => {
+        if (id !== selected) {
+            setSelected(id);
+        }
+    }
+
     return (
-        <section className="bg-[#F0FDF4]">
+        <section
+            style={{
+                background: `url('${tourType === undefined ? banner.src : `http://localhost:4000/uploads/${tourTypeUrl?.photo}`}'), no-repeat`,
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'cover',
+                backgroundPosition: ' center center',
+            }}
+            className="bg-[#F0FDF4] py-3 flex items-center min-h-[400px] relative after:absolute z-[1] after:z-[-1] after:top-0 after:left-0 after:w-full after:bg-black/40 after:h-full">
             <Container>
-                <div className="md:flex-row flex-col gap-10 flex justify-between items-center py-10">
-                    <h1 className="text-4xl w-full">{title}</h1>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div className="flex flex-col gap-4">
-                            <div className="flex gap-3 items-center">
-                                <div className="flex justify-center items-center rounded-xl text-lg bg-[#BBF7D0] min-w-[48px] min-h-[48px]">
-                                    1
-                                </div>
-                                <div className="w-full h-1 bg-[#BBF7D0]"></div>
-                            </div>
-                            <div>
-                                <h2>Выберите тур</h2>
-                                <small className="text-xs">
-                                    Авторские туры - неизведанные маршруты и
-                                    уникальные приключения от настоящих жителей
-                                    всех станов любящих свою страну.
-                                </small>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-4">
-                            <div className="flex gap-3 items-center">
-                                <div className="flex justify-center items-center rounded-xl text-lg bg-[#BBF7D0] min-w-[48px] min-h-[48px]">
-                                    2
-                                </div>
-                                <div className="w-full h-1 bg-[#BBF7D0]"></div>
-                            </div>
-                            <div>
-                                <h2>Уточните все детали</h2>
-                                <small className="text-xs">
-                                    Расспросите обо всем важном от менеджеров и
-                                    авторов туров напрямую. Доступны онлайн.
-                                </small>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-4">
-                            <div className="flex gap-3 items-center">
-                                <div className="flex justify-center items-center rounded-xl text-lg bg-[#BBF7D0] min-w-[48px] min-h-[48px]">
-                                    3
-                                </div>
-                                <div className="w-full h-1 bg-[#BBF7D0]"></div>
-                            </div>
-                            <div>
-                                <h2>Забронируйте место</h2>
-                                <small className="text-xs">
-                                    Мы гарантируем лучшее качество, безопасность
-                                    платежей и гибкую политику отмен, с услугой
-                                    “Несгораемый депозит“.
-                                </small>
-                            </div>
-                        </div>
-                    </div>
+                <h1 className='text-white font-bold sm:text-4xl text-2xl'>{tourTypeUrl?.name}</h1>
+                <div
+                    className='p-[15px] mt-[40px] mb-[20px] grid max-[500px]:grid-cols-1 grid-cols-3 bg-white/20 backdrop-blur-md rounded-md max-w-[500px]'>
+                    <button
+                        onClick={() => setFilterByDay(4) || selectTourFilterDay(1)}
+                        className={`${selected === 1 ? 'bg-white text-black' : 'text-white'} border hover:bg-white hover:text-black transition grid max-[500px]:rounded-l-none rounded-l-lg p-[12px]`}>
+                        Многодневные
+                    </button>
+                    <button
+                        onClick={() => setFilterByDay(2) || selectTourFilterDay(4)}
+                        className={`${selected === 2 ? 'bg-white text-black' : 'text-white'} border hover:bg-white hover:text-black transition  p-[12px]`}>
+                        Короткие
+                    </button>
+                    <button
+                        onClick={() => setFilterByDay(1) || selectTourFilterDay(5)}
+                        className={`${selected === 3 ? 'bg-white text-black' : 'text-white'} border hover:bg-white hover:text-black transition max-[500px]:rounded-r-none rounded-r-lg p-[12px]`}>
+                        Однодневные
+                    </button>
                 </div>
+                {!tourType && <div className='flex flex-wrap items-center gap-[10px] w-full'>
+                    {TourTypeBase?.map(el => (
+                        <Link href={`/tour/${el.url}`}
+                              className='border rounded-lg hover:bg-white hover:text-black transition text-white backdrop-blur-md bg-white/20 p-[5px] text-sm cursor-pointer'>
+                            {el.name}
+                        </Link>
+                    ))}
+                </div>
+                }
             </Container>
         </section>
     );

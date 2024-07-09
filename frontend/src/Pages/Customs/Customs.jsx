@@ -1,5 +1,8 @@
+'use client'
 import { ArticleCard, Container } from '@/Components'
 import { MdKeyboardArrowRight } from 'react-icons/md'
+import {useQuery} from "@tanstack/react-query";
+import {api} from "@/Api/api.js";
 
 const Customs = () => {
 	const imagePath = encodeURIComponent(
@@ -27,6 +30,12 @@ const Customs = () => {
 				'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
 		},
 	]
+	const {data} = useQuery({
+		queryKey: ['customsNews'],
+		queryFn: () => api.get(`/news/customs/urlType`),
+		select: data => data.data.data
+	});
+	const customs = data?.filter(el=>el.publick !== 0)
 	return (
 		<section className='py-8'>
 			<Container>
@@ -41,7 +50,7 @@ const Customs = () => {
 					Таможенные правила для туристов которые едут в Узбекистан
 				</h1>
 				<div className='grid grid-cols-1 sm:grid-cols-2 lg:gap-52 gap-10'>
-					{cards.map((el, i) => (
+					{customs?.map((el, i) => (
 						<ArticleCard {...el} key={i} />
 					))}
 				</div>

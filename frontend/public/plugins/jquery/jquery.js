@@ -146,7 +146,7 @@ function toType( obj ) {
 }
 /* global Symbol */
 // Defining this global in .eslintrc.json would create a danger of using the global
-// unguarded in another place, it seems safer to define global only for this module
+// unguarded in another places, it seems safer to define global only for this module
 
 
 
@@ -2944,7 +2944,7 @@ if ( !assert( function( el ) {
 }
 
 // Support: IE<9
-// Use defaultValue in place of getAttribute("value")
+// Use defaultValue in places of getAttribute("value")
 if ( !support.attributes || !assert( function( el ) {
 	el.innerHTML = "<input/>";
 	el.firstChild.setAttribute( "value", "" );

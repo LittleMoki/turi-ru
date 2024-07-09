@@ -5540,8 +5540,8 @@
                  * @param force True if every property shall be updated and the cache shall be ignored.
                  * !INTERNAL USAGE! : force can be a string "auto", "sync" or "zoom" too
                  * if "auto" then before a real update the content size and host element attributes gets checked, and if they changed only then the update method will be called.
-                 * if "sync" then the async update process (MutationObserver or UpdateLoop) gets synchronized and a corresponding update takes place if one was needed due to pending changes.
-                 * if "zoom" then a update takes place where it's assumed that content and host size changed
+                 * if "sync" then the async update process (MutationObserver or UpdateLoop) gets synchronized and a corresponding update takes places if one was needed due to pending changes.
+                 * if "zoom" then a update takes places where it's assumed that content and host size changed
                  * @returns {boolean|undefined} 
                  * If force is "sync" then a boolean is returned which indicates whether a update was needed due to pending changes.
                  * If force is "auto" then a boolean is returned whether a update was needed due to attribute or size changes.

@@ -1,18 +1,22 @@
 import { Container } from "@/Components";
-import {
-    FaBed,
-    FaCameraRetro,
-    FaCar,
-    FaHandshake,
-    FaInfoCircle,
-    FaMoneyBillWave,
-    FaPlane,
-    FaTrain,
-    FaUser,
-    FaWineGlassAlt,
-} from "react-icons/fa";
-import { FaTicket } from "react-icons/fa6";
-export const TourInclude = () => {
+import {useQuery} from "@tanstack/react-query";
+import {api} from "@/Api/api.js";
+
+export const TourInclude = (props) => {
+    const {data, isLoading, error} = useQuery({
+        queryKey: ['services'],
+        queryFn: () => api.get(`/services`),
+        select: data => data.data.data
+    });
+
+    const include = data?.filter(service =>
+        props?.data?.include.includes(service.id) && service.type_id === 1
+    );
+
+
+    const exclude = data?.filter(service =>
+        props?.data?.exclude.includes(service.id) && service.type_id === 3
+    );
     return (
         <section>
             <Container>
@@ -22,40 +26,12 @@ export const TourInclude = () => {
                             Включено
                         </h3>
                         <ul className="flex flex-col gap-1">
-                            <li className="flex items-start gap-2">
-                                <FaTicket className="min-w-4 min-h-4" />
-                                Входные билеты в музеи, для посещения
-                                достопримечательностей, памятников
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaUser className="min-w-4 min-h-4" />
-                                Гид - экскурсовод (Сертифицированные)
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaCar className="min-w-4 min-h-4" />
-                                Транспорт во время экскурсий
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaTrain className="min-w-4 min-h-4" />
-                                ЖД билеты эконом класса
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaBed className="min-w-4 min-h-4" />
-                                Размещение в 3* отелях (согласно программе)+
-                                Завтраки
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaHandshake className="min-w-4 min-h-4" />
-                                Встречи и проводы в аэропорт
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaMoneyBillWave className="min-w-4 min-h-4" />
-                                Тур Сбор в отеле
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaWineGlassAlt className="min-w-4 min-h-4" />
-                                Питьевая вода (2 по 0,5 литр на 1 чел в день)
-                            </li>
+                            {include?.map((el, i) => (
+                                <div className='flex gap-2 items-center' key={i}>
+                                    <li key={i} className={`${el.icon}`}/>
+                                    {el.title}
+                                </div>
+                            ))}
                         </ul>
                     </div>
                     <div className="bg-white p-5 rounded-xl shadow-lg">
@@ -63,22 +39,12 @@ export const TourInclude = () => {
                             Дополнительно
                         </h3>
                         <ul className="flex flex-col gap-1">
-                            <li className="flex items-start gap-2">
-                                <FaPlane className="min-w-4 min-h-4" />
-                                Международные перелеты в Узбекистан и обратно
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaInfoCircle className="min-w-4 min-h-4" />
-                                Дополнительные услуги в отелях
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaMoneyBillWave className="min-w-4 min-h-4" />
-                                Чаевые для гида и водителей
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <FaCameraRetro className="min-w-4 min-h-4" />
-                                Дополнительный досуг
-                            </li>
+                            {exclude?.map((el, i) => (
+                                <div className='flex gap-2 items-center' key={i}>
+                                    <li key={i} className={`${el.icon}`}/>
+                                    {el.title}
+                                </div>
+                            ))}
                         </ul>
                     </div>
                 </div>

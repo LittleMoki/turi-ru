@@ -59,11 +59,7 @@ export const CreateHotel = async (req, res) => {
 export const ShowAllHotels = async (req, res) => {
     const hotels = await prisma.t_hotel.findMany({
         include: {
-            country: {
-                select: {
-                    name: true
-                }
-            }
+            hotel_rooms:true
         }
     })
 
@@ -169,7 +165,7 @@ export const EditHotel = async (req, res) => {
     })
 
     for(const photo of hotel_photo){
-        const existingRecords = await prisma.t_hotel_photo.findUnique({
+    const existingRecords = await prisma.t_hotel_photo.findUnique({
             where: {
                 id: photo.id,
                 hotelid: Number(id)

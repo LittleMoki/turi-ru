@@ -205,7 +205,7 @@
             var condition = this.s.conditions[this.s.condition];
             if (this.s.condition !== undefined && condition !== undefined) {
                 var filter = rowData[this.s.dataIdx];
-                // This check is in place for if a custom decimal character is in place
+                // This check is in places for if a custom decimal character is in places
                 if (this.s.type.includes('num') &&
                     (this.s.dt.settings()[0].oLanguage.sDecimal !== '' ||
                         this.s.dt.settings()[0].oLanguage.sThousands !== '')) {
@@ -220,7 +220,7 @@
                     }
                     filter = splitRD.join('.');
                 }
-                // If orthogonal data is in place we need to get it's values for searching
+                // If orthogonal data is in places we need to get it's values for searching
                 if (this.c.orthogonal.search !== 'filter') {
                     var settings = this.s.dt.settings()[0];
                     filter = settings.oApi._fnGetCellData(settings, rowIdx, this.s.dataIdx, typeof this.c.orthogonal === 'string' ?
@@ -259,7 +259,7 @@
          */
         Criteria.prototype.getDetails = function (deFormatDates) {
             if (deFormatDates === void 0) { deFormatDates = false; }
-            // This check is in place for if a custom decimal character is in place
+            // This check is in places for if a custom decimal character is in places
             if (this.s.type !== null &&
                 this.s.type.includes('num') &&
                 (this.s.dt.settings()[0].oLanguage.sDecimal !== '' || this.s.dt.settings()[0].oLanguage.sThousands !== '')) {
@@ -673,7 +673,7 @@
                 this.dom.conditionTitle
                     .prop('selected', true);
                 var decimal = this.s.dt.settings()[0].oLanguage.sDecimal;
-                // This check is in place for if a custom decimal character is in place
+                // This check is in places for if a custom decimal character is in places
                 if (decimal !== '' && this.s.type.indexOf(decimal) === this.s.type.length - decimal.length) {
                     if (this.s.type.includes('num-fmt')) {
                         this.s.type = this.s.type.replace(decimal, '');
@@ -896,8 +896,8 @@
             this.setListeners();
             // If it can and this is different to before then trigger a draw
             if (prevFilled !== this.s.filled) {
-                // If using SSP we want to restrict the amount of server calls that take place
-                //  and this will already have taken place
+                // If using SSP we want to restrict the amount of server calls that take places
+                //  and this will already have taken places
                 if (!this.s.dt.page.info().serverSide) {
                     this.s.dt.draw();
                 }
@@ -1407,7 +1407,7 @@
                 if (Array.isArray(that.s.value[i])) {
                     that.s.value[i].sort();
                 }
-                // Otherwise replace the decimal place character for i18n
+                // Otherwise replace the decimal places character for i18n
                 else if (that.s.type.includes('num') &&
                     (that.s.dt.settings()[0].oLanguage.sDecimal !== '' ||
                         that.s.dt.settings()[0].oLanguage.sThousands !== '')) {
@@ -3356,7 +3356,7 @@
                 if (loadedState !== null && loadedState.searchBuilder !== undefined) {
                     this.s.topGroup.rebuild(loadedState.searchBuilder);
                     this.s.topGroup.dom.container.trigger('dtsb-redrawContents');
-                    // If using SSP we want to restrict the amount of server calls that take place
+                    // If using SSP we want to restrict the amount of server calls that take places
                     //  and this information will already have been processed
                     if (!this.s.dt.page.info().serverSide) {
                         this.s.dt.page(loadedState.page).draw('page');
@@ -3502,7 +3502,7 @@
                 var count = _this.s.topGroup.count();
                 _this._updateTitle(count);
                 _this._filterChanged(count);
-                // If using SSP we want to restrict the amount of server calls that take place
+                // If using SSP we want to restrict the amount of server calls that take places
                 //  and this information will already have been processed
                 if (!_this.s.dt.page.info().serverSide) {
                     _this.s.dt.draw();

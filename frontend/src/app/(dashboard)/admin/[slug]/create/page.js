@@ -29,7 +29,7 @@ const Create = () => {
 			return <AdminCountry />
 		case 'city':
 			return <AdminCity />
-		case 'place':
+		case 'places':
 			return <AdminPlace />
 		case 'faq':
 			return <AdminFaq />

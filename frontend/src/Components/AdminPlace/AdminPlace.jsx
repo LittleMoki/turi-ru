@@ -38,7 +38,7 @@ const AdminPlace = () => {
                 setCountry(countryResponse.data.data)
 
                 if (id) {
-                    const {data} = await api.get(`/place/${id}`)
+                    const {data} = await api.get(`/places/${id}`)
                     const {
                         country_id,
                         cityid,
@@ -110,7 +110,11 @@ const AdminPlace = () => {
                 'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
             }));
 
-            router.push(`/admin/${slug}/edit/${id}`);
+            if(id){
+                router.push(`/admin/${slug}/edit/${id}`);
+            }else {
+                router.push(`/admin/${slug}/create`);
+            }
         } catch (error) {
             console.error('Ошибка загрузки изображения:', error);
         }
@@ -121,9 +125,9 @@ const AdminPlace = () => {
         try {
             await placeSchema.validate(formData,{abortEarly:false})
             if (id) {
-                await api.put(`/place/${id}`, formData)
+                await api.put(`/places/${id}`, formData)
             } else {
-                await api.post(`/place`, formData)
+                await api.post(`/places`, formData)
             }
             router.push(`/admin/${slug}`)
         } catch (error) {
@@ -140,10 +144,10 @@ const AdminPlace = () => {
     }
 
     const placeSchema = object({
-        name:string().required('Please enter name of place'),
+        name:string().required('Please enter name of places'),
         cityid:number().min(1,'Please choose a city'),
         country_id:number().min(1,'Please choose a country'),
-        url:string().required('Please enter url of place')
+        url:string().required('Please enter url of places')
     })
     return (
         <form className='grid md:grid-cols-3 gap-3'  onSubmit={handleSubmit}>
@@ -226,12 +230,12 @@ const AdminPlace = () => {
                     onChange={(e) => handleImageChange(e.target.files[0])}
                 />
                 Файл изображения должен быть в формате JPG или PNG
-                {formData.foto ? (
+                {formData.photo ? (
                     <Image
                         width={'500'}
                         height={'500'}
-                        alt={formData.foto}
-                        src={`http://localhost:4000/uploads/${formData.foto}`
+                        alt={formData.photo}
+                        src={`http://localhost:4000/uploads/${formData.photo}`
                         }
                     />
                 ) : ''}

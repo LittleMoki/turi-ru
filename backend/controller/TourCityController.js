@@ -57,7 +57,13 @@ export const CreateCity = async (req, res) => {
 export const ShowAllCities = async (req, res) => {
 	const cities = await prisma.t_city.findMany({
 		include: {
+			tourcity:true,
 			country: true,
+			_count:{
+				select:{
+					t_place:true
+				}
+			}
 		},
 	})
 
@@ -80,6 +86,16 @@ export const ShowCity = async (req, res) => {
 		return res.json({ status: 400, message: 'We did not find this city' })
 
 	return res.json({ status: 200, data: findCity })
+}
+
+export  const ShowCityUrl = async (req, res) => {
+	const { url } = req.params
+	const city = await prisma.t_city.findFirst({
+		where:{
+			url:url
+		}
+	})
+	res.status(200).json({ status: 200, data: city })
 }
 
 export const EditCity = async (req, res) => {

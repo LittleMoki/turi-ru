@@ -1,63 +1,58 @@
-import { Advantages } from '../../Models/MainModules/Advantages'
-import { Articles } from '../../Models/MainModules/Articles'
-import { HeroBlock } from '../../Models/MainModules/HeroBlock'
-import { PopularDestinations } from '../../Models/MainModules/PopularDestinations'
-import { RecomendedTours } from '../../Models/MainModules/RecomendedTours'
-import { Reviews } from '../../Models/MainModules/Reviews'
+'use client'
+import {Advantages} from '../../Models/MainModules/Advantages'
+import {Articles} from '../../Models/MainModules/Articles'
+import {HeroBlock} from '../../Models/MainModules/HeroBlock'
+import {PopularDestinations} from '../../Models/MainModules/PopularDestinations'
+import {RecomendedTours} from '../../Models/MainModules/RecomendedTours'
+import {Reviews} from '../../Models/MainModules/Reviews'
+import {useQuery} from "@tanstack/react-query";
+import {api} from "@/Api/api.js";
+import {Spinner} from "@nextui-org/react";
 
 const MainPage = () => {
-	const cards = [
-		{
-			img: 'https://turi-uzbekistana.ru/images/news/202309251428152727.jpg',
-			country: 'Узбекистан',
-			date: '23 марта 2024',
-			views: '3121',
-			title:
-				'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-			description:
-				'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-		},
-		{
-			img: 'https://turi-uzbekistana.ru/images/news/202309251428152727.jpg',
-			country: 'Узбекистан',
-			date: '23 марта 2024',
-			views: '3121',
-			title:
-				'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-			description:
-				'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-		},
-		{
-			img: 'https://turi-uzbekistana.ru/images/news/202309251428152727.jpg',
-			country: 'Узбекистан',
-			date: '23 марта 2024',
-			views: '3121',
-			title:
-				'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-			description:
-				'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-		},
-	]
-	return (
-		<>
-			<HeroBlock />
-			<Advantages />
-			<RecomendedTours />
-			<PopularDestinations />
-			<Reviews />
-			<Articles
-				title={'Новости Узбекистана'}
-				btnName={'Все новости'}
-				cards={cards}
-			/>
-			<Articles
-				title={'Популярные статьи'}
-				btnName={'Все статьи'}
-				cards={cards}
-				style={{ paddingBottom: '30px' }}
-			/>
-		</>
-	)
+    const {data: newsCards, isLoading: newsLoading} = useQuery({
+        queryKey: ['newsCards'],
+        queryFn: () => api.get(`/news/news/urlType`),
+        select: data => data.data.data
+    });
+    const {data: statiCards, isLoading: statiLoading} = useQuery({
+        queryKey: ['statiCards'],
+        queryFn: () => api.get(`/news/stati/urlType`),
+        select: data => data.data.data
+    });
+    const titleNews = newsCards?.map(el => el.type.title).pop()
+    const titleStati = statiCards?.map(el => el.type.title).pop()
+
+    return (
+        <>
+            <HeroBlock/>
+            <Advantages/>
+            <RecomendedTours/>
+            <PopularDestinations/>
+            <Reviews/>
+            {newsLoading ?
+                <div className='w-full h-[30vh] flex justify-center items-center'><Spinner size="lg"/></div> :
+                <Articles
+                    title={titleNews}
+                    btnName={'Все новости'}
+                    btnLink='/news'
+                    isBtn={true}
+                    cards={newsCards}
+                />}
+
+            {statiLoading ? <div className='w-full h-[30vh] flex justify-center items-center'><Spinner size="lg"/></div>
+                :
+                <Articles
+                    title={titleStati}
+                    btnName={'Все статьи'}
+                    btnLink='/stati'
+                    isBtn={true}
+                    cards={statiCards}
+                    style={{paddingBottom: '30px'}}
+                />}
+
+        </>
+    )
 }
 
 export default MainPage

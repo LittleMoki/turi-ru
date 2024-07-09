@@ -1,6 +1,7 @@
 
 import { TimurAlimovFixedBg } from '../../Models/TripModule/TimurAlimovFixedBg'
 import { TripForm } from '../../Models/TripModule/TripForm'
+import bg from '/public/bg.jpg'
 
 const Trip = () => {
 	const texts = [
@@ -50,9 +51,13 @@ const Trip = () => {
 				'Да! Только, пожалуйста, расскажите о цели вашего запроса. Может, вы строите планы на выходные? Или сравниваете цены с аналогичными компаниями? А может, просто ищите идеи для будущих поездок? В любом случае будем рады оказаться полезными! Отправляйте заявку, и в течение 24 часов мы ответим вам и подберем один из наших туров. Создавайте путешествие мечты с Minzifa Travel!',
 		},
 	]
-
 	return (
-		<section className='w-full  trip'>
+		<section
+			style={{
+				background:`linear-gradient(rgb(0 0 0 / 70%), rgb(0 0 0 / 30%)),
+				url('${bg.src}')`
+			}}
+			className='w-full  trip'>
 			<div className='container max-w-[1000px] mx-auto px-3 '>
 				<div className='text-center px-3 text-white'>
 					<h2 className='text-3xl'>

@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {useParams, usePathname, useRouter} from "next/navigation";
+import {today, getLocalTimeZone} from "@internationalized/date";
 import {api} from "@/Api/api.js";
+import {format} from 'date-fns';
 import {
     Card,
     CardBody,
@@ -9,13 +11,18 @@ import {
     Tabs,
     Tab,
     Select,
-    SelectItem, Input, Textarea, AccordionItem, Accordion,
+    SelectItem,
+    Textarea,
+    AccordionItem,
+    Accordion,
+    RangeCalendar,
 } from "@nextui-org/react";
 import CustomInput from "@/UI/CustomInput.jsx";
 import CustomButton from "@/UI/CustomButton.jsx";
 import CustomEditor from "@/UI/CustomEditor.jsx";
 import Image from "next/image";
 import {number, object, string} from "yup";
+import {ru} from "date-fns/locale";
 
 const AdminMainTour = () => {
 
@@ -67,7 +74,8 @@ const AdminMainTour = () => {
         tourtoday: [],
         tour_faqs: [],
         faqIds: [],
-        tourphoto: []
+        tourphoto: [],
+        tour_day_price: []
     });
     const [errors, setErrors] = useState({});
 
@@ -128,7 +136,8 @@ const AdminMainTour = () => {
                         city,
                         tourtoday,
                         tour_faqs,
-                        tourphoto
+                        tourphoto,
+                        tour_day_price
                     } = data.data;
 
                     setFormData({
@@ -170,7 +179,8 @@ const AdminMainTour = () => {
                         tourtoday: tourtoday || [],
                         tour_faqs: dataFaq.data.data || tour_faqs,
                         faqIds: (data.data.tour_faqs || []).map(faq => faq.faqid),
-                        tourphoto: tourphoto || []
+                        tourphoto: tourphoto || [],
+                        tour_day_price: tour_day_price || []
                     });
                 }
             } catch (error) {
@@ -185,7 +195,7 @@ const AdminMainTour = () => {
     const handleInputChange = (name, value) => {
         setFormData((prevState) => ({
             ...prevState,
-            [name]: name === 'typeId' || name === 'teamId' ? Number(value) : value,
+            [name]: name === 'typeId' || name === 'teamId' || name === 'price' || name === 'oldPrice' || name === 'single_price' ? Number(value) : value,
         }));
     };
 
@@ -207,8 +217,7 @@ const AdminMainTour = () => {
 
             // Обновляем состояние с новым именем файла
             setFormData((prevState) => ({
-                ...prevState,
-                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+                ...prevState, 'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
             }));
 
             router.push(`/admin/${slug}/edit/${id}`);
@@ -222,8 +231,10 @@ const AdminMainTour = () => {
         if (e !== undefined) e.preventDefault();
         try {
             if (id) {
+                await tourDayPriceSchema.validate(tourDayPrice, {abortEarly: false})
+
                 await tourSchemaPut.validate(formData, {abortEarly: false});
-                await api.put(`/tour/${id}`, formData);
+                await api.put(`/tour/${id}`, {...formData, tour_day_price: [tourDayPrice]});
                 router.push(`/admin/${slug}`);
             } else {
                 await tourSchemaPost.validate(formData, {abortEarly: false});
@@ -240,6 +251,7 @@ const AdminMainTour = () => {
             if (error?.response?.data?.message) {
                 newErrors['url'] = error?.response?.data?.message;
             }
+            setTourDayPriceError(newErrors);
             setErrors(newErrors);
         }
     };
@@ -251,44 +263,30 @@ const AdminMainTour = () => {
     const [cityFilter, setCityFilter] = useState('')
     const [hotelFilter, setHotelFilter] = useState('')
 
-    const filteredHotels = hotel.filter(
-        (el) => el.name.toLowerCase().includes(hotelFilter.toLowerCase())
-    );
+    const filteredHotels = hotel.filter((el) => el.name.toLowerCase().includes(hotelFilter.toLowerCase()));
 
-    const filteredIncludeServices = services.filter(
-        (el) => el.type_id == 1 && el.title.toLowerCase().includes(includeFilter.toLowerCase())
-    );
+    const filteredIncludeServices = services.filter((el) => el.type_id == 1 && el.title.toLowerCase().includes(includeFilter.toLowerCase()));
 
-    const filteredExcludeServices = services.filter(
-        (el) => el.type_id == 3 && el.title.toLowerCase().includes(excludeFilter.toLowerCase())
-    );
+    const filteredExcludeServices = services.filter((el) => el.type_id == 3 && el.title.toLowerCase().includes(excludeFilter.toLowerCase()));
 
-    const filteredCountry = country.filter(
-        el => el.name.toLowerCase().includes(countryFilter.toLowerCase())
-    )
+    const filteredCountry = country.filter(el => el.name.toLowerCase().includes(countryFilter.toLowerCase()))
 
-    const filteredCity = city.filter(
-        el => el.name.toLowerCase().includes(cityFilter.toLowerCase())
-    )
+    const filteredCity = city.filter(el => el.name.toLowerCase().includes(cityFilter.toLowerCase()))
 
     // Состояние для хранения списка элементов аккордеона
 
     const addItem = () => {
         setFormData((prevState) => ({
-            ...prevState,
-            tourtoday: [
-                ...prevState.tourtoday,
-                {
-                    id: formData.tourtoday.length + 1,
-                    tourid: Number(id),
-                    name: '',
-                    body: '',
-                    breakfast: false,
-                    lunch: false,
-                    dinner: false,
-                    hotels: null
-                }
-            ]
+            ...prevState, tourtoday: [...prevState.tourtoday, {
+                id: formData.tourtoday.length + 1,
+                tourid: Number(id),
+                name: '',
+                body: '',
+                breakfast: false,
+                lunch: false,
+                dinner: false,
+                hotels: null
+            }]
         }));
 
     };
@@ -297,8 +295,7 @@ const AdminMainTour = () => {
         try {
             await api.delete(`/tour/${id}/tourtoday`); // Удаление элемента на сервере
             setFormData((prevState) => ({
-                ...prevState,
-                tourtoday: prevState.tourtoday.filter(item => item.id !== id)
+                ...prevState, tourtoday: prevState.tourtoday.filter(item => item.id !== id)
             }));
         } catch (error) {
             console.error(error.message);
@@ -309,8 +306,27 @@ const AdminMainTour = () => {
         const tourFaqId = faqId.filter(el => el.faqid === id).map(el => el.id)
 
         if (!isFaq && tourFaqId[0] !== undefined) {
-            console.log(tourFaqId[0]);
             await api.delete(`/tour/${tourFaqId[0]}/faq`);
+        } // Удаление элемента на сервере
+    }
+
+    const removeTourCountry = async (isCountry, countryId) => {
+        // Получаем массив id из всех объектов
+        const countryIds = countryId.map(el => el['id']);
+        // Если не страна и countryIds не пустой
+        if (!isCountry && countryIds.length > 0) {
+            for (const countryId of countryIds) {
+                await api.delete(`/tour/${countryId}/country`);
+            }
+        }
+    }
+
+    const removeTourCity = async (isCity, cityId, id) => {
+        const tourCityId = cityId.filter(el => el.cityid === id).map(el => el.id)
+
+
+        if (!isCity && tourCityId[0] !== undefined) {
+            await api.delete(`/tour/${tourCityId[0]}/city`);
         } // Удаление элемента на сервере
     }
 
@@ -350,14 +366,11 @@ const AdminMainTour = () => {
             const uploadedPhotos = response.data.locations; // Получаем массив URL загруженных файлов
 
             const newPhotos = uploadedPhotos.map((location, i) => ({
-                id: i,
-                tourid: Number(id),
-                photo: location
+                id: i, tourid: Number(id), photo: location
             }));
 
             setFormData(prevState => ({
-                ...prevState,
-                tourphoto: [...prevState.tourphoto, ...newPhotos]
+                ...prevState, tourphoto: [...prevState.tourphoto, ...newPhotos]
             }));
 
             if (id) {
@@ -375,626 +388,705 @@ const AdminMainTour = () => {
         await api.delete(`/uploads/${file}`);
         await api.delete(`tour/${id}/images`);
         setFormData((prevState) => ({
-            ...prevState,
-            tourphoto: prevState.tourphoto.filter(item => item.id !== id)
+            ...prevState, tourphoto: prevState.tourphoto.filter(item => item.id !== id)
         }));
     }
 
-    return (
-        <>
-            {pathName.startsWith('/admin/tour/create') ? (
-                <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-                    <CustomInput
-                        name='main_title'
-                        value={formData.main_title || ''}
-                        fn={(e) => handleInputChange('main_title', e.target.value)}
-                        label='Заголовок H1:'
-                        white='true'
-                        error={errors.main_title}
-                    />
-                    <Select
-                        name='typeId'
-                        label="Тип тура :"
-                        className="w-full"
-                        isInvalid={errors.typeId}
-                        errorMessage={errors.typeId}
-                        selectedKeys={new Set([formData.typeId.toString()])}
-                        onSelectionChange={(keys) => handleInputChange('typeId', keys.values().next().value)}
-                    >
-                        {type.map((el) => (
-                            <SelectItem key={el.id} value={el.id.toString()}>
-                                {el.name}
-                            </SelectItem>
-                        ))}
-                    </Select>
-                    <Select
-                        label="Команда:"
-                        className="w-full"
-                        isInvalid={errors.teamId}
-                        errorMessage={errors.teamId}
-                        selectedKeys={new Set([formData.teamId.toString()])}
-                        onSelectionChange={(keys) => handleInputChange('teamId', keys.values().next().value)}
-                    >
-                        {team.map((el) => (
-                            <SelectItem key={el.id} value={el.id.toString()}>
-                                {el.name}
-                            </SelectItem>
-                        ))}
-                    </Select>
+    const filteredTourTypesCountry = type?.filter(tourType => country?.some(country => country.url === tourType.url));
 
-                    <CustomButton type='submit'>Save</CustomButton>
+    const seasons = ['winter', 'summer', 'spring', 'autumn', 'all_season'];
 
-                </form>
-            ) : (
-                <div className='flex w-full dark flex-col'>
-                    <Tabs aria-label='Options'>
-                        <Tab key='settings' title='Общие настройки'>
-                            <Card>
-                                <CardBody>
-                                    <form className='flex flex-col gap-3 items-start' onSubmit={handleSubmit}>
-                                        <CustomInput
-                                            name='main_title'
-                                            value={formData.main_title || ''}
-                                            fn={(e) => handleInputChange('main_title', e.target.value)}
-                                            label='Заголовок H1:'
-                                            white='true'
-                                            error={errors.main_title}
-                                        />
-                                        <CustomInput
-                                            name='name2'
-                                            value={formData.name2 || ''}
-                                            fn={(e) => handleInputChange('name2', e.target.value)}
-                                            label='Заголовок H2:'
-                                            white='true'
-                                            error={errors.name2}
-                                        />
-
-                                        <CustomInput
-                                            name='name'
-                                            value={formData.name || ''}
-                                            fn={(e) => handleInputChange('name', e.target.value)}
-                                            label='Title:'
-                                            white='true'
-                                            error={errors.name}
-                                        />
-
-                                        <CustomInput
-                                            name='metakeywords'
-                                            value={formData.metakeywords || ''}
-                                            fn={(e) => handleInputChange('metakeywords', e.target.value)}
-                                            label='Metakeywords:'
-                                            white='true'
-                                            error={errors.metakeywords}
-                                        />
+    const filteredTourTypesSeason = type?.filter(tourType => {
+        // Проверяем, содержит ли URL какой-либо из сезонов
+        return seasons.some(season => tourType.url.includes(season));
+    });
+    const excludedTypes = new Set([...filteredTourTypesCountry.map(type => type.id), ...filteredTourTypesSeason.map(type => type.id)]);
+    const TourTypeBase = type.filter(el => !excludedTypes.has(el.id))
 
 
-                                        <CustomInput
-                                            name='metadescription'
-                                            value={formData.metadescription || ''}
-                                            fn={(e) => handleInputChange('metadescription', e.target.value)}
-                                            label='Metadescription:'
-                                            white='true'
-                                            error={errors.metadescription}
-                                        />
+    const tourDayPriceSchema = object({
+        double_price: number().typeError('Must be number'),
+        single_price: number().typeError('Must be number'),
+        transferPrice: number().typeError('Must be number')
+    })
 
-                                        <CustomInput
-                                            name='url'
-                                            value={formData.url || ''}
-                                            fn={(e) => handleInputChange('url', e.target.value)}
-                                            label='Ссылка на страницу:'
-                                            white='true'
-                                            error={errors.url}
-                                        />
-                                        <Checkbox
-                                            name='intop'
-                                            onChange={() => handleInputChange('intop', formData.intop === 1 ? 0 : 1)}
-                                            isSelected={formData.intop === 1}
-                                        >
-                                            Показать на главной странице (В разделе популярные туры)
-                                        </Checkbox>
-                                        <small className='pl-4'>
-                                            Для правильного показа туров на главной странице, надо выбрать 3 тура в одну
-                                            категорию
-                                        </small>
-                                        <Checkbox
-                                            name='guaranted'
-                                            onChange={() => handleInputChange('guaranted', formData.guaranted === 1 ? 0 : 1)}
-                                            isSelected={formData.guaranted === 1}
-                                        >Добавить галочку (Гарантированный тур)</Checkbox>
-                                        <Checkbox
-                                            name='archive'
-                                            onChange={() => handleInputChange('archive', formData.archive === 1 ? 0 : 1)}
-                                            isSelected={formData.archive === 1}
-                                        >
-                                            Перенести тур в архив
-                                        </Checkbox>
-                                        <small className='pl-4'>После переноса тура в архив, он не будет отображаться на
-                                            сайте</small>
+    let defaultDate = {
+        start: today(getLocalTimeZone()), end: today(getLocalTimeZone()),
+    };
+    const [date, setDate] = useState(defaultDate);
+    const [tourDayPriceError, setTourDayPriceError] = useState({})
 
-                                        <CustomInput
-                                            name='sales'
-                                            value={formData.sales || ''}
-                                            fn={(e) => handleInputChange('sales', e.target.value)}
-                                            label='Скидка на тур | Новый тур:'
-                                            white='true'
-                                            error={errors.sales}
-                                        />
-                                        <CustomButton type='submit'>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key='cost and date' title='Цены и даты'>
-                            <Card>
-                                <CardBody>
-                                    <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
-                                        <Tabs isVertical={true}>
-                                            <Tab className='w-full' key='Групповые цены' title='Групповые цены'>
-                                                <Card>
-                                                    <CardBody>
+    const formatDate = (date) => {
+        const year = date.year;
+        const month = date.month.toString().padStart(2, '0');
+        const day = date.day.toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
-                                                    </CardBody>
-                                                </Card>
-                                            </Tab>
-                                            <Tab className='w-full' key='Индивидуальные цены'
-                                                 title='Индивидуальные цены'>
-                                                <Card>
-                                                    <CardBody>
+    const dateStart = formatDate(date.start);
+    const dateEnd = formatDate(date.end);
+
+
+    const [tourDayPrice, setTourDayPrice] = useState({
+        tourid: Number(id),
+        date_start: formatDate(defaultDate.start),
+        date_end: formatDate(defaultDate.end),
+        double_price: 0,
+        single_price: 0,
+        transferPrice: 0
+    });
+
+    useEffect(() => {
+        const dateStart = formatDate(date.start);
+        const dateEnd = formatDate(date.end);
+        setTourDayPrice(prevState => ({
+            ...prevState, date_start: dateStart, date_end: dateEnd
+        }));
+
+    }, [date]);
+
+    const handleDayTourPrice = (name, value) => {
+        setTourDayPrice(prevState => ({
+            ...prevState, [name]: Number(value)
+        }))
+    }
+
+
+    const formatDateRange = (start, end) => {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        const startDay = format(startDate, 'd', {locale: ru});
+        const startMonth = format(startDate, 'MMM', {locale: ru});
+        const endDay = format(endDate, 'd', {locale: ru});
+        const endMonth = format(endDate, 'MMM', {locale: ru});
+
+        // Проверка на совпадение месяцев
+        const isSameMonth = startMonth === endMonth;
+
+        return isSameMonth ? `${startDay} - ${endDay} ${startMonth}` : `${startDay} ${startMonth} - ${endDay} ${endMonth}`;
+    };
+    const deleteTourPriceAll = async () => {
+        console.log('Nice')
+    }
+    const deleteTourPrice = async (id) => {
+        setFormData(prev => ({
+            ...prev, tour_day_price: prev.tour_day_price.filter(el => el.id !== id)
+        }))
+        await api.delete(`/tour/${id}/tourDayPrice`)
+    }
+
+
+    return (<>
+        {pathName.startsWith('/admin/tour/create') ? (
+            <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+                <CustomInput
+                    name='main_title'
+                    value={formData.main_title || ''}
+                    fn={(e) => handleInputChange('main_title', e.target.value)}
+                    label='Заголовок H1:'
+                    white='true'
+                    error={errors.main_title}
+                />
+                <Select
+                    name='typeId'
+                    label="Тип тура :"
+                    className="w-full"
+                    isInvalid={errors.typeId}
+                    errorMessage={errors.typeId}
+                    selectedKeys={new Set([formData.typeId.toString()])}
+                    onSelectionChange={(keys) => handleInputChange('typeId', keys.values().next().value)}
+                >
+                    {TourTypeBase.map((el) => (<SelectItem key={el.id} value={el.id.toString()}>
+                        {el.name}
+                    </SelectItem>))}
+                </Select>
+                <Select
+                    label="Команда:"
+                    className="w-full"
+                    isInvalid={errors.teamId}
+                    errorMessage={errors.teamId}
+                    selectedKeys={new Set([formData.teamId.toString()])}
+                    onSelectionChange={(keys) => handleInputChange('teamId', keys.values().next().value)}
+                >
+                    {team.map((el) => (<SelectItem key={el.id} value={el.id.toString()}>
+                        {el.name}
+                    </SelectItem>))}
+                </Select>
+
+                <CustomButton type='submit'>Save</CustomButton>
+
+            </form>) : (<div className='flex w-full dark flex-col'>
+            <Tabs aria-label='Options'>
+                <Tab key='settings' title='Общие настройки'>
+                    <Card>
+                        <CardBody>
+                            <form className='flex flex-col gap-3 items-start' onSubmit={handleSubmit}>
+                                <CustomInput
+                                    name='main_title'
+                                    value={formData.main_title || ''}
+                                    fn={(e) => handleInputChange('main_title', e.target.value)}
+                                    label='Заголовок H1:'
+                                    white='true'
+                                    error={errors.main_title}
+                                />
+                                <CustomInput
+                                    name='name2'
+                                    value={formData.name2 || ''}
+                                    fn={(e) => handleInputChange('name2', e.target.value)}
+                                    label='Заголовок H2:'
+                                    white='true'
+                                    error={errors.name2}
+                                />
+
+                                <CustomInput
+                                    name='name'
+                                    value={formData.name || ''}
+                                    fn={(e) => handleInputChange('name', e.target.value)}
+                                    label='Title:'
+                                    white='true'
+                                    error={errors.name}
+                                />
+
+                                <CustomInput
+                                    name='metakeywords'
+                                    value={formData.metakeywords || ''}
+                                    fn={(e) => handleInputChange('metakeywords', e.target.value)}
+                                    label='Metakeywords:'
+                                    white='true'
+                                    error={errors.metakeywords}
+                                />
+                                <CustomInput
+                                    name='metadescription'
+                                    value={formData.metadescription || ''}
+                                    fn={(e) => handleInputChange('metadescription', e.target.value)}
+                                    label='Metadescription:'
+                                    white='true'
+                                    error={errors.metadescription}
+                                />
+
+                                <CustomInput
+                                    name='url'
+                                    value={formData.url || ''}
+                                    fn={(e) => handleInputChange('url', e.target.value)}
+                                    label='Ссылка на страницу:'
+                                    white='true'
+                                    error={errors.url}
+                                />
+                                <Checkbox
+                                    name='intop'
+                                    onChange={() => handleInputChange('intop', formData.intop === 1 ? 0 : 1)}
+                                    isSelected={formData.intop === 1}
+                                >
+                                    Показать на главной странице (В разделе популярные туры)
+                                </Checkbox>
+                                <small className='pl-4'>
+                                    Для правильного показа туров на главной странице, надо выбрать 3 тура в одну
+                                    категорию
+                                </small>
+                                <Checkbox
+                                    name='guaranted'
+                                    onChange={() => handleInputChange('guaranted', formData.guaranted === 1 ? 0 : 1)}
+                                    isSelected={formData.guaranted === 1}
+                                >Добавить галочку (Гарантированный тур)</Checkbox>
+                                <Checkbox
+                                    name='archive'
+                                    onChange={() => handleInputChange('archive', formData.archive === 1 ? 0 : 1)}
+                                    isSelected={formData.archive === 1}
+                                >
+                                    Перенести тур в архив
+                                </Checkbox>
+                                <small className='pl-4'>После переноса тура в архив, он не будет отображаться на
+                                    сайте</small>
+
+                                <CustomInput
+                                    name='sales'
+                                    value={formData.sales || ''}
+                                    fn={(e) => handleInputChange('sales', e.target.value)}
+                                    label='Скидка на тур | Новый тур:'
+                                    white='true'
+                                    error={errors.sales}
+                                />
+                                <CustomButton type='submit'>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+                <Tab key='cost and date' title='Цены и даты'>
+                    <Card>
+                        <CardBody>
+                            <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
+                                <Tabs>
+                                    <Tab className='w-full' key='Групповые цены' title='Групповые цены'>
+                                        <Card>
+                                            <CardBody>
+                                                <div className='flex md:flex-row flex-col w-full gap-3'>
+                                                    <RangeCalendar value={date} onChange={setDate}
+                                                                   className='w-full'
+                                                    />
+                                                    <div className='w-full flex flex-col gap-3'>
+                                                        <CustomInput label='Дата с:' value={dateStart}/>
+                                                        <CustomInput label=' Дата по:' value={dateEnd}/>
                                                         <CustomInput
-                                                            name='oldPrice'
-                                                            value={formData.oldPrice || ''}
-                                                            fn={(e) => handleInputChange('oldPrice', e.target.value)}
-                                                            label='Цена (Старая):'
-                                                            white='true'
-                                                            error={errors.oldPrice}
-                                                            description='Цена, которая показывается на всем сайте. Указывайте цену за 1 человека в двухмесном номере. Не участвует в подсчесте тура на странице бронирования. '
-                                                        />
+                                                            error={tourDayPriceError.double_price}
+                                                            value={tourDayPrice.double_price}
+                                                            fn={(e) => handleDayTourPrice('double_price', e.target.value)}
+                                                            label='Цена за двухместное размещение:'/>
                                                         <CustomInput
-                                                            name='price'
-                                                            value={formData.price || ''}
-                                                            fn={(e) => handleInputChange('price', e.target.value)}
-                                                            label='Цена (Новая):'
-                                                            white='true'
-                                                            error={errors.price}
-                                                            description='Основная цена, которая показывается на всем сайте. Указывайте цену за 1 человека в двухмесном номере. Участвует в подсчесте тура на странице бронирования. '
-                                                        />
+                                                            error={tourDayPriceError.single_price}
+                                                            value={tourDayPrice.single_price}
+                                                            fn={(e) => handleDayTourPrice('single_price', e.target.value)}
+                                                            label='Доплата за одноместное размещение:'/>
                                                         <CustomInput
-                                                            name='single_price'
-                                                            value={formData.single_price || ''}
-                                                            fn={(e) => handleInputChange('single_price', e.target.value)}
-                                                            label='Доплата за одноместное размещение:'
-                                                            white='true'
-                                                            error={errors.single_price}
-                                                            description='Цена тура для индивидуального путешественника. Для правильного подсчета указывайте полную стоимость тура. Участвует в подсчесте тура на странице бронирования. '
-                                                        />
-                                                        <CustomInput
-                                                            name='single_room_price'
-                                                            value={formData.transfer_price || ''}
-                                                            fn={(e) => handleInputChange('transfer_price', e.target.value)}
-                                                            label='Доплата за трансфер:'
-                                                            white='true'
-                                                            error={errors.transfer_price}
-                                                            description='Цена для рассчета тура по индивидуальной дате. Умножается на количество ночей. Участвует в подсчесте тура на странице бронирования. '
-                                                        />
-                                                        <CustomInput
-                                                            name='solo_price'
-                                                            value={formData.solo_price || ''}
-                                                            fn={(e) => handleInputChange('solo_price', e.target.value)}
-                                                            label='Цена тура(Solo traveller):'
-                                                            white='true'
-                                                            error={errors.solo_price}
-                                                            description='Цена для путешественника который едит один. '
-                                                        />
-                                                    </CardBody>
-                                                </Card>
-                                            </Tab>
-                                        </Tabs>
-                                        <CustomButton type='submit'>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key='description' title='Описание тура'>
-                            <Card>
-                                <CardBody>
-                                    <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-                                        <label className='w-full text-white'>
-                                            Описание тура :
-                                            <CustomEditor value={formData.body}
-                                                          fn={handleInputChange}
-                                                          name={'body'}
-                                                          id={'body'}
+                                                            error={tourDayPriceError.transferPrice}
+                                                            value={tourDayPrice.transferPrice}
+                                                            fn={(e) => handleDayTourPrice('transferPrice', e.target.value)}
+                                                            label='Цена за транфер:'/>
+                                                    </div>
+                                                </div>
+                                                <div className='mt-5 flex flex-col gap-3 max-h-[260px] overflow-x-auto'>
+                                                    {formData.tour_day_price && formData.tour_day_price.map(el => (
+                                                        <div
+                                                            key={el.id}
+                                                            className='flex sm:flex-row flex-col gap-3 bg-white text-black px-3 py-2 items-center rounded-xl justify-between'>
+                                                            <p className='text-xl m-0'>{el.single_price}$</p>
+                                                            <div className={`w-5 h-5 rounded-full ${Date.now(el.date_start) <= Date.now(defaultDate.start) && Date.now(el.date_end) >= Date.now(defaultDate.start) ? 'bg-green-600':'bg-red-600'}`}></div>
+                                                            <p className='m-0'>{formatDateRange(el.date_start, el.date_end)}</p>
+                                                            <CustomButton fn={() => deleteTourPrice(el.id)}
+                                                                          type='button'>Delete</CustomButton>
+                                                        </div>))}
+                                                </div>
+                                            </CardBody>
+                                        </Card>
+                                    </Tab>
+                                    <Tab className='w-full' key='Индивидуальные цены'
+                                         title='Индивидуальные цены'>
+                                        <Card>
+                                            <CardBody>
+                                                <CustomInput
+                                                    name='oldPrice'
+                                                    value={formData.oldPrice || ''}
+                                                    fn={(e) => handleInputChange('oldPrice', e.target.value)}
+                                                    label='Цена (Старая):'
+                                                    white='true'
+                                                    error={errors.oldPrice}
+                                                    description='Цена, которая показывается на всем сайте. Указывайте цену за 1 человека в двухмесном номере. Не участвует в подсчесте тура на странице бронирования. '
+                                                />
+                                                <CustomInput
+                                                    name='price'
+                                                    value={formData.price || ''}
+                                                    fn={(e) => handleInputChange('price', e.target.value)}
+                                                    label='Цена (Новая):'
+                                                    white='true'
+                                                    error={errors.price}
+                                                    description='Основная цена, которая показывается на всем сайте. Указывайте цену за 1 человека в двухмесном номере. Участвует в подсчесте тура на странице бронирования. '
+                                                />
+                                                <CustomInput
+                                                    name='single_price'
+                                                    value={formData.single_price || ''}
+                                                    fn={(e) => handleInputChange('single_price', e.target.value)}
+                                                    label='Доплата за одноместное размещение:'
+                                                    white='true'
+                                                    error={errors.single_price}
+                                                    description='Цена тура для индивидуального путешественника. Для правильного подсчета указывайте полную стоимость тура. Участвует в подсчесте тура на странице бронирования. '
+                                                />
+                                                <CustomInput
+                                                    name='single_room_price'
+                                                    value={formData.transfer_price || ''}
+                                                    fn={(e) => handleInputChange('transfer_price', e.target.value)}
+                                                    label='Доплата за трансфер:'
+                                                    white='true'
+                                                    error={errors.transfer_price}
+                                                    description='Цена для рассчета тура по индивидуальной дате. Умножается на количество ночей. Участвует в подсчесте тура на странице бронирования. '
+                                                />
+                                                <CustomInput
+                                                    name='solo_price'
+                                                    value={formData.solo_price || ''}
+                                                    fn={(e) => handleInputChange('solo_price', e.target.value)}
+                                                    label='Цена тура(Solo traveller):'
+                                                    white='true'
+                                                    error={errors.solo_price}
+                                                    description='Цена для путешественника который едит один. '
+                                                />
+                                            </CardBody>
+                                        </Card>
+                                    </Tab>
+                                </Tabs>
+                                <CustomButton type='submit'>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+                <Tab key='description' title='Описание тура'>
+                    <Card>
+                        <CardBody>
+                            <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+                                <label className='w-full text-white'>
+                                    Описание тура :
+                                    <CustomEditor value={formData.body}
+                                                  fn={handleInputChange}
+                                                  name={'body'}
+                                                  id={'body'}
+                                    />
+                                    {errors.body && <div>{errors.body}</div>}
+                                </label>
+                                <CheckboxGroup
+                                    label="Тип транспорта:"
+                                    value={formData.transport}
+                                    onChange={(value) => handleInputChange('transport', value)}
+                                >
+                                    <Checkbox value='Самолет '>Самолет</Checkbox>
+                                    <Checkbox value='Поезд '>Поезд</Checkbox>
+                                    <Checkbox value='Легковое авто '>Легковое авто</Checkbox>
+                                    <Checkbox value='Минивен '>Минивен</Checkbox>
+                                    <Checkbox value='Минибас '>Минибас</Checkbox>
+                                    <Checkbox value='Автобус '>Автобус</Checkbox>
+                                </CheckboxGroup>
+                                <CustomInput
+                                    name='travellers'
+                                    value={formData.travellers || ''}
+                                    fn={(e) => handleInputChange('travellers', e.target.value)}
+                                    label='Количество путешественников:'
+                                    white='true'
+                                />
+                                <small>Укажите минимальное и максимальное количество путешественников. </small>
+                                <Select
+                                    label="Команда:"
+                                    className="max-w-xs"
+                                    isInvalid={errors.teamId}
+                                    errorMessage={errors.teamId}
+                                    selectedKeys={new Set([formData.teamId.toString()])}
+                                    onSelectionChange={(keys) => handleInputChange('teamId', keys.values().next().value)}
+                                >
+                                    {team.map((el) => (<SelectItem key={el.id} value={el.id.toString()}>
+                                        {el.name}
+                                    </SelectItem>))}
+                                </Select>
+                                <CustomButton type='submit'>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+                <Tab key='photo' title='Изображение'>
+                    <Card>
+                        <CardBody>
+                            <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+                                <label className='text-white flex flex-col gap-3 w-full'>
+                                    Основное фото
+                                    {formData.photo ? (<Image
+                                        width={'500'}
+                                        height={'500'}
+                                        alt={formData.photo}
+                                        src={`http://localhost:4000/uploads/${formData.photo}`}
+                                    />) : ''}
+                                    <input
+                                        className='bg-white w-full py-3	px-2 rounded-xl cursor-pointer'
+                                        name='photo'
+                                        type='file'
+                                        onChange={(e) => handleImageChange(e.target.files[0])}
+                                    />
+                                </label>
+                                <label className='text-white flex flex-col gap-3 w-full'>
+                                    Галерея
+                                    <input
+                                        className='bg-white w-full py-3	px-2 rounded-xl cursor-pointer'
+                                        name='foto'
+                                        type='file'
+                                        multiple
+                                        onChange={(e) => handleUploadImage(e.target.files)}
+                                    />
+                                    Файл изображения должен быть в формате JPG или PNG
+                                    <div className='flex flex-wrap gap-3'>
+                                        {formData.tourphoto.map(el => (<div className='relative'>
+                                            <Image
+                                                width={'300'}
+                                                height={'300'}
+                                                alt={el.photo}
+                                                src={`http://localhost:4000/uploads/${el.photo}`}
                                             />
-                                            {errors.body && <div>{errors.body}</div>}
-                                        </label>
+                                            <i className="fa-solid fa-circle-xmark absolute top-0 left-0 cursor-pointer"
+                                               style={{color: "#c01c28"}}
+                                               onClick={() => handleDeleteImage(el.photo, el.id)}
+                                            ></i>
+                                        </div>))}
+                                    </div>
+                                </label>
+                                <CustomButton>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+                <Tab key='tour type' title='Тип тура'>
+                    <Card>
+                        <CardBody>
+                            <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+                                <Select
+                                    name='typeId'
+                                    label=" Главный тип тура :"
+                                    className="w-full"
+                                    isInvalid={errors.typeId}
+                                    errorMessage={errors.typeId}
+                                    selectedKeys={new Set([formData.typeId.toString()])}
+                                    onSelectionChange={(keys) => handleInputChange('typeId', keys.values().next().value)}
+                                >
+                                    {TourTypeBase.map((el) => (<SelectItem key={el.id} value={el.id.toString()}>
+                                        {el.name}
+                                    </SelectItem>))}
+                                </Select>
+                                <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3'>
+                                    <CheckboxGroup
+                                        label="Базовые категории:"
+                                        value={formData.types}
+                                        onChange={(value) => handleInputChange('types', value)}
+                                    >
+                                        {TourTypeBase.map((el) => (
+                                            <Checkbox key={el.id} value={el.id}>{el.name}</Checkbox>))}
+                                    </CheckboxGroup>
+                                    <CheckboxGroup
+                                        label="Сезоны:"
+                                        value={formData.types}
+                                        onChange={(value) => handleInputChange('types', value)}
+                                    >
+                                        {filteredTourTypesSeason?.map(el => (
+                                            <Checkbox value={el.id}>{el.name}</Checkbox>))}
+                                    </CheckboxGroup>
+                                    <CheckboxGroup
+                                        label="Страны:"
+                                        value={formData.types}
+                                        onChange={(value) => handleInputChange('types', value)}
+                                    >
+                                        {filteredTourTypesCountry.map((el) => (
+                                            <Checkbox key={el.id} value={el.id}>{el.name}</Checkbox>))}
+                                    </CheckboxGroup>
+                                </div>
+                                <CustomButton type='submit'>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+                <Tab key='services' title='Услуги'>
+                    <Card>
+                        <CardBody>
+                            <form onSubmit={handleSubmit} className='grid md:grid-cols-2 md:gap-3 gap-10'>
+                                <div className='flex flex-col gap-3'>
+                                    <CustomInput
+                                        placeholder='Искать...'
+                                        value={includeFilter}
+                                        fn={(e) => setIncludeFilter(e.target.value)}
+                                    />
+                                    <CheckboxGroup
+                                        label="Включено:"
+                                        value={formData.include}
+                                        onChange={(value) => handleInputChange('include', value)}
+                                    >
+                                        <div
+                                            className='max-h-[300px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
+                                            {filteredIncludeServices.length > 0 ? (filteredIncludeServices.map((el) => (
+                                                <Checkbox
+                                                    key={el.id}
+                                                    value={el.id}
+                                                >
+                                                    <i className={el.icon}/> {el.title}
+                                                </Checkbox>))) : (
+                                                <div className='flex justify-center items-center'>Ничего не
+                                                    найдено</div>)}
+                                        </div>
+                                    </CheckboxGroup>
+                                </div>
+                                <div className='flex flex-col gap-3'>
+                                    <CustomInput
+                                        placeholder='Искать...'
+                                        value={excludeFilter}
+                                        fn={(e) => setExcludeFilter(e.target.value)}
+                                    />
+                                    <CheckboxGroup
+                                        label="Доп расходы:"
+                                        value={formData.exclude}
+                                        onChange={(value) => handleInputChange('exclude', value)}
+                                    >
+                                        <div
+                                            className='max-h-[300px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
+                                            {filteredExcludeServices.length > 0 ? (filteredExcludeServices.map((el) => (
+                                                <Checkbox
+                                                    key={el.id}
+                                                    value={el.id}
+                                                >
+                                                    <i className={el.icon}/>{el.title}</Checkbox>))) : (
+                                                <div className='flex justify-center items-center'>Ничего не
+                                                    найдено</div>)}
+                                        </div>
+                                    </CheckboxGroup>
+                                </div>
+                                <CustomButton type='submit'>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+                <Tab key='route' title='Маршрут'>
+                    <Card>
+                        <CardBody>
+                            <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+                                <Textarea
+                                    label="Маршрут тура"
+                                    labelPlacement="outside"
+                                    placeholder="Enter your description"
+                                    minRows={50}
+                                    className="w-full"
+                                    value={formData.map}
+                                    name='map'
+                                    onChange={e => handleInputChange('map', e.target.value)}
+                                />
+                                <a href="https://yandex.ru/map-constructor/" target='_blank'>Конструктор
+                                    карт</a>
+                                <div className='grid md:grid-cols-2 gap-3'>
+                                    <div className='flex flex-col gap-3'>
+                                        <CustomInput
+                                            placeholder='Искать...'
+                                            value={countryFilter}
+                                            fn={(e) => setCountryFilter(e.target.value)}
+                                        />
                                         <CheckboxGroup
-                                            label="Тип транспорта:"
-                                            value={formData.transport}
-                                            onChange={(value) => handleInputChange('transport', value)}
+                                            label="Страны:"
+                                            value={formData.country}
+                                            onChange={(value) => handleInputChange('country', value)}
                                         >
-                                            <Checkbox value={1}>Самолет</Checkbox>
-                                            <Checkbox value={2}>Поезд</Checkbox>
-                                            <Checkbox value={3}>Легковое авто</Checkbox>
-                                            <Checkbox value={4}>Минивен</Checkbox>
-                                            <Checkbox value={5}>Минибас</Checkbox>
-                                            <Checkbox value={6}>Автобус</Checkbox>
+                                            <div
+                                                className='max-h-[350px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
+                                                {filteredCountry.length > 0 ? (filteredCountry.map((el) => (
+                                                    <Checkbox
+                                                        onValueChange={(e) => removeTourCountry(e, el.tour_country, el.id)}
+                                                        key={el.id}
+                                                        value={el.id}>{el.name}</Checkbox>))) : (
+                                                    <div className='flex justify-center items-center'>Ничего не
+                                                        найдено</div>)}
+                                            </div>
                                         </CheckboxGroup>
+                                    </div>
+                                    <div className='flex flex-col gap-3'>
                                         <CustomInput
-                                            name='travellers'
-                                            value={formData.travellers || ''}
-                                            fn={(e) => handleInputChange('travellers', e.target.value)}
-                                            label='Количество путешественников:'
-                                            white='true'
+                                            placeholder='Искать...'
+                                            value={cityFilter}
+                                            fn={(e) => setCityFilter(e.target.value)}
                                         />
-                                        <small>Укажите минимальное и максимальное количество путешественников. </small>
-                                        <Select
-                                            label="Команда:"
-                                            className="max-w-xs"
-                                            isInvalid={errors.teamId}
-                                            errorMessage={errors.teamId}
-                                            selectedKeys={new Set([formData.teamId.toString()])}
-                                            onSelectionChange={(keys) => handleInputChange('teamId', keys.values().next().value)}
+                                        <CheckboxGroup
+                                            label="Города:"
+                                            value={formData.city}
+                                            onChange={(value) => handleInputChange('city', value)}
                                         >
-                                            {team.map((el) => (
-                                                <SelectItem key={el.id} value={el.id.toString()}>
-                                                    {el.name}
-                                                </SelectItem>
-                                            ))}
-                                        </Select>
-                                        <CustomButton type='submit'>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key='photo' title='Изображение'>
-                            <Card>
-                                <CardBody>
-                                    <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-                                        <label className='text-white flex flex-col gap-3 w-full'>
-                                            Основное фото
-                                            {formData.photo ? (
-                                                <Image
-                                                    width={'500'}
-                                                    height={'500'}
-                                                    alt={formData.photo}
-                                                    src={`http://localhost:4000/uploads/${formData.photo}`
-                                                    }
-                                                />
-                                            ) : ''}
-                                            <input
-                                                className='bg-white w-full py-3	px-2 rounded-xl cursor-pointer'
-                                                name='photo'
-                                                type='file'
-                                                onChange={(e) => handleImageChange(e.target.files[0])}
-                                            />
-                                        </label>
-                                        <label className='text-white flex flex-col gap-3 w-full'>
-                                            Галерея
-                                            <input
-                                                className='bg-white w-full py-3	px-2 rounded-xl cursor-pointer'
-                                                name='foto'
-                                                type='file'
-                                                multiple
-                                                onChange={(e) => handleUploadImage(e.target.files)}
-                                            />
-                                            Файл изображения должен быть в формате JPG или PNG
-                                            <div className='flex flex-wrap gap-3'>
-                                                {formData.tourphoto.map(el => (
-                                                    <div className='relative'>
-                                                        <Image
-                                                            width={'300'}
-                                                            height={'300'}
-                                                            alt={el.photo}
-                                                            src={`http://localhost:4000/uploads/${el.photo}`
-                                                            }
-                                                        />
-                                                        <i className="fa-solid fa-circle-xmark absolute top-0 left-0 cursor-pointer"
-                                                           style={{color: "#c01c28"}}
-                                                           onClick={() => handleDeleteImage(el.photo, el.id)}
-                                                        ></i>
-                                                    </div>
-                                                ))}
+                                            <div
+                                                className='max-h-[350px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
+                                                {filteredCity.length > 0 ? (filteredCity.map((el) => (<Checkbox
+                                                    onValueChange={(e) => removeTourCity(e, el.tourcity, el.id)}
+                                                    key={el.id}
+                                                    value={el.id}>{el.name}</Checkbox>))) : (
+                                                    <div className='flex justify-center items-center'>Ничего не
+                                                        найдено</div>)}
                                             </div>
-                                        </label>
-                                        <CustomButton>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key='tour type' title='Тип тура'>
-                            <Card>
-                                <CardBody>
-                                    <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-                                        <Select
-                                            name='typeId'
-                                            label=" Главный тип тура :"
-                                            className="w-full"
-                                            isInvalid={errors.typeId}
-                                            errorMessage={errors.typeId}
-                                            selectedKeys={new Set([formData.typeId.toString()])}
-                                            onSelectionChange={(keys) => handleInputChange('typeId', keys.values().next().value)}
-                                        >
-                                            {type.map((el) => (
-                                                <SelectItem key={el.id} value={el.id.toString()}>
-                                                    {el.name}
-                                                </SelectItem>
-                                            ))}
-                                        </Select>
-                                        <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3'>
-                                            <CheckboxGroup
-                                                label="Базовые категории:"
-                                                value={formData.types}
-                                                onChange={(value) => handleInputChange('types', value)}
-                                            >
-                                                {type.map((el) => (
-                                                    <Checkbox key={el.id} value={el.name}>{el.name}</Checkbox>
-                                                ))}
-                                            </CheckboxGroup>
-                                            <CheckboxGroup
-                                                label="Сезоны:"
-                                                value={formData.types}
-                                                onChange={(value) => handleInputChange('types', value)}
-                                            >
-                                                <Checkbox value={'Зимой'}>Зимой</Checkbox>
-                                                <Checkbox value={'Весной'}>Весной</Checkbox>
-                                                <Checkbox value={'Летом'}>Летом</Checkbox>
-                                                <Checkbox value={'Осенью'}>Осенью</Checkbox>
-                                                <Checkbox value={'Круглый год'}>Круглый год</Checkbox>
-                                            </CheckboxGroup>
-                                            <CheckboxGroup
-                                                label="Страны:"
-                                                value={formData.types}
-                                                onChange={(value) => handleInputChange('types', value)}
-                                            >
-                                                {country.map((el) => (
-                                                    <Checkbox key={el.id} value={el.name}>{el.name}</Checkbox>
-                                                ))}
-                                            </CheckboxGroup>
-                                        </div>
-                                        <CustomButton type='submit'>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key='services' title='Услуги'>
-                            <Card>
-                                <CardBody>
-                                    <form onSubmit={handleSubmit} className='grid md:grid-cols-2 md:gap-3 gap-10'>
-                                        <div className='flex flex-col gap-3'>
-                                            <CustomInput
-                                                placeholder='Искать...'
-                                                value={includeFilter}
-                                                fn={(e) => setIncludeFilter(e.target.value)}
-                                            />
-                                            <CheckboxGroup
-                                                label="Включено:"
-                                                value={formData.include}
-                                                onChange={(value) => handleInputChange('include', value)}
-                                            >
-                                                <div
-                                                    className='max-h-[300px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
-                                                    {filteredIncludeServices.length > 0 ? (
-                                                        filteredIncludeServices.map((el) => (
-                                                            <Checkbox key={el.id}
-                                                                      value={`<i className={el.icon}/> ${el.title}`}><i
-                                                                className={el.icon}/> {el.title}
-                                                            </Checkbox>
-                                                        ))
-                                                    ) : (
-                                                        <div className='flex justify-center items-center'>Ничего не
-                                                            найдено</div>
-                                                    )}
-                                                </div>
-                                            </CheckboxGroup>
-                                        </div>
-                                        <div className='flex flex-col gap-3'>
-                                            <CustomInput
-                                                placeholder='Искать...'
-                                                value={excludeFilter}
-                                                fn={(e) => setExcludeFilter(e.target.value)}
-                                            />
-                                            <CheckboxGroup
-                                                label="Доп расходы:"
-                                                value={formData.exclude}
-                                                onChange={(value) => handleInputChange('exclude', value)}
-                                            >
-                                                <div
-                                                    className='max-h-[300px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
-                                                    {filteredExcludeServices.length > 0 ? (
-                                                        filteredExcludeServices.map((el) => (
-                                                            <Checkbox key={el.id}
-                                                                      value={`<i className={el.icon}/> ${el.title}`}><i
-                                                                className={el.icon}/> {el.title}</Checkbox>
-                                                        ))
-                                                    ) : (
-                                                        <div className='flex justify-center items-center'>Ничего не
-                                                            найдено</div>
-                                                    )}
-                                                </div>
-                                            </CheckboxGroup>
-                                        </div>
-                                        <CustomButton type='submit'>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key='route' title='Маршрут'>
-                            <Card>
-                                <CardBody>
-                                    <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-                                        <Textarea
-                                            label="Маршрут тура"
-                                            labelPlacement="outside"
-                                            placeholder="Enter your description"
-                                            minRows={50}
-                                            className="w-full"
-                                            value={formData.map}
-                                            name='map'
-                                            onChange={e => handleInputChange('map', e.target.value)}
-                                        />
-                                        <a href="https://yandex.ru/map-constructor/" target='_blank'>Конструктор
-                                            карт</a>
-                                        <div className='grid md:grid-cols-2 gap-3'>
-                                            <div className='flex flex-col gap-3'>
+                                        </CheckboxGroup>
+                                    </div>
+                                </div>
+                                <div>
+                                    <Accordion variant="splitted">
+                                        {formData.tourtoday.map((el, i) => (
+                                            <AccordionItem key={el.id} title={`День: ${i + 1} ${el.name}`}>
                                                 <CustomInput
-                                                    placeholder='Искать...'
-                                                    value={countryFilter}
-                                                    fn={(e) => setCountryFilter(e.target.value)}
+                                                    label="Name"
+                                                    value={el.name}
+                                                    fn={(e) => handleInputChangeForRoutes(i, 'name', e.target.value)}
                                                 />
-                                                <CheckboxGroup
-                                                    label="Страны:"
-                                                    value={formData.city}
-                                                    onChange={(value) => handleInputChange('city', value)}
-                                                >
-                                                    <div
-                                                        className='max-h-[350px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
-                                                        {filteredCountry.length > 0 ? (
-                                                            filteredCountry.map((el) => (
-                                                                <Checkbox key={el.id}
-                                                                          value={el.name}>{el.name}</Checkbox>
-                                                            ))
-                                                        ) : (
-                                                            <div className='flex justify-center items-center'>Ничего не
-                                                                найдено</div>
-                                                        )}
-                                                    </div>
-                                                </CheckboxGroup>
-                                            </div>
-                                            <div className='flex flex-col gap-3'>
-                                                <CustomInput
-                                                    placeholder='Искать...'
-                                                    value={cityFilter}
-                                                    fn={(e) => setCityFilter(e.target.value)}
+                                                <br/>
+                                                <CustomEditor
+                                                    value={el.body}
+                                                    name="body"
+                                                    id={`editor-${i}`}
+                                                    index={i}
+                                                    fn1={handleInputChangeForRoutes}
                                                 />
-                                                <CheckboxGroup
-                                                    label="Города:"
-                                                    value={formData.city}
-                                                    onChange={(value) => handleInputChange('city', value)}
-                                                >
-                                                    <div
-                                                        className='max-h-[350px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
-                                                        {filteredCity.length > 0 ? (
-                                                            filteredCity.map((el) => (
-                                                                <Checkbox key={el.id}
-                                                                          value={el.name}>{el.name}</Checkbox>
-                                                            ))
-                                                        ) : (
-                                                            <div className='flex justify-center items-center'>Ничего не
-                                                                найдено</div>
-                                                        )}
-                                                    </div>
-                                                </CheckboxGroup>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <Accordion variant="splitted">
-                                                {formData.tourtoday.map((el, i) => (
-                                                    <AccordionItem key={el.id} title={`День: ${i + 1} ${el.name}`}>
-                                                        <CustomInput
-                                                            label="Name"
-                                                            value={el.name}
-                                                            fn={(e) => handleInputChangeForRoutes(i, 'name', e.target.value)}
-                                                        />
-                                                        <br/>
-                                                        <CustomEditor
-                                                            value={el.body}
-                                                            name="body"
-                                                            id={`editor-${i}`}
-                                                            index={i}
-                                                            fn1={handleInputChangeForRoutes}
-                                                        />
-                                                        <br/>
-                                                        <div className='flex gap-3'>
-                                                            <Checkbox name='breakfast'
-                                                                      isSelected={el.breakfast}
-                                                                      onValueChange={(e) => handleInputChangeForRoutes(i, 'breakfast', e)}>
-                                                                Завтрак
-                                                            </Checkbox>
-                                                            <Checkbox
-                                                                name='lunch'
-                                                                isSelected={el.lunch}
-                                                                onValueChange={(e) => handleInputChangeForRoutes(i, 'lunch', e)}>
-                                                                Обед</Checkbox>
-                                                            <Checkbox
-                                                                name='dinner'
-                                                                isSelected={el.dinner}
-                                                                onValueChange={(e) => handleInputChangeForRoutes(i, 'dinner', e)}>
-                                                                Ужин</Checkbox>
-                                                        </div>
-                                                        <br/>
-                                                        <div className='flex flex-col gap-3'>
-                                                            <CustomInput
-                                                                placeholder='Искать...'
-                                                                value={hotelFilter}
-                                                                fn={(e) => setHotelFilter(e.target.value)}
-                                                            />
-                                                            <CheckboxGroup
-                                                                label="Добавить гостиницу"
-                                                                value={el.hotels ?? []}
-                                                                name='hotels'
-                                                                onValueChange={(value) => handleInputChangeForRoutes(i, 'hotels', value)}
-                                                            >
+                                                <br/>
+                                                <div className='flex gap-3'>
+                                                    <Checkbox name='breakfast'
+                                                              isSelected={el.breakfast}
+                                                              onValueChange={(e) => handleInputChangeForRoutes(i, 'breakfast', e)}>
+                                                        Завтрак
+                                                    </Checkbox>
+                                                    <Checkbox
+                                                        name='lunch'
+                                                        isSelected={el.lunch}
+                                                        onValueChange={(e) => handleInputChangeForRoutes(i, 'lunch', e)}>
+                                                        Обед</Checkbox>
+                                                    <Checkbox
+                                                        name='dinner'
+                                                        isSelected={el.dinner}
+                                                        onValueChange={(e) => handleInputChangeForRoutes(i, 'dinner', e)}>
+                                                        Ужин</Checkbox>
+                                                </div>
+                                                <br/>
+                                                <div className='flex flex-col gap-3'>
+                                                    <CustomInput
+                                                        placeholder='Искать...'
+                                                        value={hotelFilter}
+                                                        fn={(e) => setHotelFilter(e.target.value)}
+                                                    />
+                                                    <CheckboxGroup
+                                                        label="Добавить гостиницу"
+                                                        value={el.hotels ?? []}
+                                                        name='hotels'
+                                                        onValueChange={(value) => handleInputChangeForRoutes(i, 'hotels', value)}
+                                                    >
 
+                                                        <div
+                                                            className='min-h-[150px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
+                                                            {filteredHotels.length > 0 ? (filteredHotels.map((el) => (
+                                                                <Checkbox key={el.id}
+                                                                          value={el.id}>{el.name}</Checkbox>))) : (
                                                                 <div
-                                                                    className='min-h-[150px] overflow-y-auto flex flex-col gap-3 overflow-x-hidden'>
-                                                                    {filteredHotels.length > 0 ? (
-                                                                        filteredHotels.map((el) => (
-                                                                            <Checkbox key={el.id}
-                                                                                      value={el.id}>{el.name}</Checkbox>
-                                                                        ))
-                                                                    ) : (
-                                                                        <div
-                                                                            className='flex justify-center items-center'>Ничего
-                                                                            не
-                                                                            найдено</div>
-                                                                    )}
-                                                                </div>
-                                                            </CheckboxGroup>
+                                                                    className='flex justify-center items-center'>Ничего
+                                                                    не
+                                                                    найдено</div>)}
                                                         </div>
-                                                        <CustomButton fn={() => removeItem(el.id)}
-                                                                      color="secondary"
-                                                                      type='button'
-                                                        >
-                                                            Удалить
-                                                        </CustomButton>
-                                                    </AccordionItem>
-                                                ))}
-                                            </Accordion>
-                                            <CustomButton className='my-3' fn={addItem} type='button'>
-                                                Добавить день
-                                            </CustomButton>
-                                        </div>
-                                        <CustomButton type='submit'>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                        <Tab key='faq' title='Вопросы'>
-                            <Card>
-                                <CardBody>
-                                    <form onSubmit={handleSubmit}>
-                                        <CheckboxGroup
-                                            label="Добавить вопросы:"
-                                            value={formData.faqIds}
-                                            onChange={(value) => handleInputChange('faqIds', value)}
-                                        >
-                                            {formData.tour_faqs.map(el => (
-                                                <Checkbox key={el.id}
-                                                          onValueChange={(e) => removeFaq(e, el.tour_faqs, el.id)}
-                                                          value={el.id}>{el.name}</Checkbox>
-                                            ))}
-                                        </CheckboxGroup>
-                                        <CustomButton type='submit'>Save</CustomButton>
-                                    </form>
-                                </CardBody>
-                            </Card>
-                        </Tab>
-                    </Tabs>
-                </div>
-            )
-            }
-        </>
-    );
+                                                    </CheckboxGroup>
+                                                </div>
+                                                <CustomButton fn={() => removeItem(el.id)}
+                                                              color="secondary"
+                                                              type='button'
+                                                >
+                                                    Удалить
+                                                </CustomButton>
+                                            </AccordionItem>))}
+                                    </Accordion>
+                                    <CustomButton className='my-3' fn={addItem} type='button'>
+                                        Добавить день
+                                    </CustomButton>
+                                </div>
+                                <CustomButton type='submit'>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+                <Tab key='faq' title='Вопросы'>
+                    <Card>
+                        <CardBody>
+                            <form onSubmit={handleSubmit}>
+                                <CheckboxGroup
+                                    label="Добавить вопросы:"
+                                    value={formData.faqIds}
+                                    onChange={(value) => handleInputChange('faqIds', value)}
+                                >
+                                    {formData.tour_faqs.map(el => (<Checkbox
+                                        className='py-3'
+                                        key={el.id}
+                                        onValueChange={(e) => removeFaq(e, el.tour_faqs, el.id)}
+                                        value={el.id}>{el.name}
+                                    </Checkbox>))}
+                                </CheckboxGroup>
+                                <CustomButton type='submit'>Save</CustomButton>
+                            </form>
+                        </CardBody>
+                    </Card>
+                </Tab>
+            </Tabs>
+        </div>)}
+    </>);
 };
 
 export default AdminMainTour;

@@ -4,7 +4,7 @@ import {
 	DeleteNewsType,
 	EditNewsType,
 	ShowAllNewsType,
-	ShowNewsType,
+	ShowNewsType
 } from '../controller/TourNewsTypeController.js'
 
 const router = Router()

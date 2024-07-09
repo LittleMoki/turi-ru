@@ -14,18 +14,17 @@ datasource db {
 }
 
 model t_types {
-  id              Int               @id @default(autoincrement())
+  id              Int           @id @default(autoincrement())
   parent          Int
   name            String
-  type            String            @db.VarChar(3)
-  url             String            @unique
+  type            String        @db.VarChar(3)
+  url             String        @unique
   photo           String?
   description     String?
   title           String
   metakeywords    String?
   metadescription String?
-  sorting         Int?              @default(0)
-  tour_services   t_tour_services[]
+  sorting         Int?          @default(0)
   tour_type       t_tour_type[]
   t_tour          t_tour[]
 }
@@ -60,21 +59,21 @@ model t_banner {
 }
 
 model t_city {
-  id              Int              @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   country_id      Int
-  country         t_country        @relation(fields: [country_id], references: [id], onDelete: Cascade)
-  name            String           @default("") @db.VarChar(30)
-  url             String           @unique @default("") @db.VarChar(255)
+  country         t_country    @relation(fields: [country_id], references: [id], onDelete: Cascade)
+  name            String       @default("") @db.VarChar(30)
+  url             String       @unique @default("") @db.VarChar(255)
   body            String?
   map             String?
-  photo           String           @default("") @db.VarChar(200)
-  metakeywords    String           @default("") @db.VarChar(255)
-  metadescription String           @default("") @db.VarChar(255)
-  title           String           @default("") @db.VarChar(255)
+  photo           String       @default("") @db.VarChar(200)
+  metakeywords    String       @default("") @db.VarChar(255)
+  metadescription String       @default("") @db.VarChar(255)
+  title           String       @default("") @db.VarChar(255)
   banner          t_banner[]
   tourcity        t_tourcity[]
-  tour_country    t_tour_country[]
   t_hotel         t_hotel[]
+  t_place         t_place[]
 
   @@index([country_id])
 }
@@ -92,6 +91,7 @@ model t_country {
   city            t_city[]
   tour_country    t_tour_country[]
   t_hotel         t_hotel[]
+  t_place         t_place[]
 }
 
 model t_cityphoto {
@@ -351,18 +351,20 @@ model t_photo {
 }
 
 model t_place {
-  id              Int     @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   country_id      Int
-  cityid          Int     @default(0)
-  url             String  @default("")
+  country         t_country @relation(references: [id], fields: [country_id], onDelete: Cascade)
+  city            t_city    @relation(references: [id], fields: [cityid], onDelete: Cascade)
+  cityid          Int       @default(0)
+  url             String    @default("")
   name            String
   body            String?
   photo           String
-  foto            String  @default("")
-  fotoext         String  @default("")
-  metakeywords    String  @default("")
-  metadescription String  @default("")
-  publics         Int     @default(1)
+  foto            String    @default("")
+  fotoext         String    @default("")
+  metakeywords    String    @default("")
+  metadescription String    @default("")
+  publics         Int       @default(1)
 
   @@unique([url])
 }
@@ -473,10 +475,9 @@ model t_tour {
 model t_tourcity {
   id     Int    @id @default(autoincrement())
   tourid Int
-  tour   t_tour @relation(fields: [tourid], references: [id])
-  city   t_city @relation(fields: [cityid], references: [id])
+  tour   t_tour @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  city   t_city @relation(fields: [cityid], references: [id], onDelete: Cascade)
   cityid Int
-  route  String @default("train")
 }
 
 model t_tourtoday {
@@ -524,18 +525,19 @@ model t_tour_country {
   tour       t_tour    @relation(fields: [tour_id], references: [id], onDelete: Cascade)
   country_id Int
   country    t_country @relation(fields: [country_id], references: [id], onDelete: Cascade)
-  t_city     t_city?   @relation(fields: [t_cityId], references: [id])
-  t_cityId   Int?
 }
 
 model t_tour_day_price {
-  id           Int      @id @default(autoincrement())
-  tourid       Int
-  tour         t_tour   @relation(fields: [tourid], references: [id], onDelete: Cascade)
-  date_start   DateTime
-  date_end     DateTime
-  double_price Int
-  single_price Int
+  id            Int      @id @default(autoincrement())
+  tourid        Int
+  tour          t_tour   @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  date_start    DateTime
+  date_end      DateTime
+  double_price  Int
+  single_price  Int
+  transferPrice Int
+
+  @@unique([tourid, date_start, date_end]) // Добавляем уникальность по комбинации полей
 }
 
 model t_tour_faqs {
@@ -547,13 +549,12 @@ model t_tour_faqs {
 }
 
 model t_tour_services {
-  id      Int      @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   type_id Int?
   title   String?
   icon    String?
   price   Int
-  archive Int      @default(0)
-  t_types t_types? @relation(fields: [type_id], references: [id])
+  archive Int     @default(0)
 }
 
 model t_tour_team {

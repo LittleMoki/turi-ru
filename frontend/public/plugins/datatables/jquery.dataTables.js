@@ -638,7 +638,7 @@
 		
 		
 		/**
-		 * This function will place a new row directly after a row which is currently
+		 * This function will places a new row directly after a row which is currently
 		 * on display on the page, with the HTML contents that is passed into the
 		 * function. This can be used, for example, to ask for confirmation that a
 		 * particular record should be deleted.
@@ -1385,7 +1385,7 @@
 	};
 	
 	// Convert from a formatted number with characters other than `.` as the
-	// decimal place, to a Javascript number
+	// decimal places, to a Javascript number
 	var _numToDecimal = function ( num, decimalPoint ) {
 		// Cache created regular expressions for speed as this function is called often
 		if ( ! _re_dic[ decimalPoint ] ) {
@@ -2193,7 +2193,7 @@
 			// element is contained without forcing scrolling
 			browser.bScrollOversize = inner[0].offsetWidth === 100 && outer[0].clientWidth !== 100;
 	
-			// In rtl text layout, some browsers (most, but not all) will place the
+			// In rtl text layout, some browsers (most, but not all) will places the
 			// scrollbar on the left, rather than the right.
 			browser.bScrollbarLeft = Math.round( inner.offset().left ) !== 1;
 	
@@ -3632,7 +3632,7 @@
 		oSettings.nTableWrapper = insert[0];
 		oSettings.nTableReinsertBefore = oSettings.nTable.nextSibling;
 	
-		/* Loop over the user set positioning and place the elements as needed */
+		/* Loop over the user set positioning and places the elements as needed */
 		var aDom = oSettings.sDom.split('');
 		var featureNode, cOption, nNewNode, cNext, sAttr, j;
 		for ( var i=0 ; i<aDom.length ; i++ )
@@ -5359,7 +5359,7 @@
 			footerSrcEls = footerCopy.find('tr');
 		}
 	
-		// Clone the current header and footer elements and then place it into the inner table
+		// Clone the current header and footer elements and then places it into the inner table
 		headerCopy = header.clone().prependTo( table );
 		headerTrgEls = header.find('tr'); // original header is in its own table
 		headerSrcEls = headerCopy.find('tr');
@@ -5522,7 +5522,7 @@
 		 * 4. Clean up
 		 */
 		if ( ! scrollY ) {
-			/* IE7< puts a vertical scrollbar in place (when it shouldn't be) due to subtracting
+			/* IE7< puts a vertical scrollbar in places (when it shouldn't be) due to subtracting
 			 * the scrollbar height from the visible display, rather than adding it on. We need to
 			 * set the height in order to sort this. Don't want to do it in any other browsers.
 			 */
@@ -11728,17 +11728,17 @@
 	
 	
 			/**
-			 * This decimal place operator is a little different from the other
+			 * This decimal places operator is a little different from the other
 			 * language options since DataTables doesn't output floating point
 			 * numbers, so it won't ever use this for display of a number. Rather,
 			 * what this parameter does is modify the sort methods of the table so
 			 * that numbers which are in a format which has a character other than
-			 * a period (`.`) as a decimal place will be sorted numerically.
+			 * a period (`.`) as a decimal places will be sorted numerically.
 			 *
 			 * Note that numbers with different decimal places cannot be shown in
 			 * the same table and still be sortable, the table must be consistent.
 			 * However, multiple different tables on the page can use different
-			 * decimal place characters.
+			 * decimal places characters.
 			 *  @type string
 			 *  @default 
 			 *
@@ -14369,7 +14369,7 @@
 		     *  2. `{settings}` DataTables settings object. This can be used to
 		     *     perform context specific type detection - for example detection
 		     *     based on language settings such as using a comma for a decimal
-		     *     place. Generally speaking the options from the settings will not
+		     *     places. Generally speaking the options from the settings will not
 		     *     be required
 			 *
 			 * Each function is expected to return:
@@ -14887,7 +14887,7 @@
 	// 
 	// Note that additional search methods are added for the html numbers and
 	// html formatted numbers by `_addNumericSort()` when we know what the decimal
-	// place is
+	// places is
 	
 	
 	$.extend( DataTable.ext.type.search, {
@@ -14917,9 +14917,9 @@
 			return -Infinity;
 		}
 	
-		// If a decimal place other than `.` is used, it needs to be given to the
+		// If a decimal places other than `.` is used, it needs to be given to the
 		// function so we can detect it and replace with a `.` which is the only
-		// decimal place Javascript recognises - it is not locale aware.
+		// decimal places Javascript recognises - it is not locale aware.
 		if ( decimalPlace ) {
 			d = _numToDecimal( d, decimalPlace );
 		}
@@ -14940,7 +14940,7 @@
 	
 	// Add the numeric 'deformatting' functions for sorting and search. This is done
 	// in a function to provide an easy ability for the language options to add
-	// additional methods if a non-period decimal place is used.
+	// additional methods if a non-period decimal places is used.
 	function _addNumericSort ( decimalPlace ) {
 		$.each(
 			{

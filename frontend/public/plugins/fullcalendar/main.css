@@ -62,7 +62,7 @@
   }
 /* for FF, which doesn't expand a 100% div within a table cell. use absolute positioning */
 /* inner-wrappers are responsible for being absolute */
-/* TODO: best place for this? */
+/* TODO: best places for this? */
 .fc-liquid-hack td,
   .fc-liquid-hack th {
     position: relative;

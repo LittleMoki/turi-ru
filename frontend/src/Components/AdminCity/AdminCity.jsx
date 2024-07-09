@@ -99,8 +99,11 @@ const AdminCity = () => {
                 ...prevState,
                 'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
             }));
-
-            router.push(`/admin/${slug}/edit/${id}`);
+            if (id) {
+                router.push(`/admin/${slug}/edit/${id}`);
+            } else {
+                router.push(`/admin/${slug}/create`);
+            }
         } catch (error) {
             console.error('Ошибка загрузки изображения:', error);
         }
@@ -109,7 +112,7 @@ const AdminCity = () => {
     const handleSubmit = async e => {
         e.preventDefault()
         try {
-            await citySchema.validate(formData,{abortEarly:false})
+            await citySchema.validate(formData, {abortEarly: false})
             if (id) {
                 await api.put(`/city/${id}`, formData)
             } else {
@@ -132,9 +135,9 @@ const AdminCity = () => {
 
 
     const citySchema = object({
-        name:string().required('Please enter name of city'),
-        country_id:number().required('Please choose a country'),
-        url:string().required('Please enter url of city')
+        name: string().required('Please enter name of city'),
+        country_id: number().required('Please choose a country'),
+        url: string().required('Please enter url of city')
     })
 
     return (

@@ -3,9 +3,10 @@ import {api} from '@/Api/api'
 import CustomInput from '@/UI/CustomInput'
 import CustomSelect from '@/UI/CustomSelect'
 import {useParams, useRouter} from 'next/navigation'
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import CustomButton from '../../UI/CustomButton'
 import {object, string} from "yup";
+import {Select, SelectItem} from "@nextui-org/react";
 
 const AdminServices = () => {
     const router = useRouter()
@@ -43,19 +44,10 @@ const AdminServices = () => {
         fetchData()
     }, [id])
 
-    const handleInputChange = e => {
-        const {name, value} = e.target
+    const handleInputChange = (name,value) => {
         setFormData(prevState => ({
             ...prevState,
             [name]: name === 'type_id' ? Number(value) : value,
-        }))
-    }
-
-    const handleSelectChange = selectedKeys => {
-        const selectedValue = Array.from(selectedKeys)[0]
-        setFormData(prevState => ({
-            ...prevState,
-            type_id: Number(selectedValue),
         }))
     }
 
@@ -93,32 +85,36 @@ const AdminServices = () => {
         title: string().required('Please enter a title'),
         icon: string().required('Please enter a icon'),
     })
+    console.log(formData.type_id)
     return (
         <form className='flex flex-col gap-3 items-start' onSubmit={handleSubmit}>
             <CustomInput
                 name='title'
-                fn={handleInputChange}
+                fn={(e)=>handleInputChange('title',e.target.value)}
                 value={formData.title}
                 label='Название услуги:'
                 error={errors.title}
             />
             <CustomInput
                 name='icon'
-                fn={handleInputChange}
+                fn={(e)=>handleInputChange('icon',e.target.value)}
                 value={formData.icon}
                 label='Иконка:'
                 description='Укажите класс иконки услуги. Она будет выводиться на сайте внутри тура. Пример: "fa fa-ticket-alt https://fontawesome.com/'
                 error={errors.icon}
 
             />
-            <CustomSelect
-                name='type_id'
-                fn={handleSelectChange}
-                value={new Set([formData.type_id.toString()])}
-                data={selectOptions}
-                label='Тип услуги:'
-                description='Выберите тип услуги. Она будет отображаться в разделе изменения туров, во вкладке услуги (Включено / Не включено / Заметка).'
-            />
+            <Select
+                label="Название услуги*:"
+                selectedKeys={new Set([formData.type_id.toString()])}
+                onSelectionChange={(keys) => handleInputChange('type_id', keys.values().next().value)}
+            >
+                {selectOptions.map((el) => (
+                    <SelectItem key={el.value} value={el.value.toString()}>
+                        {el.label}
+                    </SelectItem>
+                ))}
+            </Select>
             <CustomButton type='submit'>Save</CustomButton>
         </form>
     )

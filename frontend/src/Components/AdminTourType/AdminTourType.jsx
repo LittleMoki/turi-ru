@@ -5,6 +5,7 @@ import CustomInput from "@/UI/CustomInput.jsx";
 import CustomButton from "@/UI/CustomButton.jsx";
 import CustomEditor from "@/UI/CustomEditor.jsx";
 import {object, string} from "yup";
+import Image from "next/image.js";
 
 export default function AdminTourType() {
     const router = useRouter()
@@ -71,6 +72,7 @@ export default function AdminTourType() {
     const handleSubmit = async e => {
         e.preventDefault()
         try {
+            await tourTypeSchema.validate(formData,{abortEarly:false})
             if (id) {
                 await api.put(`/tour_type/${id}`, formData)
             } else {
@@ -86,7 +88,7 @@ export default function AdminTourType() {
             if (error?.response?.data?.message) {
                 newErrors['url'] = error?.response?.data?.message;
             }
-            setErrors(newErrors);
+            console.error(newErrors);
         }
     }
 
@@ -101,9 +103,35 @@ export default function AdminTourType() {
         name:string().typeError('Please enter letters not numbers').required('Please enter name of tour'),
         url:string().required('Please enter url'),
     })
+
+    const handleImageChange = async (img) => {
+        const formDataImage = new FormData();
+        formDataImage.append('file', img);
+        formDataImage.append('oldPhotoName', formData.photo || ''); // Передаем старое имя файла для удаления
+        try {
+            const response = await api.post('/upload', formDataImage);
+            const newPhotoLocation = response.data.location; // URL новой фотографии
+
+            // Обновляем состояние с новым именем файла
+            setFormData((prevState) => ({
+                ...prevState,
+                'photo': newPhotoLocation, // Обновляем поле photo с новым именем файла
+            }));
+
+            if(id){
+                router.push(`/admin/${slug}/edit/${id}`);
+            }else {
+                router.push(`/admin/${slug}/create`);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
+        }
+    };
+
     return (
         <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-            <CustomInput error={errors.name} name='name' label='Заголовок' value={formData.name} fn={handleInputChange}/>
+            <CustomInput error={errors.name} name='name' label='Заголовок' value={formData.name}
+                         fn={handleInputChange}/>
             <CustomInput name='parent' label='Родительская категория' value={formData.parent} fn={handleInputChange}/>
             <label className="text-white">
                 Описание
@@ -113,11 +141,30 @@ export default function AdminTourType() {
                               value={formData.description}
                 />
             </label>
-            <CustomInput error={errors.url} name='url' label='Ссылка на тип' value={formData.url} fn={handleInputChange}/>
+            <CustomInput error={errors.url} name='url' label='Ссылка на тип' value={formData.url}
+                         fn={handleInputChange}/>
             <CustomInput name='title' label='Title' value={formData.title} fn={handleInputChange}/>
             <CustomInput name='metakeywords' label='Metakeywords' value={formData.metakeywords} fn={handleInputChange}/>
             <CustomInput name='metadescription' label='Metadescription' value={formData.metadescription}
                          fn={handleInputChange}/>
+            <label className='text-white flex flex-col gap-3 w-full'>
+                Основное фото
+                <input
+                    className='bg-white w-full py-3	px-2 rounded-xl cursor-pointer'
+                    name='photo'
+                    type='file'
+                    onChange={(e) => handleImageChange(e.target.files[0])}
+                />
+                {formData.photo ? (
+                    <Image
+                        width={'500'}
+                        height={'500'}
+                        alt={formData.photo}
+                        src={`http://localhost:4000/uploads/${formData.photo}`
+                        }
+                    />
+                ) : ''}
+            </label>
             <CustomButton type='submit'>Save</CustomButton>
         </form>
     )
