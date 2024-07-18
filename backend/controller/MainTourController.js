@@ -172,6 +172,7 @@ export const ShowTourByUrl = async (req, res) => {
 
 export const EditTour = async (req, res) => {
     const {id} = req.params;
+    // const id = req.params.id
     const {
         typeId,
         teamId,
@@ -307,7 +308,6 @@ export const EditTour = async (req, res) => {
             });
         }
 
-
         for (const c of city) {
             const existingCity = await prisma.t_tourcity.findFirst({
                 where: {
@@ -419,7 +419,6 @@ export const EditTour = async (req, res) => {
                     },
                 });
             } else {
-
                 // Если записи не существуют, создаем новые
                 await prisma.t_tourtoday.createMany({
                     skipDuplicates: true,

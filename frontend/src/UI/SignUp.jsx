@@ -22,6 +22,7 @@ const SignUp = () => {
         photo: '',
         password: '',
         email: '',
+        confirmPassword:''
     });
     const router = useRouter();
 
@@ -53,6 +54,7 @@ const SignUp = () => {
             });
         } catch (err) {
             const newErrors = {};
+            console.log(newErrors)
             err.inner.forEach((error) => {
                 newErrors[error.path] = error.message;
             });

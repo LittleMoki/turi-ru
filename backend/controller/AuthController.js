@@ -20,6 +20,7 @@ export const RegisterUser = async (req, res) => {
             first_name, last_name, phone_number, password, email, role, photo
         } = req.body;
 
+
         const validateEmail = await prisma.t_users.findUnique({
             where: {
                 email

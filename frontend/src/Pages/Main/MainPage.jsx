@@ -13,15 +13,18 @@ const MainPage = () => {
     const {data: newsCards, isLoading: newsLoading} = useQuery({
         queryKey: ['newsCards'],
         queryFn: () => api.get(`/news/news/urlType`),
-        select: data => data.data.data
+        select: data => data.data.data,
     });
+
     const {data: statiCards, isLoading: statiLoading} = useQuery({
         queryKey: ['statiCards'],
         queryFn: () => api.get(`/news/stati/urlType`),
-        select: data => data.data.data
+        select: data => data.data.data,
     });
     const titleNews = newsCards?.map(el => el.type.title).pop()
     const titleStati = statiCards?.map(el => el.type.title).pop()
+
+    console.log()
 
     return (
         <>
@@ -31,17 +34,22 @@ const MainPage = () => {
             <PopularDestinations/>
             <Reviews/>
             {newsLoading ?
-                <div className='w-full h-[30vh] flex justify-center items-center'><Spinner size="lg"/></div> :
+                <div className='w-full h-[30vh] flex justify-center items-center'><Spinner size="lg"/></div>
+                :
+                newsCards?.length > 0 &&
                 <Articles
                     title={titleNews}
                     btnName={'Все новости'}
                     btnLink='/news'
                     isBtn={true}
                     cards={newsCards}
-                />}
+                />
+            }
 
-            {statiLoading ? <div className='w-full h-[30vh] flex justify-center items-center'><Spinner size="lg"/></div>
+            {statiCards && statiLoading ?
+                <div className='w-full h-[30vh] flex justify-center items-center'><Spinner size="lg"/></div>
                 :
+                statiCards?.length > 0 &&
                 <Articles
                     title={titleStati}
                     btnName={'Все статьи'}
@@ -49,7 +57,8 @@ const MainPage = () => {
                     isBtn={true}
                     cards={statiCards}
                     style={{paddingBottom: '30px'}}
-                />}
+                />
+            }
 
         </>
     )

@@ -49,7 +49,7 @@ export const WalletTopMenu = () => {
             </DropdownTrigger>
             <DropdownMenu aria-label="Dynamic exchanges">
                 {
-                    walletData?.map(el => (
+                    walletData && walletData?.map(el => (
                         <DropdownItem
                             onClick={() => {
                                 setWallet(

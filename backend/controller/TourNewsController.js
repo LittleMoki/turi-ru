@@ -92,6 +92,8 @@ export const ShowNews = async (req, res) => {
 
 export const ShowNewsUrlType = async (req, res) => {
     const {url} = req.params
+
+
     const news = await prisma.t_news.findMany({
         where: {
             type: {
@@ -103,7 +105,7 @@ export const ShowNewsUrlType = async (req, res) => {
         }
     })
 
-    if (news.length <= 0) {
+    if (news.length >! 0) {
         res.json({status: 400, message: 'No news found'})
     }
 

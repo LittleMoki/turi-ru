@@ -7,7 +7,7 @@ import {api} from "@/Api/api.js";
 import Cookies from "js-cookie";
 import {Container} from "@/Components/index.js";
 import CustomInput from "@/UI/CustomInput.jsx";
-import { Input, Radio, RadioGroup, Select, SelectItem} from "@nextui-org/react";
+import {Input, Radio, RadioGroup, Select, SelectItem, Spinner} from "@nextui-org/react";
 
 countries.registerLocale(require('i18n-iso-countries/langs/ru.json'));
 
@@ -16,7 +16,7 @@ const countryNames = countries.getNames('ru');
 const countryOptions = Object.values(countryNames);
 
 const BookingTourPage = () => {
-    const router  = useRouter()
+    const router = useRouter()
     const [filterCountry, setFilterCountry] = useState('');
     const [people, setPeople] = useState(1);
     const [name, setName] = useState('');
@@ -31,13 +31,13 @@ const BookingTourPage = () => {
     const id = searchParams.get('id');
     const userId = Cookies.get('userId');
 
-    const {data: dataTour} = useQuery({
+    const {data: dataTour, isLoading, isError} = useQuery({
         queryKey: ['tourBookingData', url],
         queryFn: () => api.get(`/tour/${url}/url`),
         select: data => data.data.data
     });
 
-    const {data: userData} = useQuery({
+    const {data: userData, isLoading: userLoading} = useQuery({
         queryKey: ['bookingUserData', userId],
         queryFn: () => api.get(`/users/${userId}`),
         select: data => data.data.data
@@ -176,24 +176,32 @@ const BookingTourPage = () => {
                                     <div className='flex flex-col gap-3'>
                                         <h3 className='text-xl font-semibold'>Информация о путешественниках</h3>
                                         <p><i className='fas fa-user'/> Основной путешественник</p>
-                                        <CustomInput label='Имя: *' value={userData?.first_name}/>
-                                        <CustomInput label='Email: *' value={userData?.email}/>
-                                        <CustomInput label='Номер телефона: *' value={userData?.phone_number}/>
-                                        <Input
-                                            label='Поиск страны:'
-                                            onChange={(e) => setFilterCountry(e.target.value)}
-                                            value={filterCountry}
-                                        />
-                                        <Select
-                                            label='Страна:'
-                                            onChange={(e) => setTourType(e.target.value)}
-                                        >
-                                            {filteredCountries.map((country, index) => (
-                                                <SelectItem key={index} value={country}>
-                                                    {country}
-                                                </SelectItem>
-                                            ))}
-                                        </Select>
+                                        {userLoading ?
+                                            <div className='w-full h-[30vh] flex justify-center items-center'>
+                                                <Spinner label='Loading...' size="lg"/>
+                                            </div>
+                                            :
+                                            <div className='flex flex-col gap-3'>
+                                                <CustomInput label='Имя: *' value={userData?.first_name}/>
+                                                <CustomInput label='Email: *' value={userData?.email}/>
+                                                <CustomInput label='Номер телефона: *' value={userData?.phone_number}/>
+                                                <Input
+                                                    label='Поиск страны:'
+                                                    onChange={(e) => setFilterCountry(e.target.value)}
+                                                    value={filterCountry}
+                                                />
+                                                <Select
+                                                    label='Страна:'
+                                                    onChange={(e) => setTourType(e.target.value)}
+                                                >
+                                                    {filteredCountries.map((country, index) => (
+                                                        <SelectItem key={index} value={country}>
+                                                            {country}
+                                                        </SelectItem>
+                                                    ))}
+                                                </Select>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             )}
@@ -272,7 +280,7 @@ const BookingTourPage = () => {
                                 </button>
                             </div>
                         </div>
-                        <div className='p-5 flex flex-col justify-between max-h-[550px] rounded-xl col-span-1 bg-white'>
+                        <div className='p-5 flex flex-col justify-between rounded-xl col-span-1 bg-white'>
                             <div>
                                 <h2 className='font-semibold text-2xl'><i className='fas fa-suitcase'/> Информация о
                                     туре</h2>
@@ -323,7 +331,6 @@ const BookingTourPage = () => {
                             </div>
                         </div>
                     </div>
-
                 </form>
             </Container>
         </section>
