@@ -24,8 +24,6 @@ const MainPage = () => {
     const titleNews = newsCards?.map(el => el.type.title).pop()
     const titleStati = statiCards?.map(el => el.type.title).pop()
 
-    console.log()
-
     return (
         <>
             <HeroBlock/>

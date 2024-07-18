@@ -34,7 +34,7 @@ export const WalletTopMenu = () => {
         }
     }, [walletData, setWallet]);
 
-    if (error) {
+    if (error && wallet) {
         return <div>Error loading data</div>;
     }
     return (
