@@ -21,8 +21,9 @@ const MainPage = () => {
         queryFn: () => api.get(`/news/stati/urlType`),
         select: data => data.data.data,
     });
-    const titleNews = newsCards?.map(el => el.type.title).pop()
-    const titleStati = statiCards?.map(el => el.type.title).pop()
+
+    const titleNews = newsCards?.map(el => el.type.title).splice(0,1).join('')
+    const titleStati = statiCards?.map(el => el.type.title).splice(0,1).join('')
 
     return (
         <>
