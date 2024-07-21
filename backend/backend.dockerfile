@@ -1,27 +1,27 @@
-# # Use Node.js 20.x image as base
-# FROM node:20
+# Use Node.js 20.x image as base
+FROM node:20
 
-# # Set the working directory inside the container
-# WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /app
 
-# # Copy package.json and package-lock.json (if present) to the working directory
-# COPY package*.json ./
+# Copy package.json and package-lock.json (if present) to the working directory
+COPY package*.json ./
 
-# # Install dependencies
-# RUN npm install
+# Install dependencies
+RUN npm install
 
-# # Copy Prisma schema and generate Prisma client
-# COPY prisma ./prisma
-# RUN npx prisma generate
+# Copy Prisma schema and generate Prisma client
+COPY prisma ./prisma
+RUN npx prisma generate
 
-# # Run migrations if necessary
-# RUN npx prisma migrate dev
+# Run migrations if necessary
+RUN npx prisma migrate dev
 
-# # Copy the rest of the application code
-# COPY . .
+# Copy the rest of the application code
+COPY . .
 
-# # Expose port 4000 to the outside world
-# EXPOSE 4000
+# Expose port 4000 to the outside world
+EXPOSE 4000
 
-# # Command to run the application
-# CMD ["npm", "run", "dev"]
+# Command to run the application
+CMD ["npm", "run", "dev"]
