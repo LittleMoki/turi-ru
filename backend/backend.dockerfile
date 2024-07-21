@@ -14,8 +14,6 @@ RUN npm install
 COPY prisma ./prisma
 RUN npx prisma generate
 
-# Run migrations if necessary
-RUN npx prisma migrate dev
 
 # Copy the rest of the application code
 COPY . .
