@@ -15,7 +15,7 @@ export default function CustomEditor({ value, fn1, fn, name, id, index }) {
     return (
         <Editor
             id={id}
-            apiKey='h5u59b6hl9nnq3huylg895npokq52ukrs4xk633u4xcosjf5'
+            apiKey='vaqjhgfwvxbltig7tf85ywxfkbjmte0idhsyanlgfvsyrz7t'
             onInit={(_evt, editor) => editorRef.current = editor}
             init={{
                 width: '100%',
