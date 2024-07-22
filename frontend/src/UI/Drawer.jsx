@@ -95,7 +95,7 @@ const CustomDrawer = ({countryData, filteredTourTypes}) => {
             </List>
             <Divider/>
             <List>
-                <Link href='rewiev'>
+                <Link href='review'>
                     <ListItem sx={{padding: '20px 8px'}} disablePadding>
                         Review
                     </ListItem>
