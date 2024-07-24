@@ -5,5 +5,5 @@ export const api = axios.create({
 	httpsAgent: new https.Agent({
 		rejectUnauthorized: false
 	}),
-	baseURL: 'https://api.turi-uzbekistana.ru/',
+	baseURL: 'http://localhost:4000/',
 })

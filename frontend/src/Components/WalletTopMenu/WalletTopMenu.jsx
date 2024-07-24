@@ -11,7 +11,7 @@ export const WalletTopMenu = () => {
     const {data: walletData, isLoading, error} = useQuery({
         queryKey: ['wallet'],
         queryFn: () => api.get(`/exchange`),
-        select: data => data.data.data
+        select: data => data.data.data,
     });
 
     const [isWallet, setIsWallet] = useState(null); // Изначально null
