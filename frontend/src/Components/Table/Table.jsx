@@ -5,7 +5,8 @@ import {
 import {useRouter} from 'next/navigation';
 import DropDownDoted from './DropDownDoted';
 import Image from 'next/image';
-import {useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
+import {base} from "next/dist/build/webpack/config/blocks/base.js";
 
 const AdminTable = ({handleDelete, dataItems, loading, params}) => {
     const router = useRouter();
@@ -95,13 +96,6 @@ const AdminTable = ({handleDelete, dataItems, loading, params}) => {
 
     const pages = Math.ceil(dataItems?.length / rowsPerPage);
 
-    const items = useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-
-        return dataItems?.slice(start, end);
-    }, [page, dataItems]);
-
     const columnSearch = columns.filter(el =>
         el.key === 'login' || el.key === 'name' || el.key === 'titlename' ||
         el.key === 'main_title' || el.key === 'icon' || el.key === 'title' ||
@@ -114,19 +108,38 @@ const AdminTable = ({handleDelete, dataItems, loading, params}) => {
         )
     );
 
-    console.log(filteredData);
+    const items = useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        return dataItems?.slice(start, end);
+    }, [page, dataItems, filteredData]);
+
+    const onSearchChange = useCallback((value) => {
+        if (value) {
+            setSearch(value);
+            setPage(1);
+        } else {
+            setSearch("");
+        }
+    }, []);
 
     return (<Table
         isStriped
         className='text-white dark mt-3'
         aria-label='Example table with dynamic content'
-        topContent={<div className='grid md:grid-cols-4 sm:grid-cols-2 gap-4'>
-            <Input onValueChange={(e) => setSearch(e)}
-                   startContent={<i className="fa-solid fa-magnifying-glass"/>} labelPlacement='outside-left'
-                   label='Поиск:'/>
-        </div>}
-        bottomContent={pages > 10 ? (<div className="flex w-full justify-center">
+        topContentPlacement='outside'
+        topContent={
+            <Input
+                className='sm:max-w-[44%]'
+                isClearable
+                onValueChange={onSearchChange}
+                startContent={<i className="fa-solid fa-magnifying-glass"/>} labelPlacement='outside-left'
+                label='Поиск:'/>
+        }
+        bottomContent={pages > 0 ? (<div className="flex w-full justify-center">
             <Pagination
+                isDisabled={search.length > 0}
                 isCompact
                 showControls
                 showShadow
@@ -138,16 +151,23 @@ const AdminTable = ({handleDelete, dataItems, loading, params}) => {
         </div>) : null}
     >
         <TableHeader columns={columns}>
-            {column => (<TableColumn
-                key={column.key}
-                style={{width: column.width || 'auto'}}
-            >
-                {column.label}
-            </TableColumn>)}
+            {column => (!loading && items.length > 0 ? <TableColumn
+                        key={column.key}
+                        style={{width: column.width || 'auto'}}
+                    >
+                        {column.label}
+                    </TableColumn>
+                    :
+                    <TableColumn
+                        key={column.key}
+                        style={{display: "none"}}
+                    >
+                    </TableColumn>
+            )}
         </TableHeader>
         <TableBody
             isLoading={loading}
-            items={filteredData.length > 0 ? filteredData : items}
+            items={search.length > 0 ? filteredData : items}
             emptyContent={'No rows to display.'}
             loadingContent={<Spinner label='Loading...'/>}
         >
