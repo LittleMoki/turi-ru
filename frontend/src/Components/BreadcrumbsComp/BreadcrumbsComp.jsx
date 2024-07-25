@@ -1,3 +1,4 @@
+'use client'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { MdKeyboardArrowRight } from 'react-icons/md'
 import { Container } from '..'
