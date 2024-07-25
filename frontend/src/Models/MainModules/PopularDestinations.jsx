@@ -40,7 +40,7 @@ export const PopularDestinations = () => {
                                 width={1000}
                                 height={1000}
                                 className="w-full h-full object-cover"
-                                src={`http://localhost:4000/uploads/${el.photo}`}
+                                src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
                                 alt={el.photo}
                             />
                             <div

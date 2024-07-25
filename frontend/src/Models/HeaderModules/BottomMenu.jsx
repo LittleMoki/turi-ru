@@ -85,7 +85,7 @@ export const BottomMenu = () => {
 											<Image
 												width={300}
 												height={300}
-												src={`http://localhost:4000/uploads/${el.photo}`}
+												src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
 												className='object-cover'
 												alt={el.photo}
 											/>
@@ -127,10 +127,12 @@ export const BottomMenu = () => {
 											href={`/tour/${el.url}`}
 											className='border relative overflow-hidden rounded-2xl h-[150px] cursor-pointer'
 										>
-											<img
-												src={`http://localhost:4000/uploads/${el.photo}`}
+											<Image
+												src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
 												className='object-cover'
 												alt='menuTopImage'
+												width={300}
+												height={300}
 											/>
 											<div className='absolute w-full duration-200 h-full top-0 left-0 flex bg-black/60 hover:bg-black/80 justify-center items-center'>
 												<h2 className='text-white text-lg'>{el.name}</h2>

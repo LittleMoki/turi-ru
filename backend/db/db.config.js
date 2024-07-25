@@ -4,12 +4,8 @@ const prisma = new PrismaClient({
 	log: ['query'],
 	datasources: {
 		db: {
-			url: 'your-database-url',
+			url: process.env.DATABASE_URL,
 		},
-	},
-	pool: {
-		max: 10, // Увеличьте лимит соединений
-		timeout: 30, // Увеличьте время ожидания
 	},
 })
 

@@ -1,10 +1,10 @@
 "use client"
 import {BreadcrumbsComp, Container} from "@/Components/index.js";
-import Image from "next/image.js";
-import {FaCalendar, FaEye, FaGlobeAsia, FaOdnoklassniki, FaTelegram, FaVk} from "react-icons/fa";
+import Image from "next/image";
+import {FaOdnoklassniki, FaTelegram, FaVk} from "react-icons/fa";
 import {PiPinterestLogoBold} from "react-icons/pi";
 import {Button, FormControl, FormHelperText, Input, InputLabel, TextareaAutosize} from "@mui/material";
-import Link from "next/link.js";
+import Link from "next/link";
 import formBg from '/public/banner-2.jpg'
 import banner1 from '/public/zvezda_vostoka.png'
 import banner2 from '/public/may-holidays.png'
@@ -41,7 +41,7 @@ export default function Place() {
                         <div className='relative w-full max-h-[400px] rounded-2xl overflow-hidden'>
                             <Image
                                 className='w-full h-full object-cover brightness-50'
-                                src={`http://localhost:4000/uploads/${placeData?.photo}`}
+                                src={`https://api.turi-uzbekistana.ru/uploads/${placeData?.photo}`}
                                 alt={'20231208500127172.jpg'}
                                 width={1000}
                                 height={1000}

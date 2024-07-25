@@ -46,7 +46,7 @@ export const Card = ({
                         width={1000}
                         height={1000}
                         className="object-cover aspect-[4/3]"
-                        src={`http://localhost:4000/uploads/${photo}`}
+                        src={`https://api.turi-uzbekistana.ru/uploads/${photo}`}
                         alt="card_img"
                     />
                 </div>

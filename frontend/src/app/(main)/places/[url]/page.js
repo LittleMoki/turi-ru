@@ -11,7 +11,6 @@ export async function generateMetadata({ params }) {
         // Подключение к API для получения данных о стране
         const response = await api.get(`places/${params.url}/url`);
         const data = response.data.data;
-        console.log(data.metakeywords)
         return {
             title: data?.name || '',
             description: data?.metadescription || '',

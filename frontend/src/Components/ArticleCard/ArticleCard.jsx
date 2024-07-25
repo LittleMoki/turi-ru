@@ -20,7 +20,7 @@ export const ArticleCard = ({
 				<Link href={`/${type?.url}/${url}`}>
 					<Image
 						className='object-cover aspect-[3/2]'
-						src={`http://localhost:4000/uploads/${photo}`}
+						src={`https://api.turi-uzbekistana.ru/uploads/${photo}`}
 						alt='BookingRulesHotelBg'
 						width='1000'
 						height='1000'

@@ -54,6 +54,7 @@ export const RecomendedTours = () => {
         }
     }, [tourCountry]);
 
+
     return (
         <section className="py-12">
             <Container>
@@ -87,7 +88,7 @@ export const RecomendedTours = () => {
                                     width={1000}
                                     height={1000}
                                     className="object-cover z-[-2] w-full h-full"
-                                    src={`http://localhost:4000/uploads/${el.photo}`}
+                                    src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
                                     alt="bg_image"
                                 />
                                 <div className="flex flex-col gap-3 text-white absolute bg-black/40 h-full bottom-0 w-full justify-end items-center py-[20px] px-[10px]">

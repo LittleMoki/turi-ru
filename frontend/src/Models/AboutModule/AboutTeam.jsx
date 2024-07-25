@@ -21,10 +21,10 @@ export const AboutTeam = () => {
                             className="overflow-hidden rounded-md bg-white border"
                             key={i}
                         >
-                            <Image width={500} height={500} src={`http://localhost:4000/uploads/${el.photo}`}
+                            <Image width={500} height={500} src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
                                    alt={el.photo}/>
                             <div className="py-3 px-6 text-center flex flex-col items-center gap-1">
-                                <h3 className="">{el.name}</h3>
+                                <h3>{el.name}</h3>
                                 <small className="opacity-70">{el.position}</small>
                                 <small>{el.employment}</small>
                             </div>

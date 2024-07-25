@@ -2,11 +2,11 @@ import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
 import {useState} from 'react'
 import {FiMenu} from 'react-icons/fi'
 import {Accordion, AccordionItem, Divider} from "@nextui-org/react";
 import Link from "next/link";
+import Image from "next/image";
 
 const CustomDrawer = ({countryData, filteredTourTypes}) => {
     const [open, setOpen] = useState(false)
@@ -26,11 +26,11 @@ const CustomDrawer = ({countryData, filteredTourTypes}) => {
                                             <div key={el.id}
                                                  className='relative w-full h-full rounded-[15px] overflow-hidden'>
                                                 <Link href={`/country/${el.url}`}>
-                                                    <img
+                                                    <Image
                                                         className='object-cover'
                                                         width={300}
                                                         height={300}
-                                                        src={`http://localhost:4000/uploads/${el.photo}`}
+                                                        src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
                                                         alt={el.photo}
                                                     />
                                                     <div
@@ -67,11 +67,11 @@ const CustomDrawer = ({countryData, filteredTourTypes}) => {
                                         <div key={el.id}
                                              className='relative w-full h-full rounded-[15px] overflow-hidden'>
                                             <Link href={`/country/${el.url}`}>
-                                                <img
+                                                <Image
                                                     className='object-cover'
                                                     width={300}
                                                     height={300}
-                                                    src={`http://localhost:4000/uploads/${el.photo}`}
+                                                    src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
                                                     alt={el.photo}
                                                 />
                                                 <div

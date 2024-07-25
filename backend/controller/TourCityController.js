@@ -57,6 +57,7 @@ export const CreateCity = async (req, res) => {
 export const ShowAllCities = async (req, res) => {
 	const cities = await prisma.t_city.findMany({
 		include: {
+			t_place:true,
 			tourcity:true,
 			country: true,
 			_count:{

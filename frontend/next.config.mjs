@@ -24,11 +24,6 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'dev.turi-uzbekistana.ru',
-                pathname: '/uploads/**',
-            },
-            {
-                protocol: 'https',
                 hostname: 'turi-uzbekistana.ru',
                 pathname: '/images/**',
             },

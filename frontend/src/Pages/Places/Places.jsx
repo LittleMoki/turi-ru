@@ -25,6 +25,7 @@ export default function Places() {
         setSelectedCity(prevSelectedCity => (prevSelectedCity === id ? null : id));
     };
     const filteredPlaces = placesData?.filter(el => el.cityid === selectedCity);
+
     return (
         <section>
             <Container>
@@ -40,7 +41,7 @@ export default function Places() {
                         </h1>
                         <form className="w-full">
                             <div className="flex flex-wrap gap-3 items-center">
-                                {cityData?.map((el) => (
+                                {cityData?.filter(el=>el._count.t_place > 0).map((el) => (
                                     <label
                                         key={el.id}
                                         className={`backdrop-blur-lg border hover:bg-[#37AF24] transition px-[12px] py-[6px] rounded-[12px] cursor-pointer flex gap-2 items-center max-w-fit ${selectedCity === el.id ? 'bg-[#37AF24]' : 'bg-black/20'}`}

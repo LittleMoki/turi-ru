@@ -3,7 +3,7 @@ import {AiOutlineGlobal} from 'react-icons/ai'
 import {FaCalendar} from 'react-icons/fa'
 import {IoSearch} from 'react-icons/io5'
 import backgroundImage from '../../../public/home-banner.jpg'
-import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Select, SelectItem} from "@nextui-org/react";
+import { Select, SelectItem} from "@nextui-org/react";
 import {useQuery} from "@tanstack/react-query";
 import {api} from "@/Api/api.js";
 
