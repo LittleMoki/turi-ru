@@ -1,16 +1,11 @@
 /** @type {import('next').NextConfig} */
-
-import withPlaiceholder from "@plaiceholder/next";
-
 const nextConfig = {
     compiler: {
         styledComponents: true,
     },
     images: {
-        formats: ['image/avif','image/webp'],
+        formats: ['image/avif', 'image/webp'],
         remotePatterns: [
-
-
             {
                 protocol: 'https',
                 hostname: 'images.unsplash.com',
@@ -19,7 +14,7 @@ const nextConfig = {
             {
                 protocol: 'http',
                 hostname: 'localhost',
-                port: '4000', // Порт вашего сервера Express.js
+                port: '4000',
                 pathname: '/uploads/**',
             },
             {
@@ -41,4 +36,4 @@ const nextConfig = {
     },
 };
 
-export default withPlaiceholder(nextConfig);
+export default nextConfig;
