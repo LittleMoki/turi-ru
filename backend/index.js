@@ -41,7 +41,6 @@ const upload = multer({storage: storage})
 
 app.post('/upload', upload.single('file'), (req, res) => {
     const {oldPhotoName} = req.body; // Получаем имя старой фотографии
-    console.log(oldPhotoName)
     // Путь к старой фотографии
     if (oldPhotoName) {
         const oldFilePath = path.join('/home/ka4ok/work/turi-uzbekistana.ru/frontend', 'uploads', oldPhotoName);
