@@ -33,7 +33,7 @@ const UserPage = () => {
                 </div>
                 <a href='/' onClick={() => logOut()}>Выход</a>
             </div>
-            <Tabs aria-label="Options">
+            <Tabs className='flex flex-wrap' aria-label="Options">
                 <Tab key="Профиль" title="Профиль">
                     <Card>
                         <CardBody>
