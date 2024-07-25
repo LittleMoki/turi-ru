@@ -25,7 +25,7 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'api.turi-uzbekistana.ru',
-                // port: '4000', // Порт вашего сервера Express.js
+                port: '4000', // Порт вашего сервера Express.js
                 pathname: '/uploads/**',
             },
             {
