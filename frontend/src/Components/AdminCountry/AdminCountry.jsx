@@ -187,7 +187,7 @@ const AdminCountry = () => {
                         width={'500'}
                         height={'500'}
                         alt={formData.photo}
-                        src={`http://localhost:4000/uploads/${formData.photo}`
+                        src={`https://api.turi-uzbekistana.ru/uploads/${formData.photo}`
                         }
                     />
                 ) : ''}

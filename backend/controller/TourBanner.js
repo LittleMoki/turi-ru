@@ -27,6 +27,8 @@ export const ShowAllBanners = async (req, res) => {
 
 export const ShowBanner = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+
 	const banner = await prisma.t_banner.findUnique({
 		where: {
 			id: Number(id),
@@ -43,6 +45,7 @@ export const ShowBanner = async (req, res) => {
 
 export const DeleteBanner = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findBanner = await prisma.t_banner.findUnique({
 		where: {

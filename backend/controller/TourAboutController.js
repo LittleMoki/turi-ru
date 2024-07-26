@@ -33,6 +33,7 @@ export const ShowAllAbout = async (req, res) => {
 
 export const ShowAbout = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findAbout = await prisma.t_about.findUnique({
 		where: {
@@ -48,6 +49,8 @@ export const ShowAbout = async (req, res) => {
 
 export const EditAbout = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+
 	const { name, position, employment, body, publick, order_number, photo } =
 		req.body
 
@@ -84,6 +87,7 @@ export const EditAbout = async (req, res) => {
 
 export const DeleteAbout = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const deleteAbout = await prisma.t_about.delete({
 		where: {

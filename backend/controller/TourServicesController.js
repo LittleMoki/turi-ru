@@ -31,6 +31,7 @@ export const ShowAllServices = async (req, res) => {
 
 export const ShowServices = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findServices = await prisma.t_tour_services.findUnique({
 		where: {
@@ -47,6 +48,7 @@ export const ShowServices = async (req, res) => {
 export const EditServices = async (req, res) => {
 	const { id } = req.params
 	const { type_id, type, title, icon, price, archive } = req.body
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findServices = await prisma.t_tour_services.findUnique({
 		where: {
@@ -80,6 +82,7 @@ export const EditServices = async (req, res) => {
 
 export const DeleteServices = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const deleteServices = await prisma.t_tour_services.delete({
 		where: {

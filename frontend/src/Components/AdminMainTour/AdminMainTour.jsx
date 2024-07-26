@@ -237,7 +237,7 @@ const AdminMainTour = () => {
 		try {
 			if (id) {
 				await tourDayPriceSchema.validate(tourDayPrice, { abortEarly: false })
-
+				console.log(tourDayPrice)
 				await tourSchemaPut.validate(formData, { abortEarly: false })
 				await api.put(`/tour/${id}`, {
 					...formData,
@@ -925,7 +925,7 @@ const AdminMainTour = () => {
 													width={'500'}
 													height={'500'}
 													alt={formData.photo}
-													src={`http://localhost:4000/uploads/${formData.photo}`}
+													src={`https://api.turi-uzbekistana.ru/uploads/${formData.photo}`}
 												/>
 											) : (
 												''
@@ -954,7 +954,7 @@ const AdminMainTour = () => {
 															width={'300'}
 															height={'300'}
 															alt={el.photo}
-															src={`http://localhost:4000/uploads/${el.photo}`}
+															src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`}
 														/>
 														<i
 															className='fa-solid fa-circle-xmark absolute top-0 left-0 cursor-pointer'

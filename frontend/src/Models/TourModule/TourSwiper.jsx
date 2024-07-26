@@ -29,7 +29,7 @@ export const TourSwiper = ({image, data}) => {
                             width={1000}
                             height={1000}
                             quality={100}
-                            src={`http://localhost:4000/uploads/${data?.photo}`}
+                            src={`https://api.turi-uzbekistana.ru/uploads/${data?.photo}`}
                             alt={data?.photo}
                         />
                     </SwiperSlide>
@@ -40,7 +40,7 @@ export const TourSwiper = ({image, data}) => {
                             width={1000}
                             height={1000}
                             quality={100}
-                            src={`http://localhost:4000/uploads/${el?.photo}`}
+                            src={`https://api.turi-uzbekistana.ru/uploads/${el?.photo}`}
                             alt={el?.photo}
                         />
                     </SwiperSlide>
@@ -62,7 +62,7 @@ export const TourSwiper = ({image, data}) => {
                             width={1000}
                             height={1000}
                             quality={100}
-                            src={`http://localhost:4000/uploads/${data?.photo}`}
+                            src={`https://api.turi-uzbekistana.ru/uploads/${data?.photo}`}
                             alt={data?.photo}
                         />
                     </SwiperSlide>
@@ -73,7 +73,7 @@ export const TourSwiper = ({image, data}) => {
                             width={1000}
                             height={1000}
                             quality={100}
-                            src={`http://localhost:4000/uploads/${el?.photo}`}
+                            src={`https://api.turi-uzbekistana.ru/uploads/${el?.photo}`}
                             alt={el?.photo}
                         />
                     </SwiperSlide>

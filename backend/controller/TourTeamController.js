@@ -27,6 +27,7 @@ export const ShowAllTeams = async (req, res) => {
 
 export const ShowTeams = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findTeams = await prisma.t_team.findUnique({
 		where: {
@@ -43,6 +44,7 @@ export const ShowTeams = async (req, res) => {
 export const EditTeams = async (req, res) => {
 	const { id } = req.params
 	const { name, photo } = req.body
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findTeams = await prisma.t_team.findUnique({
 		where: {
@@ -72,6 +74,7 @@ export const EditTeams = async (req, res) => {
 
 export const DeleteTeams = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const deleteTeams = await prisma.t_team.delete({
 		where: {

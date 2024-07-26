@@ -71,6 +71,7 @@ export const ShowAllHotels = async (req, res) => {
 
 export const ShowHotel = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
     const findHotel = await prisma.t_hotel.findUnique({
         where: {
@@ -90,6 +91,7 @@ export const ShowHotel = async (req, res) => {
 
 export const EditHotel = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
     const {
         country_id,
         cityid,
@@ -252,6 +254,7 @@ export const EditHotel = async (req, res) => {
 
 export const DeleteHotel = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
     const deleteHotel = await prisma.t_hotel.delete({
         where: {
@@ -264,6 +267,7 @@ export const DeleteHotel = async (req, res) => {
 
 export const DeleteHotelRooms = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
     const hotelRoomsUnique = await prisma.t_hotel_rooms.findUnique({
         where: {
@@ -283,6 +287,7 @@ export const DeleteHotelRooms = async (req, res) => {
 
 export const DeleteHotelPhoto = async (req,res)=>{
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
     const hotelRoomsUnique = await prisma.t_hotel_photo.findUnique({
         where: {

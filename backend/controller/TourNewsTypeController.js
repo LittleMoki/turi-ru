@@ -55,6 +55,7 @@ export const ShowAllNewsType = async (req, res) => {
 
 export const ShowNewsType = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const newsType = await prisma.t_news_type.findUnique({
 		where: {
@@ -73,6 +74,7 @@ export const ShowNewsType = async (req, res) => {
 
 export const EditNewsType = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const {
 		name,
@@ -122,6 +124,7 @@ export const EditNewsType = async (req, res) => {
 
 export const DeleteNewsType = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findNewsType = await prisma.t_news_type.findUnique({
 		where: {

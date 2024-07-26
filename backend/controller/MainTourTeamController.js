@@ -20,6 +20,8 @@ export const editMainTourTeam = async (req, res) => {
         team_id
     } = req.body;
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+
     const tour = prisma.t_tour_team.update({
         where: {
             id: Number(id),
@@ -31,8 +33,10 @@ export const editMainTourTeam = async (req, res) => {
     })
     res.json({status: 200, data: tour});
 }
+
 export const showMainTourTeam = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
     const tour = prisma.t_tour_team.findUnique({
         where: {
@@ -42,6 +46,7 @@ export const showMainTourTeam = async (req, res) => {
 
     res.json({status: 200, data: tour});
 }
+
 export const showAllMainTourTeam = async (req, res) => {
     const tour = prisma.t_tour_team.findMany({
         include:{

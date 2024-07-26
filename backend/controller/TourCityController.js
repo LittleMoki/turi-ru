@@ -76,6 +76,7 @@ export const ShowAllCities = async (req, res) => {
 
 export const ShowCity = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findCity = await prisma.t_city.findUnique({
 		where: {
@@ -91,6 +92,8 @@ export const ShowCity = async (req, res) => {
 
 export  const ShowCityUrl = async (req, res) => {
 	const { url } = req.params
+	if(!url && url === undefined) return res.status(401).json({message:'url is invalid'})
+
 	const city = await prisma.t_city.findFirst({
 		where:{
 			url:url
@@ -101,6 +104,8 @@ export  const ShowCityUrl = async (req, res) => {
 
 export const EditCity = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+
 	const {
 		country_id,
 		name,
@@ -149,6 +154,7 @@ export const EditCity = async (req, res) => {
 
 export const DeleteCity = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const deleteCity = await prisma.t_city.delete({
 		where: {

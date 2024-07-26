@@ -49,6 +49,7 @@ export const CreatePage = async (req, res) => {
 
 export const DeletePage = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
     const page = await prisma.t_pages.delete({
         where: {
@@ -74,6 +75,7 @@ export const ShowAllPages = async (req, res) => {
 
 export const ShowPage = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
     const page = await prisma.t_pages.findUnique({
         where: {
             id: Number(id),
@@ -90,6 +92,7 @@ export const ShowPage = async (req, res) => {
 
 export const EditPage = async (req, res) => {
     const {id} = req.params
+    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
     const {
         url,
         isdel,

@@ -42,6 +42,7 @@ export const ShowAllUsers = async (req, res) => {
 
 export const ShowUsers = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const findUsers = await prisma.t_users.findUnique({
 		where: {
@@ -57,6 +58,7 @@ export const ShowUsers = async (req, res) => {
 
 export const EditUsers = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 	const {
 		login,
 		first_name,
@@ -102,6 +104,7 @@ export const EditUsers = async (req, res) => {
 
 export const DeleteUsers = async (req, res) => {
 	const { id } = req.params
+	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
 
 	const deleteUsers = await prisma.t_users.delete({
 		where: {
