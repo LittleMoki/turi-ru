@@ -55,8 +55,9 @@ export const ShowAllNewsType = async (req, res) => {
 
 export const ShowNewsType = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
-
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 	const newsType = await prisma.t_news_type.findUnique({
 		where: {
 			id: Number(id),
@@ -74,8 +75,9 @@ export const ShowNewsType = async (req, res) => {
 
 export const EditNewsType = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
-
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 	const {
 		name,
 		description,
@@ -124,8 +126,9 @@ export const EditNewsType = async (req, res) => {
 
 export const DeleteNewsType = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
-
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 	const findNewsType = await prisma.t_news_type.findUnique({
 		where: {
 			id: Number(id),

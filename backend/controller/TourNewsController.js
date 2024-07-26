@@ -93,7 +93,9 @@ export const ShowNews = async (req, res) => {
 
 export const ShowNewsUrlType = async (req, res) => {
     const {url} = req.params
-    if(!url && url === undefined) return res.status(401).json({message:'url is invalid'})
+    if (!url) {
+        return res.status(401).json({ url: 'url is invalid' });
+    }
 
 
     const news = await prisma.t_news.findMany({
@@ -116,7 +118,9 @@ export const ShowNewsUrlType = async (req, res) => {
 
 export const ShowNewsUrl = async (req, res) => {
     const {url} = req.params
-    if(!url && url === undefined) return res.status(401).json({message:'url is invalid'})
+    if (!url) {
+        return res.status(401).json({ message: 'url is invalid' });
+    }
     const news = await prisma.t_news.findFirst({
         where: {
             url:url,
@@ -127,7 +131,9 @@ export const ShowNewsUrl = async (req, res) => {
 
 export const EditNews = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
     const {
         new_date,
         header,
@@ -197,7 +203,9 @@ export const EditNews = async (req, res) => {
 
 export const DeleteNews = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const findNews = await prisma.t_news.findUnique({
         where: {

@@ -74,7 +74,9 @@ export const EditTeams = async (req, res) => {
 
 export const DeleteTeams = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
 	const deleteTeams = await prisma.t_team.delete({
 		where: {

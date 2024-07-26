@@ -71,7 +71,9 @@ export const ShowCountry = async (req, res) => {
 
 export const ShowCountryUrl = async (req, res) => {
 	const { url } = req.params
-	if(!url && url === undefined) return res.status(401).json({message:'url is invalid'})
+	if (!url) {
+        return res.status(401).json({ url: 'url is invalid' });
+    }
 
 	const country = await prisma.t_country.findFirst({
 		where:{
@@ -83,7 +85,9 @@ export const ShowCountryUrl = async (req, res) => {
 
 export const EditCountry = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
 	const {
 		language_id,
@@ -142,7 +146,9 @@ export const EditCountry = async (req, res) => {
 
 export const DeleteCountry = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
 	const deleteCountry = await prisma.t_country.delete({
 		where: {

@@ -141,8 +141,9 @@ export const ShowTour = async (req, res) => {
 
 export const ShowTourByUrl = async (req, res) => {
     const {tourUrl} = req.params
-    if (!tourUrl && tourUrl === undefined) return res.status(401).json({message: 'tourUrl is invalid'})
-
+    if (!tourUrl) {
+        return res.status(401).json({ tourUrl: 'tourUrl is invalid' });
+    }
     const findTour = await prisma.t_tour.findFirst({
         where: {
             url: tourUrl,
@@ -478,7 +479,9 @@ export const DeleteTourToday = async (req, res) => {
 // controller for deleting tour
 export const DeleteTour = async (req, res) => {
     const {id} = req.params
-    if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const tour = await prisma.t_tour.findUnique({
         where: {
@@ -507,7 +510,9 @@ export const DeleteTour = async (req, res) => {
 
 export const DeleteTourFaq = async (req, res) => {
     const {id} = req.params
-    if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const faqUnique = await prisma.t_tour_faqs.findUnique({
         where: {
@@ -527,7 +532,9 @@ export const DeleteTourFaq = async (req, res) => {
 
 export const DeleteTourImages = async (req, res) => {
     const {id} = req.params
-    if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const tourUnique = await prisma.t_tourphoto.findUnique({
         where: {
@@ -547,7 +554,9 @@ export const DeleteTourImages = async (req, res) => {
 
 export const DeleteTourCountry = async (req, res) => {
     const {id} = req.params
-    if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const countryUnique = await prisma.t_tour_country.findFirst({
         where: {
@@ -567,7 +576,9 @@ export const DeleteTourCountry = async (req, res) => {
 
 export const DeleteTourCity = async (req, res) => {
     const {id} = req.params
-    if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const cityUnique = await prisma.t_tourcity.findUnique({
         where: {
@@ -587,7 +598,9 @@ export const DeleteTourCity = async (req, res) => {
 
 export const DeleteTourDayPrice = async (req, res) => {
     const {id} = req.params
-    if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     try {
         const tourDayPrice = await prisma.t_tour_day_price.delete({

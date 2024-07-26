@@ -9,7 +9,7 @@ import AdminPlace from '@/Components/AdminPlace/AdminPlace'
 import AdminServices from '@/Components/AdminServices/AdminServices'
 import AdminTeam from '@/Components/AdminTeam/AdminTeam'
 import AdminUsers from '@/Components/AdminUsers/AdminUsers'
-import { useParams } from 'next/navigation'
+import {useParams, useRouter} from 'next/navigation'
 import AdminMainTour from "@/Components/AdminMainTour/AdminMainTour.jsx";
 import AdminAbout from "@/Components/AdminAbout/AdminAbout.jsx";
 import AdminHotel from "@/Components/AdminHotel/AdminHotel.jsx";
@@ -17,9 +17,12 @@ import AdminTourType from "@/Components/AdminTourType/AdminTourType.jsx";
 import AdminOrders from "@/Components/AdminOrders/AdminOrders.jsx";
 
 const Edit = () => {
-	const params = useParams()
-
-	switch (params.slug) {
+	const {slug,id} = useParams()
+	const router = useRouter()
+	if(id === 'undefined'){
+		return router.push(`/admin/${slug}/`)
+	}
+	switch (slug) {
 		case 'page':
 			return <AdminPage />
 		case 'services':

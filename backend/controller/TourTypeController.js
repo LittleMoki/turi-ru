@@ -72,7 +72,9 @@ export const tourShow = async (req, res) => {
 
 export const tourTypeShowUrl = async (req, res) => {
     const {url} = req.params
-    if(!url && url === undefined) return res.status(401).json({message:'url is invalid'})
+    if (!url) {
+        return res.status(401).json({ message: 'url is invalid' });
+    }
 
     const tourType = await prisma.t_types.findFirst({
         where:{
@@ -99,7 +101,9 @@ export const tourTypeShowUrl = async (req, res) => {
 
 export const tourEdit = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
     const {
         parent,
         name,
@@ -153,7 +157,9 @@ export const tourEdit = async (req, res) => {
 
 export const tourDelete = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const tour_delete = await prisma.t_types.delete({
         where: {

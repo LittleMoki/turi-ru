@@ -1,7 +1,7 @@
 'use client'
 import { api } from '@/Api/api'
 import AdminTable from '@/Components/Table/Table'
-import { useParams } from 'next/navigation'
+import {useParams, usePathname} from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const fetchData = async ({ params, setLoading }) => {

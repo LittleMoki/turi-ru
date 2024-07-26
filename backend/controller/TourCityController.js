@@ -92,7 +92,9 @@ export const ShowCity = async (req, res) => {
 
 export  const ShowCityUrl = async (req, res) => {
 	const { url } = req.params
-	if(!url && url === undefined) return res.status(401).json({message:'url is invalid'})
+	if (!url) {
+        return res.status(401).json({ url: 'url is invalid' });
+    }
 
 	const city = await prisma.t_city.findFirst({
 		where:{
@@ -154,7 +156,9 @@ export const EditCity = async (req, res) => {
 
 export const DeleteCity = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
 	const deleteCity = await prisma.t_city.delete({
 		where: {

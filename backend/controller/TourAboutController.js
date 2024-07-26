@@ -87,7 +87,9 @@ export const EditAbout = async (req, res) => {
 
 export const DeleteAbout = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
 	const deleteAbout = await prisma.t_about.delete({
 		where: {

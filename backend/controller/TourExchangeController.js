@@ -24,7 +24,9 @@ export const ExchangeCreate = async (req, res) => {
 // Delete Exchange
 export const ExchangeDelete = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+   if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const deleteExchange = await prisma.t_exchange.delete({
         where: {
@@ -47,7 +49,9 @@ export const ExchangeShowAll = async (req, res) => {
 
 export const ExchangeShow = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+   if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
     const exchange = await prisma.t_exchange.findUnique({
         where: {
             id: Number(id),
@@ -60,7 +64,9 @@ export const ExchangeShow = async (req, res) => {
 // Edit exchange
 export const ExchangeEdit = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+   if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
     const {title, name, symbol, exchange_rate, primary_valuta} = req.body
     // const findExchange = await prisma.t_exchange.findUnique({
     // 	where: {

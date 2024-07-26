@@ -80,7 +80,9 @@ export const ShowPlace = async (req, res) => {
 
 export const ShowPlaceUrl = async (req, res) => {
     const {url} = req.params
-    if(!url && url === undefined) return res.status(401).json({message:'url is invalid'})
+    if (!url) {
+        return res.status(401).json({ message: 'url is invalid' });
+    }
     const place = await prisma.t_place.findFirst({
         where: {
             url
@@ -95,7 +97,9 @@ export const ShowPlaceUrl = async (req, res) => {
 
 export const EditPlace = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
     const {
         country_id,
         cityid,
@@ -147,7 +151,9 @@ export const EditPlace = async (req, res) => {
 
 export const DeletePlace = async (req, res) => {
     const {id} = req.params
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+    if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
     const deletePlace = await prisma.t_place.delete({
         where: {

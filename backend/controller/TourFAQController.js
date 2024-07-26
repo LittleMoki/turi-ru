@@ -19,7 +19,9 @@ export const FAQCreate = async (req, res) => {
 
 export const FAQDelete = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 	const findFAQ = await prisma.t_faq.delete({
 		where: {
 			id: Number(id),
@@ -47,7 +49,9 @@ export const FAQShowAll = async (req, res) => {
 
 export const FAQShow = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 
 	const FAQ = await prisma.t_faq.findUnique({
 		where: {
@@ -63,7 +67,9 @@ export const FAQShow = async (req, res) => {
 
 export const FAQEdit = async (req, res) => {
 	const { id } = req.params
-	if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+	if (!id || isNaN(Number(id))) {
+		return res.status(401).json({ message: 'id is invalid' });
+	}
 	const { name, description, archive } = req.body
 
 	const FAQ = await prisma.t_faq.update({
