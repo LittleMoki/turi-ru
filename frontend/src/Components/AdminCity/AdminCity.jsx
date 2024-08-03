@@ -75,7 +75,7 @@ const AdminCity = () => {
     const handleSelectChange = keys => {
         setFormData(prevState => ({
             ...prevState,
-            country_id: Number([...keys][0])
+            country_id:[...keys][0]
         }))
     }
 
@@ -136,7 +136,7 @@ const AdminCity = () => {
 
     const citySchema = object({
         name: string().required('Please enter name of city'),
-        country_id: number().required('Please choose a country'),
+        country_id: string().required('Please choose a country'),
         url: string().required('Please enter url of city')
     })
 

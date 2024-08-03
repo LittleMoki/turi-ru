@@ -37,7 +37,7 @@ export const ShowAbout = async (req, res) => {
 
 	const findAbout = await prisma.t_about.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -56,7 +56,7 @@ export const EditAbout = async (req, res) => {
 
 	const findAbout = await prisma.t_about.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -65,7 +65,7 @@ export const EditAbout = async (req, res) => {
 
 	const EditAbout = await prisma.t_about.update({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		data: {
 			name,
@@ -87,13 +87,13 @@ export const EditAbout = async (req, res) => {
 
 export const DeleteAbout = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
 	const deleteAbout = await prisma.t_about.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 

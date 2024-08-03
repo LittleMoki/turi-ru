@@ -31,7 +31,7 @@ export const ShowBanner = async (req, res) => {
 
 	const banner = await prisma.t_banner.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		include: {
 			city: true,
@@ -45,13 +45,13 @@ export const ShowBanner = async (req, res) => {
 
 export const DeleteBanner = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
 	const findBanner = await prisma.t_banner.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -60,7 +60,7 @@ export const DeleteBanner = async (req, res) => {
 
 	const deleteBanner = await prisma.t_banner.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 

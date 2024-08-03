@@ -31,7 +31,7 @@ export const ShowTeams = async (req, res) => {
 
 	const findTeams = await prisma.t_team.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -48,7 +48,7 @@ export const EditTeams = async (req, res) => {
 
 	const findTeams = await prisma.t_team.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -57,7 +57,7 @@ export const EditTeams = async (req, res) => {
 
 	const EditTeams = await prisma.t_team.update({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		data: {
 			name,
@@ -74,13 +74,13 @@ export const EditTeams = async (req, res) => {
 
 export const DeleteTeams = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
 	const deleteTeams = await prisma.t_team.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 

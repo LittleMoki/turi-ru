@@ -35,7 +35,7 @@ export const ShowServices = async (req, res) => {
 
 	const findServices = await prisma.t_tour_services.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -52,7 +52,7 @@ export const EditServices = async (req, res) => {
 
 	const findServices = await prisma.t_tour_services.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -61,7 +61,7 @@ export const EditServices = async (req, res) => {
 
 	const EditServices = await prisma.t_tour_services.update({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		data: {
 			type_id,
@@ -82,13 +82,13 @@ export const EditServices = async (req, res) => {
 
 export const DeleteServices = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
 	const deleteServices = await prisma.t_tour_services.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 

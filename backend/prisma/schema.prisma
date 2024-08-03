@@ -14,7 +14,7 @@ datasource db {
 }
 
 model t_types {
-  id              Int           @id @default(autoincrement())
+  id              String        @id @default(uuid())
   parent          Int
   name            String
   type            String        @db.VarChar(3)
@@ -30,7 +30,7 @@ model t_types {
 }
 
 model t_about {
-  id           Int     @id @default(autoincrement())
+  id           String  @id @default(uuid())
   name         String  @default("")
   position     String  @default("")
   employment   String  @default("")
@@ -41,7 +41,7 @@ model t_about {
 }
 
 model t_banner {
-  id      Int     @id @default(autoincrement())
+  id      String  @id @default(uuid())
   file    String  @default("") @db.VarChar(14)
   fileext String  @default("") @db.VarChar(5)
   url     String  @default("") @db.VarChar(255)
@@ -54,13 +54,13 @@ model t_banner {
   info    String?
   email   String  @default("") @db.VarChar(40)
   act     Int     @default(1)
-  cityid  Int     @default(0)
+  cityid  String
   city    t_city  @relation(fields: [cityid], references: [id], onDelete: Cascade)
 }
 
 model t_city {
-  id              Int          @id @default(autoincrement())
-  country_id      Int
+  id              String       @id @default(uuid())
+  country_id      String
   country         t_country    @relation(fields: [country_id], references: [id], onDelete: Cascade)
   name            String       @default("") @db.VarChar(30)
   url             String       @unique @default("") @db.VarChar(255)
@@ -79,7 +79,7 @@ model t_city {
 }
 
 model t_country {
-  id              Int              @id @default(autoincrement())
+  id              String           @id @default(uuid())
   language_id     Int              @default(1)
   name            String
   url             String           @unique
@@ -95,7 +95,7 @@ model t_country {
 }
 
 model t_cityphoto {
-  id        Int    @id @default(autoincrement())
+  id        String @id @default(uuid())
   header_ru String @default("") @db.VarChar(255)
   url       String @default("") @db.VarChar(255)
   foto      String @default("") @db.VarChar(200)
@@ -107,7 +107,7 @@ model t_cityphoto {
 }
 
 model t_dayplace {
-  id      Int @id @default(autoincrement())
+  id      String @id @default(uuid())
   tourid  Int
   dayid   Int
   placeid Int
@@ -116,7 +116,7 @@ model t_dayplace {
 }
 
 model t_exchange {
-  id             Int     @id @default(autoincrement())
+  id             String  @id @default(uuid())
   title          String
   name           String
   symbol         String
@@ -125,7 +125,7 @@ model t_exchange {
 }
 
 model t_faq {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(uuid())
   name        String
   description String
   archive     Int           @default(0)
@@ -133,7 +133,7 @@ model t_faq {
 }
 
 model t_guide {
-  id       Int     @id @default(autoincrement())
+  id       String  @id @default(uuid())
   url      String  @default("") @db.VarChar(255)
   name_ru  String  @default("") @db.VarChar(255)
   name_en  String  @default("") @db.VarChar(255)
@@ -154,7 +154,7 @@ model t_guide {
 }
 
 model t_guideresponses {
-  id       Int       @id @default(autoincrement())
+  id       String    @id @default(uuid())
   guide    Int
   cat      Int
   type     String    @default("") @db.Char(20)
@@ -172,9 +172,9 @@ model t_guideresponses {
 }
 
 model t_hotel {
-  id              Int             @id @default(autoincrement())
-  country_id      Int             @default(1)
-  cityid          Int             @default(0)
+  id              String          @id @default(uuid())
+  country_id      String
+  cityid          String
   country         t_country       @relation(fields: [country_id], references: [id], onDelete: Cascade)
   city            t_city          @relation(fields: [cityid], references: [id], onDelete: Cascade)
   name            String          @default("") @db.VarChar(250)
@@ -197,17 +197,17 @@ model t_hotel {
 }
 
 model t_hotel_photo {
-  id      Int     @id @default(autoincrement())
-  hotelid Int     @default(1)
+  id      String  @id @default(uuid())
+  hotelid String
   hotel   t_hotel @relation(fields: [hotelid], references: [id], onDelete: Cascade)
   photo   String  @default("") @db.VarChar(200)
   alt     String  @default("") @db.VarChar(255)
 }
 
 model t_hotel_rooms {
-  id        Int     @id @default(autoincrement())
+  id        String  @id @default(uuid())
   hotel     t_hotel @relation(fields: [hotelid], references: [id], onDelete: Cascade)
-  hotelid   Int
+  hotelid   String
   name      String  @default("") @db.VarChar(250)
   price     Int
   sizem     Int
@@ -219,26 +219,26 @@ model t_hotel_rooms {
 }
 
 model t_hotel_room_photo {
-  id      Int    @id @default(autoincrement())
+  id      String @id @default(uuid())
   room_id Int
   photo   String
   alt     String @db.VarChar(60)
 }
 
 model t_hotel_services {
-  id   Int    @id @default(autoincrement())
+  id   String @id @default(uuid())
   name String
   icon String
 }
 
 model t_news {
-  id              Int         @id @default(autoincrement())
+  id              String      @id @default(uuid())
   new_date        String?     @db.VarChar(255)
   header          String      @default("") @db.VarChar(255)
   body            String?
   firsttext       String?
   lang            String      @default("ru") @db.Char(2)
-  typeId          Int         @default(1)
+  typeId          String
   type            t_news_type @relation(fields: [typeId], references: [id], onDelete: Cascade)
   view            Int         @default(0)
   photo           String
@@ -256,7 +256,7 @@ model t_news {
 }
 
 model t_news_type {
-  id              Int      @id @default(autoincrement())
+  id              String   @id @default(uuid())
   name            String   @db.VarChar(255)
   description     String
   photo           String   @db.VarChar(255)
@@ -268,15 +268,15 @@ model t_news_type {
 }
 
 model t_order_product {
-  id       Int @id @default(autoincrement())
+  id       String @id @default(uuid())
   user_id  Int
   order_id Int
   tour_id  Int
 }
 
 model t_orders {
-  id               Int      @id @default(autoincrement())
-  user_id          Int
+  id               String   @id @default(uuid())
+  user_id          String
   user             t_users  @relation(fields: [user_id], references: [id], onDelete: Cascade)
   travellers_count Int
   tour_date_start  DateTime @default(now())
@@ -293,13 +293,13 @@ model t_orders {
 }
 
 model t_order_hotels {
-  id       Int @id @default(autoincrement())
+  id       String @id @default(uuid())
   order_id Int
   hotel_id Int
 }
 
 model t_oreder_services {
-  id            Int    @id @default(autoincrement())
+  id            String @id @default(uuid())
   user_id       Int
   order_id      Int
   service_name  String
@@ -308,13 +308,13 @@ model t_oreder_services {
 }
 
 model t_order_status {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(uuid())
   name  String
   color String
 }
 
 model t_order_travellers {
-  id             Int    @id @default(autoincrement())
+  id             String @id @default(uuid())
   order_id       Int
   user_id        Int
   customer_name  String
@@ -327,7 +327,7 @@ model t_order_travellers {
 }
 
 model t_pages {
-  id              Int     @id @default(autoincrement())
+  id              String  @id @default(uuid())
   url             String? @unique
   isdel           Int     @default(0)
   metakeywords    String?
@@ -338,24 +338,24 @@ model t_pages {
 }
 
 model t_payment_status {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(uuid())
   name  String
   color String
 }
 
 model t_photo {
-  id         Int    @id @default(autoincrement())
+  id         String @id @default(uuid())
   photo_type String
   photo      String
   alt        String
 }
 
 model t_place {
-  id              Int       @id @default(autoincrement())
-  country_id      Int
+  id              String    @id @default(uuid())
+  country_id      String
   country         t_country @relation(references: [id], fields: [country_id], onDelete: Cascade)
   city            t_city    @relation(references: [id], fields: [cityid], onDelete: Cascade)
-  cityid          Int       @default(0)
+  cityid          String
   url             String    @default("")
   name            String
   body            String?
@@ -370,14 +370,14 @@ model t_place {
 }
 
 model t_place_photo {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(uuid())
   place_id Int
   photo    String
   alt      String
 }
 
 model t_restaurant {
-  id              Int     @id @default(autoincrement())
+  id              String  @id @default(uuid())
   country_id      Int
   cityid          Int     @default(0)
   url             String  @default("")
@@ -391,7 +391,7 @@ model t_restaurant {
 }
 
 model t_restaurant_photo {
-  id            Int    @id @default(autoincrement())
+  id            String @id @default(uuid())
   restaurant_id Int
   url           String @default("")
   photo         String
@@ -399,7 +399,7 @@ model t_restaurant_photo {
 }
 
 model t_review {
-  id      Int       @id @default(autoincrement())
+  id      String    @id @default(uuid())
   user_id Int
   name    String?   @default("")
   city    String
@@ -411,13 +411,13 @@ model t_review {
 }
 
 model t_tags {
-  id   Int    @id @default(autoincrement())
+  id   String @id @default(uuid())
   name String
   url  String
 }
 
 model t_team {
-  id        Int           @id @default(autoincrement())
+  id        String        @id @default(uuid())
   name      String
   photo     String
   tour_team t_tour_team[]
@@ -425,11 +425,11 @@ model t_team {
 }
 
 model t_tour {
-  id              Int                @id @default(autoincrement())
+  id              String             @id @default(uuid())
   type            t_types            @relation(fields: [typeId], references: [id], onDelete: Cascade)
   team            t_team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  typeId          Int
-  teamId          Int
+  typeId          String
+  teamId          String
   main_title      String?
   name            String
   name2           String
@@ -473,16 +473,16 @@ model t_tour {
 }
 
 model t_tourcity {
-  id     Int    @id @default(autoincrement())
-  tourid Int
+  id     String @id @default(uuid())
+  tourid String
   tour   t_tour @relation(fields: [tourid], references: [id], onDelete: Cascade)
   city   t_city @relation(fields: [cityid], references: [id], onDelete: Cascade)
-  cityid Int
+  cityid String
 }
 
 model t_tourtoday {
-  id           Int              @id @default(autoincrement())
-  tourid       Int
+  id           String           @id @default(uuid())
+  tourid       String
   tour         t_tour           @relation(fields: [tourid], references: [id], onDelete: Cascade)
   name         String
   body         String
@@ -494,8 +494,8 @@ model t_tourtoday {
 }
 
 model t_tourdayphoto {
-  id      Int         @id @default(autoincrement())
-  day_id  Int
+  id      String      @id @default(uuid())
+  day_id  String
   tourday t_tourtoday @relation(fields: [day_id], references: [id])
   photo   String
   foto    String?     @default("")
@@ -504,14 +504,14 @@ model t_tourdayphoto {
 }
 
 model t_tourphoto {
-  id     Int     @id @default(autoincrement())
-  tourid Int
+  id     String  @id @default(uuid())
+  tourid String
   tour   t_tour  @relation(fields: [tourid], references: [id], onDelete: Cascade)
   photo  String?
 }
 
 model t_tour_meta {
-  id              Int    @id @default(autoincrement())
+  id              String @id @default(uuid())
   lang            String @db.Char(2)
   title           String
   metakeywords    String
@@ -520,16 +520,16 @@ model t_tour_meta {
 }
 
 model t_tour_country {
-  id         Int       @id @default(autoincrement())
-  tour_id    Int
+  id         String    @id @default(uuid())
+  tour_id    String
   tour       t_tour    @relation(fields: [tour_id], references: [id], onDelete: Cascade)
-  country_id Int
+  country_id String
   country    t_country @relation(fields: [country_id], references: [id], onDelete: Cascade)
 }
 
 model t_tour_day_price {
-  id            Int      @id @default(autoincrement())
-  tourid        Int
+  id            String   @id @default(uuid())
+  tourid        String
   tour          t_tour   @relation(fields: [tourid], references: [id], onDelete: Cascade)
   date_start    DateTime
   date_end      DateTime
@@ -541,16 +541,16 @@ model t_tour_day_price {
 }
 
 model t_tour_faqs {
-  id     Int    @id @default(autoincrement())
-  tourid Int
+  id     String @id @default(uuid())
+  tourid String
   tour   t_tour @relation(fields: [tourid], references: [id], onDelete: Cascade)
-  faqid  Int
+  faqid  String
   faq    t_faq  @relation(fields: [faqid], references: [id], onDelete: Cascade)
 }
 
 model t_tour_services {
-  id      Int     @id @default(autoincrement())
-  type_id Int?
+  id      String  @id @default(uuid())
+  type_id String?
   title   String?
   icon    String?
   price   Int
@@ -558,16 +558,16 @@ model t_tour_services {
 }
 
 model t_tour_team {
-  id      Int    @id @default(autoincrement())
-  tour_id Int
-  team_id Int
+  id      String @id @default(uuid())
+  tour_id String
+  team_id String
   tour    t_tour @relation(fields: [tour_id], references: [id])
   team    t_team @relation(fields: [team_id], references: [id])
 }
 
 model t_tour_type {
-  id              Int     @id @default(autoincrement())
-  type_id         Int
+  id              String  @id @default(uuid())
+  type_id         String
   types           t_types @relation(fields: [type_id], references: [id])
   name            String
   url             String?
@@ -581,7 +581,7 @@ model t_tour_type {
 }
 
 model t_users {
-  id           Int              @id @default(autoincrement())
+  id           String           @id @default(uuid())
   login        String?          @unique
   first_name   String?
   last_name    String?
@@ -595,14 +595,14 @@ model t_users {
 }
 
 model t_users_role {
-  id        Int    @id @default(autoincrement())
+  id        String @id @default(uuid())
   name      String
   type_name String @default("guest")
 }
 
 model t_user_address {
-  id      Int     @id @default(autoincrement())
-  user_id Int
+  id      String  @id @default(uuid())
+  user_id String
   user    t_users @relation(fields: [user_id], references: [id])
   country String
   city    String
@@ -611,7 +611,7 @@ model t_user_address {
 }
 
 model t_video {
-  id        Int    @id @default(autoincrement())
+  id        String @id @default(uuid())
   header    String @default("") @db.VarChar(255)
   code      String @default("")
   header_en String @default("") @db.VarChar(255)

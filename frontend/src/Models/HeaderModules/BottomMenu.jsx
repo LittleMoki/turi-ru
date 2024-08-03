@@ -44,7 +44,6 @@ export const BottomMenu = () => {
 	const searchFilter = tours?.filter(tour =>
 		tour.main_title.toLowerCase().includes(search.toLowerCase())
 	)
-
 	return (
 		<div className='py-2 bg-white w-full px-3 shadow-md relative'>
 			<div className='max-w-[100wh]'>
@@ -169,7 +168,7 @@ export const BottomMenu = () => {
 									className={`bg-white px-1 py-2 absolute w-full max-h-[200px] z-10 transition-all top-[50px] rounded-md overflow-x-auto`}
 								>
 									{searchFilter.map(el => (
-										<Link key={el.id} className='hover:underline' href={el.url}>
+										<Link onClick={()=>setSearch('')} key={el.id} className='hover:underline' href={`/tour/${el.type.url}/${el.url}`}>
 											{el.main_title}
 										</Link>
 									))}

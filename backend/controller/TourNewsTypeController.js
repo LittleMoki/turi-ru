@@ -55,12 +55,12 @@ export const ShowAllNewsType = async (req, res) => {
 
 export const ShowNewsType = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 	const newsType = await prisma.t_news_type.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		include: {
 			news: true,
@@ -75,7 +75,7 @@ export const ShowNewsType = async (req, res) => {
 
 export const EditNewsType = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 	const {
@@ -90,7 +90,7 @@ export const EditNewsType = async (req, res) => {
 
 	const currentTourType = await prisma.t_news_type.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	});
 
@@ -107,7 +107,7 @@ export const EditNewsType = async (req, res) => {
 
 	const newType = await prisma.t_news_type.update({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		data: {
 			name,
@@ -126,12 +126,12 @@ export const EditNewsType = async (req, res) => {
 
 export const DeleteNewsType = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 	const findNewsType = await prisma.t_news_type.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -140,7 +140,7 @@ export const DeleteNewsType = async (req, res) => {
 
 	const newsType = await prisma.t_news_type.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 

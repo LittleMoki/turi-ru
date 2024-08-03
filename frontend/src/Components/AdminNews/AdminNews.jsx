@@ -22,7 +22,7 @@ const AdminNews = () => {
 		body: '',
 		firsttext: '',
 		lang: '',
-		typeId: Number(newsId),
+		typeId: newsId,
 		view: 0,
 		photo: '',
 		foto: '',
@@ -73,7 +73,7 @@ const AdminNews = () => {
 						body: body || '',
 						firsttext: firsttext || '',
 						lang: lang || '',
-						typeId: Number(newsId),
+						typeId: newsId,
 						view: view || 0,
 						photo: photo || '',
 						foto: foto || '',
@@ -106,6 +106,13 @@ const AdminNews = () => {
 			[name]: type === 'checkbox' ? (checked ? 1 : 0) : value,
 		}))
 	}
+
+	const handleSelectChange = (keys, type) => {
+		setFormData(prevState => ({
+			...prevState,
+			[type]: [...keys][0],
+		}));
+	};
 
 	const handleEditorChange = (name, value) => {
 		setFormData((prevState) => ({
@@ -177,6 +184,7 @@ const AdminNews = () => {
 		header:string().required('Please enter header of news'),
 		url:string().required('Please enter url of news'),
 		country:string().min(1,'Please choose a country').required('Please choose a country'),
+		typeId:string().required('Please choose a type'),
 	})
 
 	return (
@@ -237,12 +245,12 @@ const AdminNews = () => {
 								<Select
 									label="Выберите страну"
 									placeholder="Выберите страну"
-									value={formData.country}
+									selectedKeys={new Set([formData.country])}
 									className="w-full"
 									errorMessage={errors.country}
 									isInvalid={errors.country}
 									name='country'
-									onChange={handleInputChange}
+									onSelectionChange={(keys) => handleSelectChange(keys, 'country')}
 								>
 									{country.map(el => (
 										<SelectItem key={el.name} value={el.name}>

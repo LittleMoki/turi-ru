@@ -50,7 +50,7 @@ export const showOrder = async (req, res) => {
     const {id} = req.params
     const order = await prisma.t_orders.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
     return res.json({status: 200, data: order})
@@ -76,7 +76,7 @@ export const updateOrder = async (req, res) => {
     } = req.body
     const order = await prisma.t_orders.update({
         where: {
-            id: Number(id),
+            id: id,
         },
         data: {
             user_id,
@@ -102,7 +102,7 @@ export const deleteOrders = async (req, res) => {
     const {id} = req.params
     const order = await prisma.t_orders.delete({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
     return res.json({status: 200, data: order})

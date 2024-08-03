@@ -59,7 +59,7 @@ export const ShowCountry = async (req, res) => {
 
 	const findCountry = await prisma.t_country.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -85,7 +85,7 @@ export const ShowCountryUrl = async (req, res) => {
 
 export const EditCountry = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
@@ -102,7 +102,7 @@ export const EditCountry = async (req, res) => {
 
 	const findCountry = await prisma.t_country.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -123,7 +123,7 @@ export const EditCountry = async (req, res) => {
 
 	const editCountry = await prisma.t_country.update({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		data: {
 			language_id,
@@ -146,13 +146,13 @@ export const EditCountry = async (req, res) => {
 
 export const DeleteCountry = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
 	const deleteCountry = await prisma.t_country.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 

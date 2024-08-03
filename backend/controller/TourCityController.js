@@ -16,7 +16,7 @@ export const CreateCity = async (req, res) => {
 	// Проверка существования country_id
 	const countryExists = await prisma.t_country.findUnique({
 		where: {
-			id: Number(country_id),
+			id: country_id,
 		},
 	});
 
@@ -80,7 +80,7 @@ export const ShowCity = async (req, res) => {
 
 	const findCity = await prisma.t_city.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -122,7 +122,7 @@ export const EditCity = async (req, res) => {
 
 	const findCity = await prisma.t_city.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -131,7 +131,7 @@ export const EditCity = async (req, res) => {
 
 	const editCity = await prisma.t_city.update({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		data: {
 			country_id,
@@ -156,13 +156,13 @@ export const EditCity = async (req, res) => {
 
 export const DeleteCity = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
 	const deleteCity = await prisma.t_city.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 

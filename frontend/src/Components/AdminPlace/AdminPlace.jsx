@@ -78,14 +78,14 @@ const AdminPlace = () => {
         const {name, value} = e.target
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === 'cityid' && name === 'country_id'? Number(value) : value,
+            [name]: value,
         }))
     }
 
     const handleSelectChange = (keys,name) => {
         setFormData(prevState => ({
             ...prevState,
-            [name]: Number([...keys][0]),
+            [name]: [...keys][0],
         }))
     }
 
@@ -145,8 +145,8 @@ const AdminPlace = () => {
 
     const placeSchema = object({
         name:string().required('Please enter name of places'),
-        cityid:number().min(1,'Please choose a city'),
-        country_id:number().min(1,'Please choose a country'),
+        cityid:string().min(1,'Please choose a city'),
+        country_id:string().min(1,'Please choose a country'),
         url:string().required('Please enter url of places')
     })
     return (
@@ -164,13 +164,13 @@ const AdminPlace = () => {
                     placeholder="Выберите страну"
                     isInvalid={errors.country_id}
                     errorMessage={errors.country_id}
-                    selectedKeys={new Set([formData.country_id.toString()])}
+                    selectedKeys={new Set([formData.country_id])}
                     className="w-full"
                     // name='country_id'
                     onSelectionChange={(e)=>handleSelectChange(e, 'country_id')}
                 >
                     {country.map(el => (
-                        <SelectItem key={el.id} value={el.id.toString()}>
+                        <SelectItem key={el.id} value={el.id}>
                             {el.name}
                         </SelectItem>
                     ))}
@@ -180,13 +180,13 @@ const AdminPlace = () => {
                     placeholder="Выберите город"
                     isInvalid={errors.cityid}
                     errorMessage={errors.cityid}
-                    selectedKeys={new Set([formData.cityid.toString()])}
+                    selectedKeys={new Set([formData.cityid])}
                     className="w-full"
                     onSelectionChange={(e)=>handleSelectChange(e, 'cityid')}
 
                 >
                     {city.map(el => (
-                        <SelectItem key={el.id} value={el.id.toString()}>
+                        <SelectItem key={el.id} value={el.id}>
                             {el.name}
                         </SelectItem>
                     ))}

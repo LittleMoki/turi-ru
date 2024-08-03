@@ -77,10 +77,10 @@ export const ShowAllNews = async (req, res) => {
 export const ShowNews = async (req, res) => {
     const {id} = req.params
 
-    if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
+    if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
     const news = await prisma.t_news.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -94,7 +94,7 @@ export const ShowNews = async (req, res) => {
 export const ShowNewsUrlType = async (req, res) => {
     const {url} = req.params
     if (!url) {
-        return res.status(401).json({ url: 'url is invalid' });
+        return res.status(401).json({url: 'url is invalid'});
     }
 
 
@@ -109,7 +109,7 @@ export const ShowNewsUrlType = async (req, res) => {
         }
     })
 
-    if (news.length >! 0) {
+    if (news.length > !0) {
         res.json({status: 400, message: 'No news found'})
     }
 
@@ -119,21 +119,21 @@ export const ShowNewsUrlType = async (req, res) => {
 export const ShowNewsUrl = async (req, res) => {
     const {url} = req.params
     if (!url) {
-        return res.status(401).json({ message: 'url is invalid' });
+        return res.status(401).json({message: 'url is invalid'});
     }
     const news = await prisma.t_news.findFirst({
         where: {
-            url:url,
+            url: url,
         }
     })
-    res.json({status: 200, data: news })
+    res.json({status: 200, data: news})
 }
 
 export const EditNews = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
     const {
         new_date,
         header,
@@ -156,11 +156,13 @@ export const EditNews = async (req, res) => {
 
     const currentTourType = await prisma.t_news.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     });
 
+
     // Если текущий URL отличается от нового, проверяем уникальность
+    if (currentTourType === null) return res.status(404).send({message: 'Please leave this page'});
     if (currentTourType.url !== url) {
         const findUniqueType = await prisma.t_news.findFirst({
             where: {
@@ -170,7 +172,6 @@ export const EditNews = async (req, res) => {
 
         if (findUniqueType) return res.status(404).send({message: 'Page with this URL already exists'});
     }
-
 
     const news = await prisma.t_news.update({
         data: {
@@ -193,7 +194,7 @@ export const EditNews = async (req, res) => {
             tags,
         },
         where: {
-            id: Number(id),
+            id: id,
         },
     })
     return res.json({status: 200, data: news})
@@ -203,13 +204,13 @@ export const EditNews = async (req, res) => {
 
 export const DeleteNews = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
 
     const findNews = await prisma.t_news.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -218,7 +219,7 @@ export const DeleteNews = async (req, res) => {
 
     const news = await prisma.t_news.delete({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 

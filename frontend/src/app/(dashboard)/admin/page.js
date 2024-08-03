@@ -3,6 +3,8 @@ import { api } from '@/Api/api'
 import SmallBox from '@/UI/SmallBox'
 import { useEffect, useState } from 'react'
 
+
+
 const AdminPage = () => {
 	const [data, setData] = useState({
 		tour: 0,

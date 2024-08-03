@@ -19,12 +19,12 @@ export const FAQCreate = async (req, res) => {
 
 export const FAQDelete = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 	const findFAQ = await prisma.t_faq.delete({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 
@@ -49,13 +49,13 @@ export const FAQShowAll = async (req, res) => {
 
 export const FAQShow = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
 	const FAQ = await prisma.t_faq.findUnique({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 	})
 	if (!FAQ) return res.json({ status: 400, message: 'We did not find any FAQ' })
@@ -67,14 +67,14 @@ export const FAQShow = async (req, res) => {
 
 export const FAQEdit = async (req, res) => {
 	const { id } = req.params
-	if (!id || isNaN(Number(id))) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 	const { name, description, archive } = req.body
 
 	const FAQ = await prisma.t_faq.update({
 		where: {
-			id: Number(id),
+			id: id,
 		},
 		data: {
 			name,

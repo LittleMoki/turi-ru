@@ -20,12 +20,12 @@ export const editMainTourTeam = async (req, res) => {
         team_id
     } = req.body;
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id) {
         return res.status(401).json({ message: 'id is invalid' });
     }
     const tour = prisma.t_tour_team.update({
         where: {
-            id: Number(id),
+            id: id,
         },
         data: {
             tour_id,
@@ -36,12 +36,12 @@ export const editMainTourTeam = async (req, res) => {
 }
 export const showMainTourTeam = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id) {
         return res.status(401).json({ message: 'id is invalid' });
     }
     const tour = prisma.t_tour_team.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -55,7 +55,6 @@ export const showAllMainTourTeam = async (req, res) => {
     })
     res.json({status: 200, data: tour});
 }
-
 export const deleteMainTourTeam = async (req, res) => {
     const {
         tour_id,
@@ -69,15 +68,14 @@ export const deleteMainTourTeam = async (req, res) => {
     })
     res.json({status: 200, data: tour});
 }
-
 export const deleteAllMainTourTeam = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id) {
         return res.status(401).json({ message: 'id is invalid' });
     }
     const tour = prisma.t_tour_team.delete({
         where:{
-            id: Number(id),
+            id: id,
         }
     })
 

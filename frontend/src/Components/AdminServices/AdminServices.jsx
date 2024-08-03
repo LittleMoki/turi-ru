@@ -47,7 +47,7 @@ const AdminServices = () => {
     const handleInputChange = (name,value) => {
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === 'type_id' ? Number(value) : value,
+            [name]: value,
         }))
     }
 
@@ -106,11 +106,11 @@ const AdminServices = () => {
             />
             <Select
                 label="Название услуги*:"
-                selectedKeys={new Set([formData.type_id.toString()])}
+                selectedKeys={new Set([formData.type_id])}
                 onSelectionChange={(keys) => handleInputChange('type_id', keys.values().next().value)}
             >
                 {selectOptions.map((el) => (
-                    <SelectItem key={el.value} value={el.value.toString()}>
+                    <SelectItem key={el.value} value={el.value}>
                         {el.label}
                     </SelectItem>
                 ))}

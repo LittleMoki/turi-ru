@@ -53,7 +53,7 @@ export const DeletePage = async (req, res) => {
 
     const page = await prisma.t_pages.delete({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -78,7 +78,7 @@ export const ShowPage = async (req, res) => {
     if(!id && id === undefined) return res.status(401).json({message:'id is invalid'})
     const page = await prisma.t_pages.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -92,7 +92,7 @@ export const ShowPage = async (req, res) => {
 
 export const EditPage = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {
@@ -107,7 +107,7 @@ export const EditPage = async (req, res) => {
 
     const currentTourType = await prisma.t_pages.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     });
 
@@ -124,7 +124,7 @@ export const EditPage = async (req, res) => {
 
     const page = await prisma.t_pages.update({
         where: {
-            id: Number(id),
+            id: id,
         },
         data: {
             url,

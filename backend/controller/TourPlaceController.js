@@ -68,7 +68,7 @@ export const ShowPlace = async (req, res) => {
 
     const findPlace = await prisma.t_place.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -97,7 +97,7 @@ export const ShowPlaceUrl = async (req, res) => {
 
 export const EditPlace = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {
@@ -116,7 +116,7 @@ export const EditPlace = async (req, res) => {
 
     const findPlace = await prisma.t_place.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -125,7 +125,7 @@ export const EditPlace = async (req, res) => {
 
     const EditPlace = await prisma.t_place.update({
         where: {
-            id: Number(id),
+            id: id,
         },
         data: {
             country_id,
@@ -151,13 +151,13 @@ export const EditPlace = async (req, res) => {
 
 export const DeletePlace = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
     const deletePlace = await prisma.t_place.delete({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 

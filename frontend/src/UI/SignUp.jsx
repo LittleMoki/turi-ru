@@ -1,6 +1,6 @@
 'use client'
 import {
-    Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure,
+    Button, Input, Modal, ModalBody, ModalContent, useDisclosure,
 } from '@nextui-org/react'
 import Image from "next/image";
 import bg from '/public/registration-banner.jpg'
@@ -28,9 +28,11 @@ const SignUp = () => {
 
     const mutation = useMutation({
         mutationFn: (formData) => {
+            console.log("Sending data:", formData); // Добавьте лог здесь
             return api.post('/auth/register', formData)
         },
         onSuccess: (data) => {
+            console.log("Received data:", data); // Добавьте лог здесь
             if (data.data.token) {
                 Cookies.set('userId', data.data.data.id, {expires: 1}); // token saving for 1 day
                 Cookies.set('session', data.data.token, {expires: 1}); // token saving for 1 day
@@ -38,11 +40,15 @@ const SignUp = () => {
                 router.refresh();
             }
         },
+        onError: (error) => {
+            console.error("Error:", error); // Добавьте лог здесь
+        },
     });
 
     const onSubmit = async (event) => {
         event.preventDefault();
         try {
+            console.log("Form data before validation:", formData); // Добавьте лог здесь
             await userSchema.validate(formData, {abortEarly: false});
             mutation.mutate({
                 first_name: formData.first_name,
@@ -54,11 +60,11 @@ const SignUp = () => {
             });
         } catch (err) {
             const newErrors = {};
-            console.log(newErrors)
             err.inner.forEach((error) => {
                 newErrors[error.path] = error.message;
             });
             setErrors(newErrors);
+            console.error("Validation errors:", newErrors); // Добавьте лог здесь
         }
     };
 
@@ -81,7 +87,6 @@ const SignUp = () => {
             .matches(/^\d{10}$/, "Phone Number must be 10 digits")
             .required(),
         first_name: string().min(1, 'Please enter first name'),
-        last_name: string().min(1, 'Please enter last name'),
     });
 
     const handleInputChange = (name, value) => {

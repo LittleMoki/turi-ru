@@ -7,7 +7,7 @@ import {api} from "@/Api/api.js";
 import Cookies from "js-cookie";
 import {Container} from "@/Components/index.js";
 import CustomInput from "@/UI/CustomInput.jsx";
-import {Input, Radio, RadioGroup, Select, SelectItem, Spinner} from "@nextui-org/react";
+import {Radio, RadioGroup, Select, SelectItem, Spinner} from "@nextui-org/react";
 
 countries.registerLocale(require('i18n-iso-countries/langs/ru.json'));
 
@@ -17,7 +17,6 @@ const countryOptions = Object.values(countryNames);
 
 const BookingTourPage = () => {
     const router = useRouter()
-    const [filterCountry, setFilterCountry] = useState('');
     const [people, setPeople] = useState(1);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -36,6 +35,7 @@ const BookingTourPage = () => {
         queryFn: () => api.get(`/tour/${url}/url`),
         select: data => data.data.data
     });
+
 
     const {data: userData, isLoading: userLoading} = useQuery({
         queryKey: ['bookingUserData', userId],
@@ -61,10 +61,9 @@ const BookingTourPage = () => {
             setCurrentStep(step => step - 1);
         }
     };
+    const filteredTourDayPrice = dataTour?.tour_day_price.filter(el => el.id === Number(id))[0]
 
-    const filteredCountries = countryOptions.filter((country) => country.toLowerCase().includes(filterCountry.toLowerCase()));
-
-    const filterTourDayPriceById = dataTour?.tour_day_price?.find(el => el.id == id);
+    const filterTourDayPriceById = dataTour?.tour_day_price?.find(el => el.id === Number(id));
 
     const decreasePeople = () => {
         if (people > 1) {
@@ -98,11 +97,12 @@ const BookingTourPage = () => {
             order_updated: new Date(),
             price: dataTour?.price || dataTour?.price,
             deposit: 0,  // Замените на реальные данные если они есть
-            balance: dataTour?.price * people + singleRoomPrice || dataTour?.price,
-            total_price: dataTour?.price * people || dataTour?.price,
+            // balance: dataTour?.price * people + singleRoomPrice || dataTour?.price,
+            balance: dataTour?.price > 0 ? dataTour?.price + singleRoomPrice : filteredTourDayPrice?.single_price + singleRoomPrice,
+            total_price: dataTour?.price > 0 ? dataTour?.price + people : filteredTourDayPrice?.single_price * people,
             total_paid_price: 0,  // Замените на реальные данные если они есть
             payment_type: paymentType || '',
-            tour_type: tourType || ''
+            tour_type: tourType || '',
         });
 
 
@@ -124,6 +124,7 @@ const BookingTourPage = () => {
     const increaseSingleRoom = () => {
         setSingleRoom(singleRoom => singleRoom + 1);
     };
+
 
     return (
         <section>
@@ -185,16 +186,11 @@ const BookingTourPage = () => {
                                                 <CustomInput label='Имя: *' value={userData?.first_name}/>
                                                 <CustomInput label='Email: *' value={userData?.email}/>
                                                 <CustomInput label='Номер телефона: *' value={userData?.phone_number}/>
-                                                <Input
-                                                    label='Поиск страны:'
-                                                    onChange={(e) => setFilterCountry(e.target.value)}
-                                                    value={filterCountry}
-                                                />
                                                 <Select
                                                     label='Страна:'
                                                     onChange={(e) => setTourType(e.target.value)}
                                                 >
-                                                    {filteredCountries.map((country, index) => (
+                                                    {countryOptions.map((country, index) => (
                                                         <SelectItem key={index} value={country}>
                                                             {country}
                                                         </SelectItem>
@@ -319,14 +315,14 @@ const BookingTourPage = () => {
                                 <div className='grid lg:grid-cols-2 px-[20px] py-[10px]'>
                                     <p className='font-semibold'>Цена тура на 1 чел.:</p>
                                     <small className='text-end font-semibold text-base'>
-                                        ${dataTour?.price}
+                                        ${dataTour?.price > 0 ? dataTour?.price : filteredTourDayPrice?.single_price}
                                     </small>
                                 </div>
                             </div>
                             <div className='flex items-center justify-between'>
                                 <h3 className='font-semibold text-2xl'>Итого:</h3>
                                 <h3 className='text-end font-semibold text-xl'>
-                                    ${dataTour?.price * people + singleRoomPrice}
+                                    ${dataTour?.price > 0 ? dataTour?.price * people + singleRoomPrice : filteredTourDayPrice?.single_price * people}
                                 </h3>
                             </div>
                         </div>

@@ -118,7 +118,7 @@ export const ShowTour = async (req, res) => {
     if (!id && id === undefined) return res.status(401).json({message: 'id is invalid'})
     const tour = await prisma.t_tour.findUnique({
         where: {
-            id: Number(id),
+            id: id,
 
         },
         include: {
@@ -142,7 +142,7 @@ export const ShowTour = async (req, res) => {
 export const ShowTourByUrl = async (req, res) => {
     const {tourUrl} = req.params
     if (!tourUrl) {
-        return res.status(401).json({ tourUrl: 'tourUrl is invalid' });
+        return res.status(401).json({tourUrl: 'tourUrl is invalid'});
     }
     const findTour = await prisma.t_tour.findFirst({
         where: {
@@ -222,7 +222,7 @@ export const EditTour = async (req, res) => {
 
     const currentTourType = await prisma.t_tour.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     });
 
@@ -240,7 +240,7 @@ export const EditTour = async (req, res) => {
     try {
         const tour = await prisma.t_tour.update({
             where: {
-                id: Number(id)
+                id: id
             },
             data: {
                 typeId,
@@ -281,8 +281,6 @@ export const EditTour = async (req, res) => {
             },
         });
 
-        // console.log(tour_day_price)
-
         // Create t_tour_day_price entries for each day in the date range
         for (const tdp of tour_day_price) {
             const dateStart = parseISO(tdp.date_start);
@@ -292,7 +290,7 @@ export const EditTour = async (req, res) => {
                 where: {
                     // Уникальное сочетание tourid, date_start, date_end
                     tourid_date_start_date_end: {
-                        tourid: Number(id),
+                        tourid: id,
                         date_start: dateStart.toISOString(),
                         date_end: dateEnd.toISOString(),
                     },
@@ -303,9 +301,9 @@ export const EditTour = async (req, res) => {
                     transferPrice: tdp.transferPrice,
                 },
                 create: {
-                    tourid: Number(id),
+                    tourid: id,
                     date_start: dateStart.toISOString(),
-                    date_end: dateEnd.toISOString(),
+                    date_end: dateEnd.toISOString() ,
                     double_price: tdp.double_price,
                     single_price: tdp.single_price,
                     transferPrice: tdp.transferPrice,
@@ -317,14 +315,14 @@ export const EditTour = async (req, res) => {
             const existingCity = await prisma.t_tourcity.findFirst({
                 where: {
                     cityid: c,
-                    tourid: Number(id)
+                    tourid: id
                 }
             });
 
             if (!existingCity) {
                 await prisma.t_tourcity.create({
                     data: {
-                        tourid: Number(id),
+                        tourid: id,
                         cityid: c
                     }
                 });
@@ -335,14 +333,14 @@ export const EditTour = async (req, res) => {
             const existingCountry = await prisma.t_tour_country.findFirst({
                 where: {
                     country_id: c,
-                    tour_id: Number(id)
+                    tour_id: id
                 }
             });
 
             if (!existingCountry) {
                 await prisma.t_tour_country.create({
                     data: {
-                        tour_id: Number(id),
+                        tour_id: id,
                         country_id: c
                     }
                 });
@@ -353,14 +351,14 @@ export const EditTour = async (req, res) => {
             const existingFaq = await prisma.t_tour_faqs.findFirst({
                 where: {
                     faqid: faq,
-                    tourid: Number(id)
+                    tourid: id
                 }
             });
 
             if (!existingFaq) {
                 await prisma.t_tour_faqs.create({
                     data: {
-                        tourid: Number(id),
+                        tourid: id,
                         faqid: faq
                     }
                 });
@@ -371,7 +369,7 @@ export const EditTour = async (req, res) => {
             const existingRecords = await prisma.t_tourphoto.findUnique({
                 where: {
                     id: photo.id,
-                    tourid: Number(id)
+                    tourid: id
                 }
             });
 
@@ -381,7 +379,7 @@ export const EditTour = async (req, res) => {
                 await prisma.t_tourphoto.updateMany({
                     where: {id: photo.id},
                     data: {
-                        tourid: Number(id),
+                        tourid: id,
                         photo: photo.photo,
                     },
                 });
@@ -391,7 +389,7 @@ export const EditTour = async (req, res) => {
                 await prisma.t_tourphoto.createMany({
                     skipDuplicates: true,
                     data: {
-                        tourid: Number(id),
+                        tourid: id,
                         photo: photo.photo,
                     },
                 });
@@ -403,8 +401,8 @@ export const EditTour = async (req, res) => {
             // Проверяем, существует ли запись с указанным tourid
             const existingRecords = await prisma.t_tourtoday.findUnique({
                 where: {
-                    id: t.id,
-                    tourid: Number(id)
+                    id: String(t.id),
+                    tourid: id
                 }
             });
 
@@ -420,7 +418,7 @@ export const EditTour = async (req, res) => {
                         lunch: t.lunch,
                         dinner: t.dinner,
                         hotels: t.hotels,
-                        tourid: Number(id)
+                        tourid: id
                     },
                 });
             } else {
@@ -434,7 +432,7 @@ export const EditTour = async (req, res) => {
                         lunch: t.lunch,
                         dinner: t.dinner,
                         hotels: t.hotels,
-                        tourid: Number(id),
+                        tourid: id,
                     },
                 });
             }
@@ -456,7 +454,7 @@ export const DeleteTourToday = async (req, res) => {
 
     const tourToday = await prisma.t_tourtoday.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -465,7 +463,7 @@ export const DeleteTourToday = async (req, res) => {
 
     const deletedTourToday = await prisma.t_tourtoday.delete({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -479,13 +477,13 @@ export const DeleteTourToday = async (req, res) => {
 // controller for deleting tour
 export const DeleteTour = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id || isNaN(id)) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
 
     const tour = await prisma.t_tour.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -495,7 +493,7 @@ export const DeleteTour = async (req, res) => {
 
     const deletedTour = await prisma.t_tour.delete({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -510,20 +508,20 @@ export const DeleteTour = async (req, res) => {
 
 export const DeleteTourFaq = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
 
     const faqUnique = await prisma.t_tour_faqs.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
     if (!faqUnique) return res.json({status: 400, message: 'We could not find this faq'})
 
     const faq = await prisma.t_tour_faqs.delete({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
 
@@ -532,20 +530,20 @@ export const DeleteTourFaq = async (req, res) => {
 
 export const DeleteTourImages = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
 
     const tourUnique = await prisma.t_tourphoto.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
     if (!tourUnique) return res.json({status: 400, message: 'We could not find this hotel rooms'})
 
     const tourPhoto = await prisma.t_tourphoto.delete({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
 
@@ -554,20 +552,20 @@ export const DeleteTourImages = async (req, res) => {
 
 export const DeleteTourCountry = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
 
     const countryUnique = await prisma.t_tour_country.findFirst({
         where: {
-            id: Number(id),
+            id:id,
         }
     })
     if (!countryUnique) return res.json({status: 400, message: 'We could not find this tour country'})
 
     const countryTour = await prisma.t_tour_country.delete({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
 
@@ -576,20 +574,20 @@ export const DeleteTourCountry = async (req, res) => {
 
 export const DeleteTourCity = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id ) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
 
     const cityUnique = await prisma.t_tourcity.findUnique({
         where: {
-            id: Number(id),
+            id:id,
         }
     })
     if (!cityUnique) return res.json({status: 400, message: 'We could not find this tour country'})
 
     const cityTour = await prisma.t_tourcity.delete({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
 
@@ -598,14 +596,14 @@ export const DeleteTourCity = async (req, res) => {
 
 export const DeleteTourDayPrice = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
-		return res.status(401).json({ message: 'id is invalid' });
-	}
+    if (!id) {
+        return res.status(401).json({message: 'id is invalid'});
+    }
 
     try {
         const tourDayPrice = await prisma.t_tour_day_price.delete({
             where: {
-                id: Number(id),
+                id: id,
             }
         })
         res.json({status: 200, data: tourDayPrice})

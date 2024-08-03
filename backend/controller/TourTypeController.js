@@ -63,7 +63,7 @@ export const tourShow = async (req, res) => {
 
     const tours = await prisma.t_types.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
 
@@ -101,7 +101,7 @@ export const tourTypeShowUrl = async (req, res) => {
 
 export const tourEdit = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+     if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {
@@ -120,7 +120,7 @@ export const tourEdit = async (req, res) => {
     // Получаем текущие данные записи
     const currentTourType = await prisma.t_types.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     });
 
@@ -137,7 +137,7 @@ export const tourEdit = async (req, res) => {
 
     const tourType = await prisma.t_types.update({
         where: {
-            id: Number(id),
+            id: id,
         },
         data: {
             parent,
@@ -157,13 +157,13 @@ export const tourEdit = async (req, res) => {
 
 export const tourDelete = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+     if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
     const tour_delete = await prisma.t_types.delete({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 

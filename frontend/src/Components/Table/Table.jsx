@@ -137,7 +137,7 @@ const AdminTable = ({handleDelete, dataItems, loading, params}) => {
                 startContent={<i className="fa-solid fa-magnifying-glass"/>} labelPlacement='outside-left'
                 label='Поиск:'/>
         }
-        bottomContent={pages > 0 ? (<div className="flex w-full justify-center">
+        bottomContent={pages > 1 ? (<div className="flex w-full justify-center">
             <Pagination
                 isDisabled={search.length > 0}
                 isCompact

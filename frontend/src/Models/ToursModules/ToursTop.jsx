@@ -33,12 +33,12 @@ export const ToursTop = ({tourType, tourTypeUrl, TourTypeBase, setFilterByDay}) 
                         Многодневные
                     </button>
                     <button
-                        onClick={() => setFilterByDay(2) || selectTourFilterDay(4)}
+                        onClick={() => setFilterByDay(2) || selectTourFilterDay(2)}
                         className={`${selected === 2 ? 'bg-white text-black' : 'text-white'} border hover:bg-white hover:text-black transition  p-[12px]`}>
                         Короткие
                     </button>
                     <button
-                        onClick={() => setFilterByDay(1) || selectTourFilterDay(5)}
+                        onClick={() => setFilterByDay(1) || selectTourFilterDay(3)}
                         className={`${selected === 3 ? 'bg-white text-black' : 'text-white'} border hover:bg-white hover:text-black transition max-[500px]:rounded-r-none rounded-r-lg p-[12px]`}>
                         Однодневные
                     </button>

@@ -1,21 +1,21 @@
 'use client'
 import Cookies from "js-cookie";
 import {useRouter} from "next/navigation";
-import {Card, CardBody, Tab, Tabs} from "@nextui-org/react";
+import {Card, CardBody, Spinner, Tab, Tabs} from "@nextui-org/react";
 import {Container} from "@/Components/index.js";
 import Image from "next/image";
 import {useQuery} from "@tanstack/react-query";
 import {api} from "@/Api/api.js";
-import Link from "next/link";
+import UserOrdersPage from "@/Components/UserOrdersPage/UserOrdersPage.jsx";
 
 const UserPage = () => {
     const router = useRouter();
-    const userId = Number(Cookies.get("userId"));
+    const userId = Cookies.get("userId");
 
-    const {data} = useQuery({
+    const {data, isLoading} = useQuery({
         queryKey: ['userInfo'],
         queryFn: () => api.get(`/users/${userId}`),
-        select:data => data?.data?.data
+        select: data => data?.data?.data
     });
 
 
@@ -23,8 +23,13 @@ const UserPage = () => {
         Cookies.remove("session")
         Cookies.remove("userId")
     }
+
+    if (isLoading) {
+        return <div className='w-full h-[30vh] flex justify-center items-center'><Spinner size="lg"/></div>
+    }
+
     return (
-        data !== null && <Container>
+        <Container>
             <div className='bg-white my-10 flex justify-between items-center py-3 px-2 rounded-xl'>
                 <div className='flex items-center gap-3'>
                     <Image width={40} height={40} className='rounded-full bg-gray-700'
@@ -51,16 +56,20 @@ const UserPage = () => {
                 <Tab key="Мои заказы" title="Мои заказы">
                     <Card>
                         <CardBody>
-                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                            dolore eu fugiat nulla pariatur.
+                            {
+                                'You have not any orders' && data?.t_orders.map(el => (
+                                    <UserOrdersPage key={el.id} {...el}/>
+                                ))
+                            }
                         </CardBody>
                     </Card>
                 </Tab>
                 <Tab key="Мои отзывы" title="Мои отзывы">
                     <Card>
                         <CardBody>
-                            Excepteur sint occaecat cupidata?t non proident, sunt in culpa qui officia deserunt mollit
+                            Excepteur sint occaecat cupidata?t non proident, sunt in culpa qui officia
+                            deserunt
+                            mollit
                             anim id est laborum.
                         </CardBody>
                     </Card>

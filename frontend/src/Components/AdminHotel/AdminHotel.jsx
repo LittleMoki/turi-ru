@@ -128,7 +128,7 @@ export default function AdminHotel() {
     const handleSelectChange = (keys, type) => {
         setFormData(prevState => ({
             ...prevState,
-            [type]: Number([...keys][0]),
+            [type]: [...keys][0],
         }));
     };
 
@@ -232,8 +232,8 @@ export default function AdminHotel() {
 
     const hotelSchema = object({
         name: string().min(1).required('Please enter a name'),
-        country_id: number().min(1, 'Please choose a country'),
-        cityid: number().min(1, 'Please choose a city'),
+        country_id: string().min(1, 'Please choose a country'),
+        cityid: string().min(1, 'Please choose a city'),
         url: string().required('Please enter url'),
         rating: number().min(0).typeError('Please enter numbers').max(5, 'Choose number from 1 to 5'),
         booking_rating: number().min(0).typeError('Please enter numbers').max(10, 'Choose number from 1 to 10'),
@@ -299,14 +299,14 @@ export default function AdminHotel() {
                         <Select
                             label="Страна гостницы"
                             placeholder="Страна гостницы"
-                            selectedKeys={new Set([formData.country_id.toString()])}
+                            selectedKeys={new Set([formData.country_id])}
                             className="w-full"
                             errorMessage={errors.country_id}
                             isInvalid={errors.country_id}
-                            onSelectionChange={(keys) => handleSelectChange(keys, 'country_id')}
+                                onSelectionChange={(keys) => handleSelectChange(keys, 'country_id')}
                         >
                             {country.map(el => (
-                                <SelectItem key={el.id} value={el.id.toString()}>
+                                <SelectItem key={el.id} value={el.id}>
                                     {el.name}
                                 </SelectItem>
                             ))}
@@ -314,7 +314,7 @@ export default function AdminHotel() {
                         <Select
                             label="Город гостницы"
                             placeholder="Город гостницы"
-                            selectedKeys={new Set([formData.cityid.toString()])}
+                            selectedKeys={new Set([formData.cityid])}
                             className="w-full"
                             errorMessage={errors.cityid}
                             isInvalid={errors.cityid}

@@ -71,13 +71,13 @@ export const ShowAllHotels = async (req, res) => {
 
 export const ShowHotel = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
     const findHotel = await prisma.t_hotel.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
         include: {
             hotel_rooms: true,
@@ -93,7 +93,7 @@ export const ShowHotel = async (req, res) => {
 
 export const EditHotel = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {
@@ -120,7 +120,7 @@ export const EditHotel = async (req, res) => {
 
     const currentTourType = await prisma.t_hotel.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     });
 
@@ -137,7 +137,7 @@ export const EditHotel = async (req, res) => {
 
     const findHotel = await prisma.t_hotel.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -146,7 +146,7 @@ export const EditHotel = async (req, res) => {
 
     const editHotel = await prisma.t_hotel.update({
         where: {
-            id: Number(id),
+            id: id,
         },
         data: {
             country_id,
@@ -174,7 +174,7 @@ export const EditHotel = async (req, res) => {
     const existingRecords = await prisma.t_hotel_photo.findUnique({
             where: {
                 id: photo.id,
-                hotelid: Number(id)
+                hotelid: id
             }
         });
 
@@ -184,7 +184,7 @@ export const EditHotel = async (req, res) => {
             await prisma.t_hotel_photo.updateMany({
                 where: {id: photo.id},
                 data: {
-                    hotelid: Number(id),
+                    hotelid: id,
                     alt:photo.alt,
                     photo:photo.photo,
                 },
@@ -195,7 +195,7 @@ export const EditHotel = async (req, res) => {
             await prisma.t_hotel_photo.createMany({
                 skipDuplicates: true,
                 data: {
-                    hotelid: Number(id),
+                    hotelid: id,
                     alt:photo.alt,
                     photo:photo.photo,
                 },
@@ -208,7 +208,7 @@ export const EditHotel = async (req, res) => {
         const existingRecords = await prisma.t_hotel_rooms.findUnique({
             where: {
                 id: hotel.id,
-                hotelid: Number(id)
+                hotelid: id
             }
         });
 
@@ -218,7 +218,7 @@ export const EditHotel = async (req, res) => {
             await prisma.t_hotel_rooms.updateMany({
                 where: {id: hotel.id},
                 data: {
-                    hotelid: Number(id),
+                    hotelid: id,
                     name: hotel.name,
                     price: hotel.price,
                     sizem: hotel.sizem,
@@ -235,7 +235,7 @@ export const EditHotel = async (req, res) => {
             await prisma.t_hotel_rooms.createMany({
                 skipDuplicates: true,
                 data: {
-                    hotelid: Number(id),
+                    hotelid: id,
                     name: hotel.name,
                     price: hotel.price,
                     sizem: hotel.sizem,
@@ -258,13 +258,13 @@ export const EditHotel = async (req, res) => {
 
 export const DeleteHotel = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
     const deleteHotel = await prisma.t_hotel.delete({
         where: {
-            id: Number(id),
+            id: id,
         },
     })
 
@@ -273,20 +273,20 @@ export const DeleteHotel = async (req, res) => {
 
 export const DeleteHotelRooms = async (req, res) => {
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
     const hotelRoomsUnique = await prisma.t_hotel_rooms.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
     if (!hotelRoomsUnique) return res.json({status: 400, message: 'We could not find this hotel rooms'})
 
     const hotelRooms = await prisma.t_hotel_rooms.delete({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
 
@@ -295,20 +295,20 @@ export const DeleteHotelRooms = async (req, res) => {
 
 export const DeleteHotelPhoto = async (req,res)=>{
     const {id} = req.params
-    if (!id || isNaN(Number(id))) {
+    if (!id ) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
     const hotelRoomsUnique = await prisma.t_hotel_photo.findUnique({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
     if (!hotelRoomsUnique) return res.json({status: 400, message: 'We could not find this hotel rooms'})
 
     const hotelRooms = await prisma.t_hotel_photo.delete({
         where: {
-            id: Number(id),
+            id: id,
         }
     })
 
