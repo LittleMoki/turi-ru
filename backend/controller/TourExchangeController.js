@@ -24,7 +24,7 @@ export const ExchangeCreate = async (req, res) => {
 // Delete Exchange
 export const ExchangeDelete = async (req, res) => {
     const {id} = req.params
-   if (id) {
+   if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
@@ -49,7 +49,7 @@ export const ExchangeShowAll = async (req, res) => {
 
 export const ExchangeShow = async (req, res) => {
     const {id} = req.params
-   if (id) {
+   if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const exchange = await prisma.t_exchange.findUnique({
@@ -64,7 +64,7 @@ export const ExchangeShow = async (req, res) => {
 // Edit exchange
 export const ExchangeEdit = async (req, res) => {
     const {id} = req.params
-   if (id) {
+   if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {title, name, symbol, exchange_rate, primary_valuta} = req.body

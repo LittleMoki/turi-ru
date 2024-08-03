@@ -97,7 +97,7 @@ export const ShowPlaceUrl = async (req, res) => {
 
 export const EditPlace = async (req, res) => {
     const {id} = req.params
-    if (id) {
+    if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {
@@ -151,7 +151,7 @@ export const EditPlace = async (req, res) => {
 
 export const DeletePlace = async (req, res) => {
     const {id} = req.params
-    if (id) {
+    if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 

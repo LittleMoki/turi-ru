@@ -92,7 +92,7 @@ export const ShowPage = async (req, res) => {
 
 export const EditPage = async (req, res) => {
     const {id} = req.params
-    if (id) {
+    if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {

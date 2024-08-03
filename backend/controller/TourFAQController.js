@@ -19,7 +19,7 @@ export const FAQCreate = async (req, res) => {
 
 export const FAQDelete = async (req, res) => {
 	const { id } = req.params
-	if (id) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 	const findFAQ = await prisma.t_faq.delete({
@@ -49,7 +49,7 @@ export const FAQShowAll = async (req, res) => {
 
 export const FAQShow = async (req, res) => {
 	const { id } = req.params
-	if (id) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
@@ -67,7 +67,7 @@ export const FAQShow = async (req, res) => {
 
 export const FAQEdit = async (req, res) => {
 	const { id } = req.params
-	if (id) {
+	if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 	const { name, description, archive } = req.body

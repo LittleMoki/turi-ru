@@ -101,7 +101,7 @@ export const tourTypeShowUrl = async (req, res) => {
 
 export const tourEdit = async (req, res) => {
     const {id} = req.params
-     if (id) {
+     if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {
@@ -157,7 +157,7 @@ export const tourEdit = async (req, res) => {
 
 export const tourDelete = async (req, res) => {
     const {id} = req.params
-     if (id) {
+     if (!id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
