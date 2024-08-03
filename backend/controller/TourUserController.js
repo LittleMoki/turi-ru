@@ -42,7 +42,7 @@ export const ShowAllUsers = async (req, res) => {
 
 export const ShowUsers = async (req, res) => {
     const {id} = req.params
-     if (!id) {
+     if (id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
@@ -63,7 +63,7 @@ export const ShowUsers = async (req, res) => {
 
 export const EditUsers = async (req, res) => {
     const {id} = req.params
-     if (!id) {
+     if (id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
     const {
@@ -111,7 +111,7 @@ export const EditUsers = async (req, res) => {
 
 export const DeleteUsers = async (req, res) => {
     const {id} = req.params
-     if (!id) {
+     if (id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 

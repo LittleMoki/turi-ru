@@ -87,7 +87,7 @@ export const EditAbout = async (req, res) => {
 
 export const DeleteAbout = async (req, res) => {
 	const { id } = req.params
-	if (!id) {
+	if (id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 

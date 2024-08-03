@@ -156,7 +156,7 @@ export const EditCity = async (req, res) => {
 
 export const DeleteCity = async (req, res) => {
 	const { id } = req.params
-	if (!id) {
+	if (id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 

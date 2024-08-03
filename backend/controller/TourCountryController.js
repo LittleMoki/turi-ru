@@ -85,7 +85,7 @@ export const ShowCountryUrl = async (req, res) => {
 
 export const EditCountry = async (req, res) => {
 	const { id } = req.params
-	if (!id) {
+	if (id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
@@ -146,7 +146,7 @@ export const EditCountry = async (req, res) => {
 
 export const DeleteCountry = async (req, res) => {
 	const { id } = req.params
-	if (!id) {
+	if (id) {
 		return res.status(401).json({ message: 'id is invalid' });
 	}
 
