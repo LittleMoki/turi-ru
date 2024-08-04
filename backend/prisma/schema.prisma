@@ -290,8 +290,12 @@ model t_orders {
   total_paid_price Float    @default(0)
   payment_type     String
   tour_type        String
+  order_data       Int
+  order_status     Int
+  payment_status   Int
+  order_number     Int
+  payment_id       Int
 }
-
 model t_order_hotels {
   id       String @id @default(uuid())
   order_id Int
