@@ -181,7 +181,7 @@ export const EditNews = async (req, res) => {
             body,
             firsttext,
             lang,
-            typeId,
+            typeid,
             view,
             photo,
             foto,
