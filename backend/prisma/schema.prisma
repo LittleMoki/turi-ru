@@ -426,15 +426,12 @@ model t_team {
   name      String
   photo     String
   tour_team t_tour_team[]
-  t_tour    t_tour[]
 }
 
 model t_tour {
   id              String             @id @default(uuid())
-  type            t_types            @relation(fields: [typeId], references: [id], onDelete: Cascade)
-  team            t_team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  typeId          String
-  teamId          String
+  type            t_types            @relation(fields: [type_id], references: [id], onDelete: Cascade)
+  type_id         String
   main_title      String?
   name            String
   name2           String

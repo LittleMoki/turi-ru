@@ -481,8 +481,7 @@ CREATE TABLE "t_team" (
 -- CreateTable
 CREATE TABLE "t_tour" (
     "id" TEXT NOT NULL,
-    "typeId" TEXT NOT NULL,
-    "teamId" TEXT NOT NULL,
+    "type_id" TEXT NOT NULL,
     "main_title" TEXT,
     "name" TEXT NOT NULL,
     "name2" TEXT NOT NULL,
@@ -770,10 +769,7 @@ ALTER TABLE "t_place" ADD CONSTRAINT "t_place_country_id_fkey" FOREIGN KEY ("cou
 ALTER TABLE "t_place" ADD CONSTRAINT "t_place_cityid_fkey" FOREIGN KEY ("cityid") REFERENCES "t_city"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "t_tour" ADD CONSTRAINT "t_tour_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "t_types"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "t_tour" ADD CONSTRAINT "t_tour_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "t_team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "t_tour" ADD CONSTRAINT "t_tour_type_id_fkey" FOREIGN KEY ("type_id") REFERENCES "t_types"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "t_tourcity" ADD CONSTRAINT "t_tourcity_tourid_fkey" FOREIGN KEY ("tourid") REFERENCES "t_tour"("id") ON DELETE CASCADE ON UPDATE CASCADE;

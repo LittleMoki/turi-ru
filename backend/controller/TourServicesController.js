@@ -3,7 +3,7 @@ import prisma from '../db/db.config.js'
 export const CreateServices = async (req, res) => {
 	const { type_id, type, title, icon, price, archive } = req.body
 
-	const service = await prisma.t_tour_services.create({
+		const service = await prisma.t_tour_services.create({
 		data: {
 			type_id,
 			type,

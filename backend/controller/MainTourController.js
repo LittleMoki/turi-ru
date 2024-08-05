@@ -53,7 +53,6 @@ export const CreateTour = async (req, res) => {
         const tour = await prisma.t_tour.create({
             data: {
                 typeId,
-                teamId,
                 main_title,
                 name,
                 name2,
@@ -88,6 +87,13 @@ export const CreateTour = async (req, res) => {
                 country,
                 city,
             },
+        })
+
+        const tourTeam = await prisma.t_tour_team.create({
+            data:{
+                tour_id:tour.id,
+                team_id:teamId
+            }
         })
 
         res.json({status: 200, data: tour, id: tour.id})
@@ -137,7 +143,6 @@ export const ShowTour = async (req, res) => {
 
     res.json({status: 200, data: tour})
 }
-
 
 export const ShowTourByUrl = async (req, res) => {
     const {tourUrl} = req.params
@@ -244,7 +249,6 @@ export const EditTour = async (req, res) => {
             },
             data: {
                 typeId,
-                teamId,
                 main_title,
                 name,
                 name2,
@@ -280,6 +284,13 @@ export const EditTour = async (req, res) => {
                 city,
             },
         });
+
+        const teamTour = await prisma.t_tour_team.update({
+            data:{
+                tour_id:id,
+                team_id:teamId
+            }
+        })
 
         // Create t_tour_day_price entries for each day in the date range
         for (const tdp of tour_day_price) {
