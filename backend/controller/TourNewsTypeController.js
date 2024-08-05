@@ -42,9 +42,10 @@ export const CreateNewsType = async (req, res) => {
 
 export const ShowAllNewsType = async (req, res) => {
 	const newsType = await prisma.t_news_type.findMany({
-		include: {
-			_count: true,
-		},
+		include:{
+			news:true,
+			_count:true
+		}
 	})
 
 	return res.json({ status: 200, data: newsType })
