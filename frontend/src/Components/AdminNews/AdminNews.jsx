@@ -22,7 +22,7 @@ const AdminNews = () => {
 		body: '',
 		firsttext: '',
 		lang: '',
-		typeId: newsId,
+		type_id: newsId,
 		view: 0,
 		photo: '',
 		foto: '',
@@ -73,7 +73,7 @@ const AdminNews = () => {
 						body: body || '',
 						firsttext: firsttext || '',
 						lang: lang || '',
-						typeId: newsId,
+						type_id: newsId,
 						view: view || 0,
 						photo: photo || '',
 						foto: foto || '',
@@ -184,7 +184,7 @@ const AdminNews = () => {
 		header:string().required('Please enter header of news'),
 		url:string().required('Please enter url of news'),
 		country:string().min(1,'Please choose a country').required('Please choose a country'),
-		typeId:string().required('Please choose a type'),
+		type_id:string().required('Please choose a type'),
 	})
 
 	return (
