@@ -105,7 +105,7 @@ export const ShowNewsUrlType = async (req, res) => {
             }
         },
         include: {
-            type: true,
+            type:true
         }
     })
 
