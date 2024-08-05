@@ -9,7 +9,7 @@ export const CreateNews = async (req, res) => {
         body,
         firsttext,
         lang,
-        typeid,
+        type_id,
         view,
         photo,
         foto,
@@ -42,7 +42,7 @@ export const CreateNews = async (req, res) => {
             body,
             firsttext,
             lang,
-            typeid,
+            type_id,
             view,
             photo,
             foto,
@@ -140,7 +140,7 @@ export const EditNews = async (req, res) => {
         body,
         firsttext,
         lang,
-        typeid,
+        type_id,
         view,
         photo,
         foto,
@@ -154,7 +154,7 @@ export const EditNews = async (req, res) => {
         tags,
     } = req.body
 
-    const currentTourType = await prisma.t_news.findUnique({
+        const currentTourType = await prisma.t_news.findUnique({
         where: {
             id: id,
         },
@@ -181,7 +181,7 @@ export const EditNews = async (req, res) => {
             body,
             firsttext,
             lang,
-            typeid,
+            type_id,
             view,
             photo,
             foto,
