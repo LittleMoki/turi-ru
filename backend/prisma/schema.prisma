@@ -238,8 +238,8 @@ model t_news {
   body            String?
   firsttext       String?
   lang            String      @default("ru") @db.Char(2)
-  typeId          String
-  type            t_news_type @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  typeid          String
+  type            t_news_type @relation(fields: [typeid], references: [id], onDelete: Cascade)
   view            Int         @default(0)
   photo           String
   foto            String      @db.VarChar(200)
@@ -296,6 +296,7 @@ model t_orders {
   order_number     Int
   payment_id       Int
 }
+
 model t_order_hotels {
   id       String @id @default(uuid())
   order_id Int
