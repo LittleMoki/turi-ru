@@ -90,31 +90,35 @@ export const ShowNews = async (req, res) => {
     res.json({status: 200, data: news})
 }
 
-
 export const ShowNewsUrlType = async (req, res) => {
-    const {url} = req.params
-    if (!url) {
-        return res.status(401).json({url: 'url is invalid'});
-    }
+    const { url } = req.params;
 
-
-    const news = await prisma.t_news.findMany({
-        where: {
-            type: {
-                url: url
-            }
-        },
-        include: {
-            type:true
+    try {
+        if (!url) {
+            return res.status(401).json({ message: 'url is invalid' });
         }
-    })
 
-    if (news.length > !0) {
-        res.json({status: 400, message: 'No news found'})
+        const news = await prisma.t_news.findMany({
+            where: {
+                type: {
+                    url: url
+                }
+            },
+            include: {
+                type: true
+            }
+        });
+
+        if (news.length === 0) {
+            return res.status(400).json({ message: 'No news found' });
+        }
+
+        return res.json({ status: 200, data: news });
+    } catch (e) {
+        console.log(e);
+        return res.status(404).json({ message: 'something went wrong', error: e });
     }
-
-    res.json({status: 200, data: news})
-}
+};
 
 export const ShowNewsUrl = async (req, res) => {
     const {url} = req.params

@@ -436,7 +436,7 @@ model t_tour {
   name            String
   name2           String
   price           Float
-  oldPrice        Float
+  oldprice        Float
   sales           String
   body            String?
   map             String?
@@ -465,6 +465,7 @@ model t_tour {
   single_price    Float
   guaranted       Int                @default(0)
   new_type        String             @default("i")
+  transfer_price  String
   tour_city       t_tourcity[]
   tourtoday       t_tourtoday[]
   tourphoto       t_tourphoto[]

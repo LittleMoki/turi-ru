@@ -42,6 +42,7 @@ const MainPage = () => {
                     btnLink='/news'
                     isBtn={true}
                     cards={newsCards}
+                    maxData={3}
                 />
             }
 
@@ -56,6 +57,7 @@ const MainPage = () => {
                     isBtn={true}
                     cards={statiCards}
                     style={{paddingBottom: '30px'}}
+                    maxData={3}
                 />
             }
 

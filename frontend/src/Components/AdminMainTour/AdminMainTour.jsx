@@ -359,8 +359,8 @@ const AdminMainTour = () => {
 
     const tourSchemaPut = object({
         main_title: string().required('Please enter H1'),
-        typeId: string().required('Please select a type'),
-        teamId: string().required('Please select a team'),
+        typeId: string().min(1).required('Please select a type'),
+        teamId: string().min(1).required('Please select a team'),
         name: string(),
         name2: string(),
         metakeywords: string(),

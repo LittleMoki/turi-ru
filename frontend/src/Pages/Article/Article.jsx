@@ -34,38 +34,6 @@ const Article = ({
                      body,
                     newsType
                  }) => {
-    // const cards = [
-    //     {
-    //         img: bg,
-    //         country: 'Узбекистан',
-    //         date: '23 марта 2024',
-    //         views: '3121',
-    //         title:
-    //             'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-    //         description:
-    //             'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-    //     },
-    //     {
-    //         img: bg,
-    //         country: 'Узбекистан',
-    //         date: '23 марта 2024',
-    //         views: '3121',
-    //         title:
-    //             'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-    //         description:
-    //             'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-    //     },
-    //     {
-    //         img: bg,
-    //         country: 'Узбекистан',
-    //         date: '23 марта 2024',
-    //         views: '3121',
-    //         title:
-    //             'Откройте для себя Узбекистан: 7-дневное приключение с Minzifa Travel',
-    //         description:
-    //             'Исследуйте красоту и культуру Узбекистана с нашим эксклюзивным 7-дневным туром. Узнайте цены и особенности путешествия от Minzifa Travel.',
-    //     },
-    // ]
     const breadcrumbs = [
         <Link href='/' key='1'>
             Главная
@@ -218,7 +186,7 @@ const Article = ({
                     </div>
                 </div>
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 py-10'>
-                    {newsCards?.map((el, i) => (
+                    {newsCards?.slice(0,3).map((el, i) => (
                         <ArticleCard {...el} key={i}/>
                     ))}
                 </div>
